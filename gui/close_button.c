@@ -33,7 +33,6 @@ static void
 gui_close_button_on_pointer_up(widget_st *widget, event_st event, point_st pos)
 {
     gui_button_on_pointer_up(widget, event, pos);
-    gui_wm_remove_window(widget->window);
 }
 
 void

@@ -40,7 +40,6 @@ gui_main(void)
 
             if (w) {
                 pressed_window = w;
-                gui_wm_raise_window(w);
                 gui_window_on_pointer_down(w, event);
             }
         } else if (event.type == EVENT_POINTER_MOVE) {

@@ -277,6 +277,10 @@ gui_window_on_key_down(window_st *window, event_st event)
         }
     }
 
+    if (event.key_code == KEY_ESC) {
+        app_launcher.show();
+    }
+
     if (window->on_key_down) {
         window->on_key_down(window, event);
     }

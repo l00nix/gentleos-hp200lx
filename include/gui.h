@@ -165,6 +165,7 @@ enum {
     KEY_LEFT = 0x4b,
     KEY_RIGHT = 0x4d,
     KEY_ENTER = 0x1c,
+    KEY_ESC = 0x01,
 };
 
 enum {

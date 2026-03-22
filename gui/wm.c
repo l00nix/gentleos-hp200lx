@@ -14,7 +14,7 @@ enum {
 rect_st gui_wm_container = { 0 };
 
 static window_st *gui_wm_status_window = NULL;
-static window_st *gui_wm_windows[WINDOWS_COUNT_MAX];
+static window_st *gui_wm_current_window = NULL;
 
 bitmap_st *gui_wm_bg_pattern = NULL;
 uint8_t gui_wm_desktop_color = COLOR_DESKTOP;
@@ -36,82 +36,22 @@ gui_wm_toggle_window_active(window_st *w, int active)
     gui_window_on_active_change(w);
 }
 
-void
-gui_wm_raise_window(struct window *w)
-{
-    unsigned i;
-
-    for (i = 0; i < WINDOWS_COUNT_MAX; ++i) {
-        if (gui_wm_windows[i] == w) {
-            break;
-        }
-    }
-
-    if (i == WINDOWS_COUNT_MAX) {
-        return;
-    }
-
-    if (i > 0) {
-        for (; i > 0; --i) {
-            gui_wm_windows[i] = gui_wm_windows[i - 1];
-            gui_wm_toggle_window_active(gui_wm_windows[i], 0);
-        }
-    }
-
-    gui_wm_windows[0] = w;
-    gui_wm_toggle_window_active(w, 1);
-
-    gui_wm_render_desktop_region(w->rect, w);
-}
-
 int
 gui_wm_add_window(struct window *w)
 {
-    unsigned i;
-
-    for (i = 0; i < WINDOWS_COUNT_MAX; ++i) {
-        if (gui_wm_windows[i] == w) {
-            gui_wm_raise_window(w);
-            return 0;
-        }
-
-        if (gui_wm_windows[i] == NULL) {
-            gui_wm_windows[i] = w;
-            w->visible = 1;
-            gui_wm_raise_window(w);
-            return 1;
-        }
+    if (gui_wm_current_window) {
+        gui_wm_current_window->visible = 0;
+        gui_wm_toggle_window_active(gui_wm_current_window, 0);
+        gui_wm_current_window = NULL;
     }
 
-    gui_status_set("Error: Too many windows");
+    gui_wm_current_window = w;
+    gui_wm_current_window->visible = 1;
+    gui_wm_toggle_window_active(gui_wm_current_window, 1);
+
+    gui_wm_render_desktop_region(gui_wm_container, NULL);
 
     return 0;
-}
-
-void
-gui_wm_remove_window(struct window *w)
-{
-    unsigned i;
-
-    for (i = 0; i < WINDOWS_COUNT_MAX; ++i) {
-        if (gui_wm_windows[i] == w) {
-            w->visible = 0;
-            gui_wm_windows[i] = NULL;
-            gui_wm_toggle_window_active(w, 0);
-
-            break;
-        }
-    }
-
-    for (; i < WINDOWS_COUNT_MAX; ++i) {
-        gui_wm_windows[i] = (i + 1 < WINDOWS_COUNT_MAX) ? gui_wm_windows[i + 1] : NULL;
-    }
-
-    if (gui_wm_windows[0]) {
-        gui_wm_toggle_window_active(gui_wm_windows[0], 1);
-    }
-
-    gui_wm_render_desktop_region(w->rect, NULL);
 }
 
 static void
@@ -144,23 +84,12 @@ gui_wm_render_window_surface(window_st *window, rect_st desktop_reg)
 void
 gui_wm_render_desktop_region(rect_st rect, window_st *bottom_window)
 {
-    window_st *w;
-    int started = (bottom_window == NULL);
-
     if (!bottom_window) {
         gui_wm_render_wallpaper(rect);
     }
 
-    for (int i = WINDOWS_COUNT_MAX - 1; i >= 0; --i) {
-        w = gui_wm_windows[i];
-
-        if (w && w == bottom_window) {
-            started = 1;
-        }
-
-        if (w && started) {
-            gui_wm_render_window_surface(w, rect);
-        }
+    if (gui_wm_current_window) {
+        gui_wm_render_window_surface(gui_wm_current_window, rect);
     }
 }
 
@@ -187,16 +116,8 @@ gui_wm_find_window(uint16_t x, uint16_t y)
 {
     point_st p = { .x = x, .y = y };
 
-    for (size_t i = 0; i < WINDOWS_COUNT_MAX; ++i) {
-        window_st *w = gui_wm_windows[i];
-
-        if (!w) {
-            break;
-        }
-
-        if (gui_rect_contains_point(w->rect, p)) {
-            return w;
-        }
+    if (gui_wm_current_window && gui_rect_contains_point(gui_wm_current_window->rect, p)) {
+        return gui_wm_current_window;
     }
 
     return NULL;
@@ -205,7 +126,7 @@ gui_wm_find_window(uint16_t x, uint16_t y)
 window_st *
 gui_wm_top_window(void)
 {
-    return gui_wm_windows[0];
+    return gui_wm_current_window;
 }
 
 void
