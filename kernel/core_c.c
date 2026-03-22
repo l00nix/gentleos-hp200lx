@@ -22,7 +22,7 @@ uint32_t krn_core_mboot_header[] = {
     0,
     GUI_WIDTH,
     GUI_HEIGHT,
-    4,
+    1,
 };
 
 mboot_info_st *krn_core_mboot_info;

@@ -70,6 +70,4 @@ gui_fb_init(void)
     gui_fb_vram_surface->size.height = krn_core_mboot_info->fb_height;
     gui_fb_vram_surface->pitch = krn_core_mboot_info->fb_pitch;
     gui_fb_vram_surface->pixels = krn_core_mboot_info->fb_addr;
-
-    krn_core_mboot_info->fb_bpp = 4;
 }

@@ -6,14 +6,13 @@
 // --------------------------------------------------------------------------------------
 
 #include <gui.h>
-#include "vga.h"
 
 static const uint8_t gui_vga_dac_indexes[16] = {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x14, 0x07,
     0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F
 };
 
-void
+static void
 gui_vga_set_color(int index, uint32_t rgb)
 {
     uint8_t dac_index = index;
@@ -24,6 +23,18 @@ gui_vga_set_color(int index, uint32_t rgb)
     outb((rgb >> 18) & 0x3F, 0x3C9);
     outb((rgb >> 10) & 0x3F, 0x3C9);
     outb((rgb >>  2) & 0x3F, 0x3C9);
+}
+
+static void
+gui_vga_set_write_mode(uint8_t mode)
+{
+    outw((mode << 8) | 0x05, 0x3CE);
+}
+
+static void
+gui_vga_set_bit_mask(uint8_t mask)
+{
+    outw((mask << 8) | 0x08, 0x3CE);
 }
 
 void

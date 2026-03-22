@@ -56,7 +56,6 @@ extern void gui_timeout_on_tick(event_st event);
 /* gui/title_bar.c */
 extern void gui_title_bar_init(widget_st *bar, window_st *window);
 /* gui/vga.c */
-extern void gui_vga_set_color(int index, uint32_t rgb);
 extern void gui_vga_init(void);
 /* gui/widget.c */
 extern void gui_widget_draw(widget_st *widget);

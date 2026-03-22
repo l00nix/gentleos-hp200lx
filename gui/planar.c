@@ -6,14 +6,13 @@
 // --------------------------------------------------------------------------------------
 
 #include <gui.h>
-#include "vga.h"
 
 enum {
     FB_PITCH = GUI_WIDTH / 8,
     FB_PLANE_SIZE = GUI_HEIGHT * FB_PITCH,
 };
 
-static uint8_t gui_planar_pixels[4][FB_PLANE_SIZE] __attribute__((aligned(16)));
+static uint8_t gui_planar_pixels[FB_PLANE_SIZE] __attribute__((aligned(16)));
 
 void
 gui_planar_flush(rect_st rect)
@@ -23,16 +22,12 @@ gui_planar_flush(rect_st rect)
     int byte_x0 = x0 / 8;
     int byte_count = (x1 - x0) / 8;
 
-    for (int plane = 0; plane < 4; ++plane) {
-        gui_vga_set_write_planes(1 << plane);
-
-        for (int y = rect.y; y < rect.y + rect.height; ++y) {
-            memcpy(
-                gui_fb_vram_surface->pixels + y * gui_fb_vram_surface->pitch + byte_x0,
-                gui_planar_pixels[plane] + y * FB_PITCH + byte_x0,
-                byte_count
-            );
-        }
+    for (int y = rect.y; y < rect.y + rect.height; ++y) {
+        memcpy(
+            gui_fb_vram_surface->pixels + y * gui_fb_vram_surface->pitch + byte_x0,
+            gui_planar_pixels + y * FB_PITCH + byte_x0,
+            byte_count
+        );
     }
 }
 
@@ -52,27 +47,25 @@ gui_planar_draw_rect(rect_st rect, uint8_t color)
     uint8_t l_mask = 0xFF >> (l_x & 7);
     uint8_t r_mask = 0xFF << (7 - (r_x & 7));
 
-    for (int plane = 0; plane < 4; ++plane) {
-        uint8_t fill = ((color >> plane) & 1) ? 0xFF : 0x00;
-        uint8_t *dst_plane = gui_planar_pixels[plane];
+    uint8_t fill = (color & 1) ? 0xFF : 0x00;
+    uint8_t *dst_plane = gui_planar_pixels;
 
-        for (int y = rect.y; y < rect.y + rect.height; ++y) {
-            uint8_t *dst_row = dst_plane + y * FB_PITCH;
+    for (int y = rect.y; y < rect.y + rect.height; ++y) {
+        uint8_t *dst_row = dst_plane + y * FB_PITCH;
 
-            if (l_byte == r_byte) {
-                uint8_t mask = l_mask & r_mask;
-                dst_row[l_byte] = (dst_row[l_byte] & ~mask) | (fill & mask);
-                continue;
-            }
-
-            dst_row[l_byte] = (dst_row[l_byte] & ~l_mask) | (fill & l_mask);
-
-            if (r_byte > l_byte + 1) {
-                memset(dst_row + l_byte + 1, fill, r_byte - l_byte - 1);
-            }
-
-            dst_row[r_byte] = (dst_row[r_byte] & ~r_mask) | (fill & r_mask);
+        if (l_byte == r_byte) {
+            uint8_t mask = l_mask & r_mask;
+            dst_row[l_byte] = (dst_row[l_byte] & ~mask) | (fill & mask);
+            continue;
         }
+
+        dst_row[l_byte] = (dst_row[l_byte] & ~l_mask) | (fill & l_mask);
+
+        if (r_byte > l_byte + 1) {
+            memset(dst_row + l_byte + 1, fill, r_byte - l_byte - 1);
+        }
+
+        dst_row[r_byte] = (dst_row[r_byte] & ~r_mask) | (fill & r_mask);
     }
 }
 
@@ -132,7 +125,7 @@ gui_planar_draw_surface(int dst_x, int dst_y, surface_st *src, rect_st src_rect)
         return;
     }
 
-    uint8_t (*dst)[FB_PLANE_SIZE] = (uint8_t (*)[FB_PLANE_SIZE])gui_planar_pixels;
+    uint8_t *dst = gui_planar_pixels;
 
     int dst_l_x = dst_x;
     int dst_r_x = dst_x + src_rect.width - 1;
@@ -151,7 +144,7 @@ gui_planar_draw_surface(int dst_x, int dst_y, surface_st *src, rect_st src_rect)
         int dst_row_ofs = (dst_y + row) * FB_PITCH;
 
         if (dst_l_byte == dst_r_byte) {
-            uint8_t p[4] = { 0, 0, 0, 0 };
+            uint8_t p = 0;
             uint8_t dst_mask = dst_l_mask & dst_r_mask;
             int dst_ofs = dst_row_ofs + dst_l_byte;
 
@@ -161,76 +154,55 @@ gui_planar_draw_surface(int dst_x, int dst_y, surface_st *src, rect_st src_rect)
                 if (src_x >= 0 && src_x < src_rect.width) {
                     uint8_t c = src_row[src_x];
                     uint8_t s = 7 - bit;
-
-                    p[0] |= ((c     ) & 1) << s;
-                    p[1] |= ((c >> 1) & 1) << s;
-                    p[2] |= ((c >> 2) & 1) << s;
-                    p[3] |= ((c >> 3) & 1) << s;
+                    p |= (c & 1) << s;
                 }
             }
 
-            for (int i = 0; i < 4; ++i) {
-                dst[i][dst_ofs] = (dst[i][dst_ofs] & ~dst_mask) | p[i];
-            }
+            dst[dst_ofs] = (dst[dst_ofs] & ~dst_mask) | p;
 
             continue;
         }
 
         if (dst_l_byte < dst_l_full_byte) {
-            uint8_t p[4] = { 0, 0, 0, 0 };
+            uint8_t p = 0;
             int dst_ofs = dst_row_ofs + dst_l_byte;
 
             for (int bit = dst_l_x & 7; bit < 8; ++bit) {
                 uint8_t c = src_row[dst_l_byte * 8 - dst_x + bit];
                 uint8_t s = 7 - bit;
 
-                p[0] |= ((c     ) & 1) << s;
-                p[1] |= ((c >> 1) & 1) << s;
-                p[2] |= ((c >> 2) & 1) << s;
-                p[3] |= ((c >> 3) & 1) << s;
+                p |= (c & 1) << s;
             }
 
-            for (int i = 0; i < 4; ++i) {
-                dst[i][dst_ofs] = (dst[i][dst_ofs] & ~dst_l_mask) | p[i];
-            }
+            dst[dst_ofs] = (dst[dst_ofs] & ~dst_l_mask) | p;
         }
 
         for (int x = dst_l_full_byte; x < dst_r_full_byte; ++x) {
-            uint8_t p[4] = { 0, 0, 0, 0 };
+            uint8_t p = 0;
             int dst_ofs = dst_row_ofs + x;
 
             for (int bit = 0; bit < 8; ++bit) {
                 uint8_t c = src_row[x * 8 - dst_x + bit];
                 uint8_t s = 7 - bit;
 
-                p[0] |= ((c     ) & 1) << s;
-                p[1] |= ((c >> 1) & 1) << s;
-                p[2] |= ((c >> 2) & 1) << s;
-                p[3] |= ((c >> 3) & 1) << s;
+                p |= (c & 1) << s;
             }
 
-            for (int i = 0; i < 4; ++i) {
-                dst[i][dst_ofs] = p[i];
-            }
+            dst[dst_ofs] = p;
         }
 
         if (dst_r_byte >= dst_r_full_byte) {
-            uint8_t p[4] = { 0, 0, 0, 0 };
+            uint8_t p = 0;
             int dst_ofs = dst_row_ofs + dst_r_byte;
 
             for (int bit = 0; bit <= (dst_r_x & 7); ++bit) {
                 uint8_t c = src_row[dst_r_byte * 8 - dst_x + bit];
                 uint8_t s = 7 - bit;
 
-                p[0] |= ((c     ) & 1) << s;
-                p[1] |= ((c >> 1) & 1) << s;
-                p[2] |= ((c >> 2) & 1) << s;
-                p[3] |= ((c >> 3) & 1) << s;
+                p |= (c & 1) << s;
             }
 
-            for (int i = 0; i < 4; ++i) {
-                dst[i][dst_ofs] = (dst[i][dst_ofs] & ~dst_r_mask) | p[i];
-            }
+            dst[dst_ofs] = (dst[dst_ofs] & ~dst_r_mask) | p;
         }
     }
 }
