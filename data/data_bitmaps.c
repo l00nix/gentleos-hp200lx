@@ -2,7 +2,6 @@
 
 bitmap_st bitmap_icon_about = {
     .size = { .width = 24, .height = 27 },
-    .bpp = 1,
     .pitch = 3,
     .pixels = (uint8_t *)
         "\xff\xff\xff" \
@@ -36,7 +35,6 @@ bitmap_st bitmap_icon_about = {
 
 bitmap_st bitmap_icon_blackjack = {
     .size = { .width = 26, .height = 32 },
-    .bpp = 1,
     .pitch = 4,
     .pixels = (uint8_t *)
         "\xff\xff\xfc\x00" \
@@ -75,7 +73,6 @@ bitmap_st bitmap_icon_blackjack = {
 
 bitmap_st bitmap_icon_calc = {
     .size = { .width = 20, .height = 26 },
-    .bpp = 1,
     .pitch = 3,
     .pixels = (uint8_t *)
         "\xff\xff\xf0" \
@@ -108,7 +105,6 @@ bitmap_st bitmap_icon_calc = {
 
 bitmap_st bitmap_icon_calendar = {
     .size = { .width = 26, .height = 26 },
-    .bpp = 1,
     .pitch = 4,
     .pixels = (uint8_t *)
         "\x0c\x00\x0c\x00" \
@@ -141,7 +137,6 @@ bitmap_st bitmap_icon_calendar = {
 
 bitmap_st bitmap_icon_clock = {
     .size = { .width = 22, .height = 22 },
-    .bpp = 1,
     .pitch = 3,
     .pixels = (uint8_t *)
         "\xff\xff\xfc" \
@@ -170,7 +165,6 @@ bitmap_st bitmap_icon_clock = {
 
 bitmap_st bitmap_icon_colors = {
     .size = { .width = 26, .height = 26 },
-    .bpp = 1,
     .pitch = 4,
     .pixels = (uint8_t *)
         "\x00\x7f\x00\x00" \
@@ -203,7 +197,6 @@ bitmap_st bitmap_icon_colors = {
 
 bitmap_st bitmap_icon_fonts = {
     .size = { .width = 22, .height = 20 },
-    .bpp = 1,
     .pitch = 3,
     .pixels = (uint8_t *)
         "\x00\xff\xfc" \
@@ -230,7 +223,6 @@ bitmap_st bitmap_icon_fonts = {
 
 bitmap_st bitmap_icon_github = {
     .size = { .width = 16, .height = 16 },
-    .bpp = 1,
     .pitch = 2,
     .pixels = (uint8_t *)
         "\x07\xe0" \
@@ -253,7 +245,6 @@ bitmap_st bitmap_icon_github = {
 
 bitmap_st bitmap_icon_mines = {
     .size = { .width = 26, .height = 26 },
-    .bpp = 1,
     .pitch = 4,
     .pixels = (uint8_t *)
         "\x00\x0c\x00\x00" \
@@ -286,7 +277,6 @@ bitmap_st bitmap_icon_mines = {
 
 bitmap_st bitmap_icon_pairs = {
     .size = { .width = 26, .height = 26 },
-    .bpp = 1,
     .pitch = 4,
     .pixels = (uint8_t *)
         "\xff\xff\xff\xc0" \
@@ -319,7 +309,6 @@ bitmap_st bitmap_icon_pairs = {
 
 bitmap_st bitmap_icon_pairs_bear = {
     .size = { .width = 28, .height = 24 },
-    .bpp = 1,
     .pitch = 4,
     .pixels = (uint8_t *)
         "\x3c\xff\xf3\xc0" \
@@ -350,7 +339,6 @@ bitmap_st bitmap_icon_pairs_bear = {
 
 bitmap_st bitmap_icon_pairs_bot = {
     .size = { .width = 30, .height = 27 },
-    .bpp = 1,
     .pitch = 4,
     .pixels = (uint8_t *)
         "\x00\x0f\xc0\x00" \
@@ -384,7 +372,6 @@ bitmap_st bitmap_icon_pairs_bot = {
 
 bitmap_st bitmap_icon_pairs_butterfly = {
     .size = { .width = 28, .height = 23 },
-    .bpp = 1,
     .pitch = 4,
     .pixels = (uint8_t *)
         "\xfe\x00\x07\xf0" \
@@ -414,7 +401,6 @@ bitmap_st bitmap_icon_pairs_butterfly = {
 
 bitmap_st bitmap_icon_pairs_cat = {
     .size = { .width = 23, .height = 25 },
-    .bpp = 1,
     .pitch = 3,
     .pixels = (uint8_t *)
         "\x00\x0c\x06" \
@@ -446,7 +432,6 @@ bitmap_st bitmap_icon_pairs_cat = {
 
 bitmap_st bitmap_icon_pairs_elephant = {
     .size = { .width = 32, .height = 23 },
-    .bpp = 1,
     .pitch = 4,
     .pixels = (uint8_t *)
         "\x01\xff\x1f\x80" \
@@ -476,7 +461,6 @@ bitmap_st bitmap_icon_pairs_elephant = {
 
 bitmap_st bitmap_icon_pairs_fish = {
     .size = { .width = 28, .height = 24 },
-    .bpp = 1,
     .pitch = 4,
     .pixels = (uint8_t *)
         "\x0f\xff\x00\x00" \
@@ -507,7 +491,6 @@ bitmap_st bitmap_icon_pairs_fish = {
 
 bitmap_st bitmap_icon_pairs_ghost = {
     .size = { .width = 20, .height = 24 },
-    .bpp = 1,
     .pitch = 3,
     .pixels = (uint8_t *)
         "\x0f\xff\x00" \
@@ -538,7 +521,6 @@ bitmap_st bitmap_icon_pairs_ghost = {
 
 bitmap_st bitmap_icon_pairs_rabbit = {
     .size = { .width = 25, .height = 23 },
-    .bpp = 1,
     .pitch = 4,
     .pixels = (uint8_t *)
         "\x00\xff\x00\x00" \
@@ -568,7 +550,6 @@ bitmap_st bitmap_icon_pairs_rabbit = {
 
 bitmap_st bitmap_icon_pairs_snake = {
     .size = { .width = 28, .height = 28 },
-    .bpp = 1,
     .pitch = 4,
     .pixels = (uint8_t *)
         "\x03\xff\xfc\x00" \
@@ -603,7 +584,6 @@ bitmap_st bitmap_icon_pairs_snake = {
 
 bitmap_st bitmap_icon_pairs_turtle = {
     .size = { .width = 30, .height = 23 },
-    .bpp = 1,
     .pitch = 4,
     .pixels = (uint8_t *)
         "\x00\x7f\x80\x00" \
@@ -633,7 +613,6 @@ bitmap_st bitmap_icon_pairs_turtle = {
 
 bitmap_st bitmap_icon_patterns = {
     .size = { .width = 28, .height = 26 },
-    .bpp = 1,
     .pitch = 4,
     .pixels = (uint8_t *)
         "\xff\xff\xff\xf0" \
@@ -666,7 +645,6 @@ bitmap_st bitmap_icon_patterns = {
 
 bitmap_st bitmap_icon_snake = {
     .size = { .width = 28, .height = 20 },
-    .bpp = 1,
     .pitch = 4,
     .pixels = (uint8_t *)
         "\x03\xff\xfc\x00" \
@@ -693,7 +671,6 @@ bitmap_st bitmap_icon_snake = {
 
 bitmap_st bitmap_icon_sounds = {
     .size = { .width = 24, .height = 15 },
-    .bpp = 1,
     .pitch = 3,
     .pixels = (uint8_t *)
         "\xff\xff\xff" \
@@ -715,7 +692,6 @@ bitmap_st bitmap_icon_sounds = {
 
 bitmap_st bitmap_icon_tetris = {
     .size = { .width = 18, .height = 26 },
-    .bpp = 1,
     .pitch = 3,
     .pixels = (uint8_t *)
         "\xff\xc0\x00" \
@@ -748,7 +724,6 @@ bitmap_st bitmap_icon_tetris = {
 
 bitmap_st bitmap_pattern_1 = {
     .size = { .width = 16, .height = 16 },
-    .bpp = 1,
     .pitch = 2,
     .pixels = (uint8_t *)
         "\x08\x00" \
@@ -771,7 +746,6 @@ bitmap_st bitmap_pattern_1 = {
 
 bitmap_st bitmap_pattern_2 = {
     .size = { .width = 16, .height = 16 },
-    .bpp = 1,
     .pitch = 2,
     .pixels = (uint8_t *)
         "\x00\x00" \
@@ -794,7 +768,6 @@ bitmap_st bitmap_pattern_2 = {
 
 bitmap_st bitmap_pattern_3 = {
     .size = { .width = 16, .height = 16 },
-    .bpp = 1,
     .pitch = 2,
     .pixels = (uint8_t *)
         "\x08\x00" \
@@ -817,7 +790,6 @@ bitmap_st bitmap_pattern_3 = {
 
 bitmap_st bitmap_pattern_4 = {
     .size = { .width = 16, .height = 16 },
-    .bpp = 1,
     .pitch = 2,
     .pixels = (uint8_t *)
         "\xe2\x3f" \
@@ -840,7 +812,6 @@ bitmap_st bitmap_pattern_4 = {
 
 bitmap_st bitmap_pattern_5 = {
     .size = { .width = 16, .height = 16 },
-    .bpp = 1,
     .pitch = 2,
     .pixels = (uint8_t *)
         "\x00\x00" \
@@ -863,7 +834,6 @@ bitmap_st bitmap_pattern_5 = {
 
 bitmap_st bitmap_pattern_6 = {
     .size = { .width = 16, .height = 16 },
-    .bpp = 1,
     .pitch = 2,
     .pixels = (uint8_t *)
         "\xff\x00" \
@@ -886,7 +856,6 @@ bitmap_st bitmap_pattern_6 = {
 
 bitmap_st bitmap_pattern_7 = {
     .size = { .width = 16, .height = 16 },
-    .bpp = 1,
     .pitch = 2,
     .pixels = (uint8_t *)
         "\x01\x00" \
@@ -909,7 +878,6 @@ bitmap_st bitmap_pattern_7 = {
 
 bitmap_st bitmap_sprite_flag = {
     .size = { .width = 8, .height = 10 },
-    .bpp = 1,
     .pitch = 1,
     .pixels = (uint8_t *)
         "\xf0" \
@@ -926,7 +894,6 @@ bitmap_st bitmap_sprite_flag = {
 
 bitmap_st bitmap_sprite_mine = {
     .size = { .width = 11, .height = 11 },
-    .bpp = 1,
     .pitch = 2,
     .pixels = (uint8_t *)
         "\x04\x00" \

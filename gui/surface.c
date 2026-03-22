@@ -83,27 +83,6 @@ gui_surface_draw_str_centered(surface_st *surface, rect_st rect,
     gui_surface_draw_str(surface, x, y, font, s, fg, bg);
 }
 
-static void
-gui_surface_draw_bitmap_8bpp(surface_st *surface, rect_st src_rect, int dst_x, int dst_y,
-    bitmap_st *bitmap)
-{
-    uint8_t alpha = (uint8_t)bitmap->alpha;
-
-    for (uint16_t i = 0; i < src_rect.height; i++) {
-        for (uint16_t j = 0; j < src_rect.width; j++) {
-            if (bitmap->pixels[i * bitmap->pitch + j] == alpha) {
-                continue;
-            }
-
-            size_t src_pixel_no = i * bitmap->pitch + j;
-            size_t dst_pixel_no = (dst_x + j) + (dst_y + i) * surface->pitch;
-
-            uint8_t pixel = bitmap->pixels[src_pixel_no];
-            surface->pixels[dst_pixel_no] = pixel;
-        }
-    }
-}
-
 void
 gui_surface_draw_bitmap_1bpp(surface_st *surface, rect_st src_rect, int dst_x, int dst_y,
     bitmap_st *bitmap, uint8_t fill)
@@ -143,11 +122,7 @@ void gui_surface_draw_bitmap(surface_st *surface, int dst_x, int dst_y, bitmap_s
         src_rect.height = src_rect.height < 0 ? 0 : src_rect.height;
     }
 
-    if (bitmap->bpp == 1) {
-        gui_surface_draw_bitmap_1bpp(surface, src_rect, dst_x, dst_y, bitmap, fill);
-    } else if (bitmap->bpp == 8) {
-        gui_surface_draw_bitmap_8bpp(surface, src_rect, dst_x, dst_y, bitmap);
-    }
+    gui_surface_draw_bitmap_1bpp(surface, src_rect, dst_x, dst_y, bitmap, fill);
 }
 
 void
