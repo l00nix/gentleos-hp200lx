@@ -89,6 +89,7 @@ extern void gui_window_on_pointer_move(window_st *window, event_st event);
 extern void gui_window_on_pointer_up(window_st *window, event_st event);
 extern void gui_window_on_pointer_alt(window_st *window, event_st event);
 extern void gui_window_on_active_change(window_st *window);
+extern void gui_window_on_key_down(window_st *window, event_st event);
 /* gui/wm.c */
 extern rect_st gui_wm_container;
 extern bitmap_st *gui_wm_bg_pattern;

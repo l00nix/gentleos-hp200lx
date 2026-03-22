@@ -30,10 +30,17 @@ void
 gui_button_draw(widget_st *widget)
 {
     rect_st rect = widget->rect;
+    rect_st full_rect = rect;
 
     int is_pressed = (widget == widget->window->pressed_widget) || widget->active;
+    int is_focused = (widget == widget->window->focused_widget);
 
     if (!widget->hide_border) {
+        gui_surface_draw_border(widget->window->surface, rect, COLOR_BORDER);
+        rect = gui_rect_shrink(rect, 1);
+    }
+
+    if (is_focused && !is_pressed) {
         gui_surface_draw_border(widget->window->surface, rect, COLOR_BORDER);
         rect = gui_rect_shrink(rect, 1);
     }
@@ -62,5 +69,5 @@ gui_button_draw(widget_st *widget)
         );
     }
 
-    gui_wm_render_window_region(widget->window, rect);
+    gui_wm_render_window_region(widget->window, full_rect);
 }

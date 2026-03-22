@@ -88,6 +88,9 @@ struct widget {
     int press_fixed;
     int hidden;
     int hide_border;
+    int focusable;
+    int focus_x;
+    int focus_y;
 
     void (*draw)(widget_st *);
     void (*on_pointer_down)(widget_st *, event_st event, point_st pos);
@@ -115,6 +118,7 @@ struct window {
     size_t widgets_count;
     size_t widgets_capacity;
     widget_st *pressed_widget;
+    widget_st *focused_widget;
 
     void (*render_region)(window_st *, rect_st reg);
     void (*on_pointer)(window_st *, event_st event);
@@ -160,6 +164,7 @@ enum {
     KEY_DOWN = 0x50,
     KEY_LEFT = 0x4b,
     KEY_RIGHT = 0x4d,
+    KEY_ENTER = 0x1c,
 };
 
 enum {

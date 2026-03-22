@@ -73,6 +73,7 @@ init_window(void)
     window.bg_color = COLOR_WINDOW;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
+    window.focused_widget = &app_buttons[0];
 
     gui_window_init_frame(&window, &title_bar, &close_button);
 }
@@ -92,6 +93,9 @@ init_app_buttons(void)
         app_buttons[i].bitmap = apps[i]->icon;
         app_buttons[i].tag1 = i;
         app_buttons[i].on_pointer_up = on_button_pointer_up;
+        app_buttons[i].focusable = 1;
+        app_buttons[i].focus_x = col;
+        app_buttons[i].focus_y = row;
 
         gui_window_add_widget(&window, &app_buttons[i]);
     }

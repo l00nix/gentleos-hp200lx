@@ -68,8 +68,8 @@ gui_main(void)
         } else if (event.type == EVENT_KEY_DOWN) {
             window_st *w = gui_wm_top_window();
 
-            if (w && w->on_key_down) {
-                w->on_key_down(w, event);
+            if (w) {
+                gui_window_on_key_down(w, event);
             }
         } else if (event.type == EVENT_KEY_UP) {
             window_st *w = gui_wm_top_window();
