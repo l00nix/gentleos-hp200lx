@@ -18,8 +18,6 @@ extern app_st app_launcher;
 extern app_st app_mines;
 /* apps/pairs.c */
 extern app_st app_pairs;
-/* apps/panel.c */
-extern app_st app_panel;
 /* apps/patterns.c */
 extern app_st app_patterns;
 /* apps/snake.c */

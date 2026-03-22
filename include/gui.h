@@ -164,7 +164,6 @@ enum {
 
 enum {
     TITLE_BAR_HEIGHT = 24,
-    PANEL_WIDTH = 64,
     STATUS_HEIGHT = 24,
 };
 

@@ -8,7 +8,7 @@
 #include <gui.h>
 
 enum {
-    STATUS_WIDTH = GUI_WIDTH - PANEL_WIDTH,
+    STATUS_WIDTH = GUI_WIDTH,
 };
 
 enum {

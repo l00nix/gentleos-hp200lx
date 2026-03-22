@@ -13,7 +13,6 @@ enum {
 
 rect_st gui_wm_container = { 0 };
 
-static window_st *gui_wm_panel_window = NULL;
 static window_st *gui_wm_status_window = NULL;
 static window_st *gui_wm_windows[WINDOWS_COUNT_MAX];
 
@@ -176,7 +175,7 @@ gui_wm_render_window_region(window_st *window, rect_st window_reg)
 
     desktop_reg = gui_rect_translate(window_reg, window->rect.pos);
 
-    if (window == gui_wm_panel_window || window == gui_wm_status_window) {
+    if (window == gui_wm_status_window) {
         gui_wm_render_window_surface(window, desktop_reg);
     } else {
         gui_wm_render_desktop_region(desktop_reg, window);
@@ -187,10 +186,6 @@ window_st *
 gui_wm_find_window(uint16_t x, uint16_t y)
 {
     point_st p = { .x = x, .y = y };
-
-    if (gui_wm_panel_window && gui_rect_contains_point(gui_wm_panel_window->rect, p)) {
-        return gui_wm_panel_window;
-    }
 
     for (size_t i = 0; i < WINDOWS_COUNT_MAX; ++i) {
         window_st *w = gui_wm_windows[i];
@@ -214,13 +209,6 @@ gui_wm_top_window(void)
 }
 
 void
-gui_wm_set_panel_window(window_st *w)
-{
-    gui_wm_panel_window = w;
-    gui_wm_render_window_region(w, gui_window_area(w));
-}
-
-void
 gui_wm_set_status_window(window_st *w)
 {
     gui_wm_status_window = w;
@@ -230,12 +218,11 @@ gui_wm_set_status_window(window_st *w)
 void
 gui_wm_init(void)
 {
-    gui_wm_container.width = GUI_WIDTH - PANEL_WIDTH;
+    gui_wm_container.width = GUI_WIDTH;
     gui_wm_container.height = GUI_HEIGHT - STATUS_HEIGHT;
     gui_wm_render_wallpaper(gui_wm_container);
 
     gui_status_init();
 
-    app_panel.show();
     app_launcher.show();
 }
