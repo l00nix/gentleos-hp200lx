@@ -50,9 +50,9 @@ static widget_st app_buttons[APPS_COUNT];
 static widget_st *widgets[APPS_COUNT + 1];
 
 static void
-on_button_pointer_up(widget_st *widget, event_st event, point_st pos)
+on_button_pointer_up(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 {
-    gui_button_on_pointer_up(widget, event, pos);
+    gui_widget_draw(widget);
 
     if (apps[widget->tag1]) {
         apps[widget->tag1]->show();

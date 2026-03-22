@@ -100,9 +100,9 @@ draw_font_label(void)
 }
 
 static void
-on_prev_button(widget_st *widget _unsd, event_st event, point_st pos)
+on_prev_button(widget_st *widget _unsd, event_st event _unsd, point_st pos _unsd)
 {
-    gui_button_on_pointer_up(widget, event, pos);
+    gui_widget_draw(widget);
 
     current_font = (current_font - 1) % FONT_COUNT;
 
@@ -111,9 +111,9 @@ on_prev_button(widget_st *widget _unsd, event_st event, point_st pos)
 }
 
 static void
-on_next_button(widget_st *widget _unsd, event_st event, point_st pos)
+on_next_button(widget_st *widget _unsd, event_st event _unsd, point_st pos _unsd)
 {
-    gui_button_on_pointer_up(widget, event, pos);
+    gui_widget_draw(widget);
 
     current_font = (current_font + 1) % FONT_COUNT;
 

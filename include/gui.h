@@ -117,7 +117,6 @@ struct window {
     widget_st **widgets;
     size_t widgets_count;
     size_t widgets_capacity;
-    widget_st *pressed_widget;
     widget_st *focused_widget;
 
     void (*render_region)(window_st *, rect_st reg);

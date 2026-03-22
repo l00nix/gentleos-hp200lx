@@ -107,7 +107,7 @@ draw_day_button(widget_st *widget)
     int is_in_month = day >= 0 && day < num_days;
     int is_current = (day == current_day - 1 && selected_month == current_month
         && selected_year == current_year);
-    int is_pressed = (widget == widget->window->pressed_widget) || widget->active;
+    int is_pressed = widget->active;
 
     if (!is_in_month) {
         gui_surface_draw_rect(widget->window->surface, widget->rect, COLOR_WINDOW);
@@ -169,10 +169,9 @@ draw_week_bar(void)
 }
 
 static void
-on_prev_button(widget_st *widget _unsd, event_st event,
-    point_st pos)
+on_prev_button(widget_st *widget _unsd, event_st event _unsd, point_st pos _unsd)
 {
-    gui_button_on_pointer_up(widget, event, pos);
+    gui_widget_draw(widget);
 
     if (selected_month > 1) {
         selected_month -= 1;
@@ -187,10 +186,9 @@ on_prev_button(widget_st *widget _unsd, event_st event,
 }
 
 static void
-on_next_button(widget_st *widget _unsd, event_st event,
-    point_st pos)
+on_next_button(widget_st *widget _unsd, event_st event _unsd, point_st pos _unsd)
 {
-    gui_button_on_pointer_up(widget, event, pos);
+    gui_widget_draw(widget);
 
     if (selected_month < 12) {
         selected_month += 1;

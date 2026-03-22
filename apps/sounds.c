@@ -39,8 +39,7 @@ static void
 draw_key_w(widget_st *widget)
 {
     rect_st rect_base = gui_rect_shrink(widget->rect, 1);
-    uint8_t color = (widget == widget->window->pressed_widget)
-        ? COLOR_TITLE_BAR_ACTIVE : COLOR_WINDOW;
+    uint8_t color = COLOR_WINDOW;
 
     int octave = widget->tag2 / 7;
     int ofs = widget->tag2 % 7;
@@ -66,8 +65,7 @@ draw_key_w(widget_st *widget)
 static void
 draw_key_b(widget_st *widget)
 {
-    uint8_t color = (widget == widget->window->pressed_widget)
-        ? COLOR_TITLE_BAR_ACTIVE : COLOR_BLACK;
+    uint8_t color = COLOR_BLACK;
 
     gui_surface_draw_rect(widget->window->surface, widget->rect, color);
 
@@ -89,27 +87,27 @@ key_frequency(widget_st *widget)
 }
 
 static void
-on_key_pointer_down(widget_st *widget, event_st event, point_st pos)
+on_key_pointer_down(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 {
     krn_speaker_play(key_frequency(widget));
 
-    gui_button_on_pointer_down(widget, event, pos);
+    gui_widget_draw(widget);
 }
 
 static void
-on_key_pointer_up(widget_st *widget, event_st event, point_st pos)
+on_key_pointer_up(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 {
     krn_speaker_stop();
 
-    gui_button_on_pointer_up(widget, event, pos);
+    gui_widget_draw(widget);
 }
 
 static void
-on_key_pointer_out(widget_st *widget, event_st event, point_st pos)
+on_key_pointer_out(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 {
     krn_speaker_stop();
 
-    gui_button_on_pointer_out(widget, event, pos);
+    gui_widget_draw(widget);
 }
 
 static void

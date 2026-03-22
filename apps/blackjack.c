@@ -318,9 +318,9 @@ player_hit(void)
 }
 
 static void
-on_hit_button(widget_st *widget, event_st event, point_st pos)
+on_hit_button(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 {
-    gui_button_on_pointer_up(widget, event, pos);
+    gui_widget_draw(widget);
 
     if (game_state == STATE_PLAYING) {
         player_hit();
@@ -328,9 +328,9 @@ on_hit_button(widget_st *widget, event_st event, point_st pos)
 }
 
 static void
-on_stand_button(widget_st *widget, event_st event, point_st pos)
+on_stand_button(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 {
-    gui_button_on_pointer_up(widget, event, pos);
+    gui_widget_draw(widget);
 
     if (game_state == STATE_PLAYING) {
         player_stand();
@@ -338,9 +338,9 @@ on_stand_button(widget_st *widget, event_st event, point_st pos)
 }
 
 static void
-on_deal_button(widget_st *widget, event_st event, point_st pos)
+on_deal_button(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 {
-    gui_button_on_pointer_up(widget, event, pos);
+    gui_widget_draw(widget);
 
     if (game_state == STATE_OVER) {
         restart_game();

@@ -8,31 +8,12 @@
 #include <gui.h>
 
 void
-gui_button_on_pointer_down(widget_st *widget, event_st event _unsd, point_st pos _unsd)
-{
-    gui_widget_draw(widget);
-}
-
-void
-gui_button_on_pointer_up(widget_st *widget, event_st event _unsd, point_st pos _unsd)
-{
-    gui_widget_draw(widget);
-}
-
-void
-gui_button_on_pointer_out(widget_st *widget, event_st event _unsd, point_st pos _unsd)
-{
-    widget->window->pressed_widget = NULL;
-    gui_widget_draw(widget);
-}
-
-void
 gui_button_draw(widget_st *widget)
 {
     rect_st rect = widget->rect;
     rect_st full_rect = rect;
 
-    int is_pressed = (widget == widget->window->pressed_widget) || widget->active;
+    int is_pressed = widget->active;
     int is_focused = (widget == widget->window->focused_widget);
 
     if (!widget->hide_border) {

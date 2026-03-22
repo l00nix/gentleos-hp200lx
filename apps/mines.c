@@ -106,7 +106,7 @@ draw_cell(widget_st *widget)
     uint8_t state = cell_state[col][row];
     uint8_t type = cell_type[col][row];
     rect_st rect = widget->rect;
-    int pressed = widget->window->pressed_widget == widget;
+    int pressed = 0;
     char num_str[2] = { 0, 0 };
 
     if (state == CELL_STATE_HIDDEN && !pressed) {

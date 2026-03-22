@@ -1,7 +1,4 @@
 /* gui/button.c */
-extern void gui_button_on_pointer_down(widget_st *widget, event_st event, point_st pos);
-extern void gui_button_on_pointer_up(widget_st *widget, event_st event, point_st pos);
-extern void gui_button_on_pointer_out(widget_st *widget, event_st event, point_st pos);
 extern void gui_button_draw(widget_st *widget);
 /* gui/fb.c */
 extern surface_st *gui_fb_vram_surface;
@@ -24,11 +21,6 @@ extern void gui_planar_flush(rect_st rect);
 extern void gui_planar_draw_rect(rect_st rect, uint8_t color);
 extern void gui_planar_draw_pattern(rect_st dst_rect, bitmap_st *pattern, uint8_t c1, uint8_t c2);
 extern void gui_planar_draw_surface(int dst_x, int dst_y, surface_st *src, rect_st src_rect);
-extern void gui_planar_draw_pointer(int dst_x, int dst_y);
-/* gui/pointer.c */
-extern void gui_pointer_draw(void);
-extern void gui_pointer_move(uint16_t x, uint16_t y);
-extern void gui_pointer_init(void);
 /* gui/rect.c */
 extern int gui_rect_is_empty(rect_st r);
 extern rect_st gui_rect_make(int x, int y, int width, int height);
@@ -72,12 +64,6 @@ extern void gui_widget_draw(widget_st *widget);
 extern rect_st gui_window_area(window_st *window);
 extern void gui_window_init_frame(window_st *window, widget_st *title_bar);
 extern int gui_window_add_widget(window_st *window, widget_st *widget);
-extern widget_st *gui_window_find_widget_at(window_st *window, point_st pos);
-extern void gui_window_on_pointer_out(window_st *window, event_st event, point_st pos);
-extern void gui_window_on_pointer_down(window_st *window, event_st event);
-extern void gui_window_on_pointer_move(window_st *window, event_st event);
-extern void gui_window_on_pointer_up(window_st *window, event_st event);
-extern void gui_window_on_pointer_alt(window_st *window, event_st event);
 extern void gui_window_on_active_change(window_st *window);
 extern void gui_window_on_key_down(window_st *window, event_st event);
 /* gui/wm.c */

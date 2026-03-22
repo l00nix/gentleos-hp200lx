@@ -11,11 +11,9 @@ void
 gui_main(void)
 {
     event_st event;
-    window_st *pressed_window = NULL;
 
     gui_vga_init();
     gui_fb_init();
-    gui_pointer_init();
     gui_wm_init();
     gui_fb_flush();
 
@@ -33,37 +31,6 @@ gui_main(void)
 
         if (event.type == EVENT_TIMER_TICK) {
             gui_timeout_on_tick(event);
-        } else if (event.type == EVENT_POINTER_DOWN) {
-            gui_pointer_move(event.pointer_x, event.pointer_y);
-
-            window_st *w = gui_wm_find_window(event.pointer_x, event.pointer_y);
-
-            if (w) {
-                pressed_window = w;
-                gui_window_on_pointer_down(w, event);
-            }
-        } else if (event.type == EVENT_POINTER_MOVE) {
-            gui_pointer_move(event.pointer_x, event.pointer_y);
-
-            if (pressed_window) {
-                gui_window_on_pointer_move(pressed_window, event);
-            }
-        } else if (event.type == EVENT_POINTER_UP) {
-            gui_pointer_move(event.pointer_x, event.pointer_y);
-
-            if (pressed_window) {
-                gui_window_on_pointer_up(pressed_window, event);
-            }
-
-            pressed_window = NULL;
-        } else if (event.type == EVENT_POINTER_ALT) {
-            gui_pointer_move(event.pointer_x, event.pointer_y);
-
-            window_st *w = gui_wm_find_window(event.pointer_x, event.pointer_y);
-
-            if (w && !pressed_window) {
-                gui_window_on_pointer_alt(w, event);
-            }
         } else if (event.type == EVENT_KEY_DOWN) {
             window_st *w = gui_wm_top_window();
 

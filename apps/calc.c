@@ -151,7 +151,7 @@ update_display(void)
 static void
 on_button_press(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 {
-    gui_button_on_pointer_up(widget, event, pos);
+    gui_widget_draw(widget);
 
     uint8_t op = widget->label[0];
 

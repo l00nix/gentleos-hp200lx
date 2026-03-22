@@ -61,7 +61,6 @@ gui_fb_flush(void)
     dirty_rect = (rect_st) { 0 };
 
     gui_planar_flush(rect);
-    gui_pointer_draw();
 }
 
 void

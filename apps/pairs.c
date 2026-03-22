@@ -91,7 +91,7 @@ draw_button(widget_st *widget)
     int idx = widget->tag1;
     uint8_t state = button_states[idx];
     rect_st rect = widget->rect;
-    int pressed = widget->window->pressed_widget == widget && !waiting;
+    int pressed = 0;
 
     if (state == BUTTON_STATE_HIDDEN && !pressed) {
         gui_surface_draw_rect(window.surface, rect, COLOR_WINDOW);
