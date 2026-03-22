@@ -53,11 +53,10 @@ static surface_st window_surface;
 static window_st window;
 
 static widget_st title_bar;
-static widget_st close_button;
 static widget_st hit_button;
 static widget_st stand_button;
 static widget_st deal_button;
-static widget_st *widgets[5];
+static widget_st *widgets[4];
 
 static uint8_t deck[DECK_SIZE];
 static int deck_pos;
@@ -371,7 +370,7 @@ init_window(void)
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
     window.on_active_change = on_active_change;
 
-    gui_window_init_frame(&window, &title_bar, &close_button);
+    gui_window_init_frame(&window, &title_bar);
 
     gui_surface_draw_h_seg(window.surface, 1, DIVIDER_Y, WINDOW_WIDTH - 2, COLOR_BORDER);
 }

@@ -34,9 +34,8 @@ static surface_st window_surface;
 static window_st window;
 
 static widget_st title_bar;
-static widget_st close_button;
 static widget_st button_widgets[BUTTONS_COUNT];
-static widget_st *widgets[BUTTONS_COUNT + 2];
+static widget_st *widgets[BUTTONS_COUNT + 1];
 
 static grid_st grid;
 
@@ -219,7 +218,7 @@ init_window(void)
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
 
-    gui_window_init_frame(&window, &title_bar, &close_button);
+    gui_window_init_frame(&window, &title_bar);
 }
 
 static void

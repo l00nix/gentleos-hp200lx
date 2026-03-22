@@ -30,11 +30,10 @@ static surface_st window_surface;
 static window_st window;
 
 static widget_st title_bar;
-static widget_st close_button;
 static widget_st prev_button;
 static widget_st next_button;
 static widget_st char_buttons[GRID_CELLS_COUNT];
-static widget_st *widgets[GRID_CELLS_COUNT + 4];
+static widget_st *widgets[GRID_CELLS_COUNT + 3];
 
 static widget_st *active_char_button = NULL;
 static size_t current_font = 0;
@@ -165,7 +164,7 @@ init_window(void)
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
     window.on_active_change = on_active_change;
 
-    gui_window_init_frame(&window, &title_bar, &close_button);
+    gui_window_init_frame(&window, &title_bar);
 }
 
 static void

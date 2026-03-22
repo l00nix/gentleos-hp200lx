@@ -30,11 +30,10 @@ enum {
 };
 
 static widget_st title_bar;
-static widget_st close_button;
 static widget_st prev_button;
 static widget_st next_button;
 static widget_st day_buttons[GRID_CELLS_COUNT];
-static widget_st *widgets[GRID_CELLS_COUNT + 4];
+static widget_st *widgets[GRID_CELLS_COUNT + 3];
 
 static uint8_t window_pixels[WINDOW_WIDTH * WINDOW_HEIGHT];
 static surface_st window_surface;
@@ -219,7 +218,7 @@ init_window(void)
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
 
-    gui_window_init_frame(&window, &title_bar, &close_button);
+    gui_window_init_frame(&window, &title_bar);
 }
 
 static void

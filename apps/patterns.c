@@ -35,7 +35,7 @@ enum {
     WINDOW_WIDTH = COLOR_GRID_WIDTH + 2,
     WINDOW_HEIGHT = COLOR2_GRID_Y + COLOR_GRID_HEIGHT + 1,
 
-    WIDGETS_COUNT = PATTERN_COUNT + COLOR_COUNT + COLOR_COUNT + 2,
+    WIDGETS_COUNT = PATTERN_COUNT + COLOR_COUNT + COLOR_COUNT + 1,
 };
 
 static uint8_t window_pixels[WINDOW_WIDTH * WINDOW_HEIGHT];
@@ -43,7 +43,6 @@ static surface_st window_surface;
 static window_st window;
 
 static widget_st title_bar;
-static widget_st close_button;
 
 static widget_st pattern_buttons[PATTERN_COUNT];
 static widget_st color1_buttons[COLOR_COUNT];
@@ -174,7 +173,7 @@ init_window(void)
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
 
-    gui_window_init_frame(&window, &title_bar, &close_button);
+    gui_window_init_frame(&window, &title_bar);
 }
 
 static void

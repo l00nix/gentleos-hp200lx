@@ -30,9 +30,8 @@ static surface_st window_surface;
 static window_st window;
 
 static widget_st title_bar;
-static widget_st close_button;
 static widget_st buttons[GRID_CELL_COUNT];
-static widget_st *widgets[GRID_CELL_COUNT + 2];
+static widget_st *widgets[GRID_CELL_COUNT + 1];
 
 static grid_st grid;
 
@@ -231,7 +230,7 @@ init_window(void)
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
     window.on_active_change = on_active_change;
 
-    gui_window_init_frame(&window, &title_bar, &close_button);
+    gui_window_init_frame(&window, &title_bar);
 }
 
 static void

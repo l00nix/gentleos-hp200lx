@@ -11,7 +11,7 @@ static void
 gui_title_bar_draw(widget_st *widget)
 {
     char title[64];
-    snprintf(title, sizeof(title), "   %s", widget->window->title);
+    snprintf(title, sizeof(title), "%s", widget->window->title);
 
     window_st *win = widget->window;
     int bg_color = win->active ? COLOR_TITLE_BAR_ACTIVE : COLOR_TITLE_BAR_INACTIVE;
@@ -30,7 +30,7 @@ gui_title_bar_init(widget_st *bar, window_st *window)
     bar->rect = (rect_st) {
         .x = 0,
         .y = 0,
-        .width = window->surface->size.width - TITLE_BAR_HEIGHT + 1,
+        .width = window->surface->size.width,
         .height = TITLE_BAR_HEIGHT,
     };
 

@@ -19,7 +19,7 @@ gui_window_area(window_st *window)
 }
 
 void
-gui_window_init_frame(window_st *window, widget_st *title_bar, widget_st *close_button)
+gui_window_init_frame(window_st *window, widget_st *title_bar)
 {
     window->rect = (rect_st) {
         .x = 0,
@@ -41,9 +41,6 @@ gui_window_init_frame(window_st *window, widget_st *title_bar, widget_st *close_
 
     gui_title_bar_init(title_bar, window);
     gui_window_add_widget(window, title_bar);
-
-    gui_close_button_init(close_button, window);
-    gui_window_add_widget(window, close_button);
 }
 
 int
