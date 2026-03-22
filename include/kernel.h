@@ -66,10 +66,6 @@ typedef struct {
 
 enum {
     EVENT_UNKNOWN = 0,
-    EVENT_POINTER_MOVE = 1,
-    EVENT_POINTER_DOWN = 2,
-    EVENT_POINTER_UP = 3,
-    EVENT_POINTER_ALT = 4,
     EVENT_KEY_DOWN = 5,
     EVENT_KEY_UP = 6,
     EVENT_TIMER_TICK = 7,
@@ -78,10 +74,6 @@ enum {
 typedef struct {
     uint8_t type;
     union {
-        struct {
-            uint16_t pointer_x;
-            uint16_t pointer_y;
-        };
         struct {
             uint8_t key_code;
             uint8_t key_char;

@@ -20,8 +20,6 @@ extern void krn_interrupt_set_handler(uint8_t int_no, isr_handler_fn handler);
 extern void krn_keyboard_init(void);
 /* kernel/main.c */
 extern void krn_main(void);
-/* kernel/mouse.c */
-extern void krn_mouse_init(void);
 /* kernel/rtc.c */
 extern int krn_rtc_are_times_equal(time_st *t1, time_st *t2);
 extern void krn_rtc_get_time(time_st *t);

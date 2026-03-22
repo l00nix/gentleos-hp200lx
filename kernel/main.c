@@ -13,7 +13,6 @@ krn_main(void)
 {
     krn_timer_init();
     krn_keyboard_init();
-    krn_mouse_init();
 
     krn_debug_dump_multiboot_info();
     krn_debug_dump_kernel_location();

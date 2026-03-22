@@ -38,15 +38,7 @@ krn_event_format(event_st ev)
     static char buf[64];
     size_t n = sizeof(buf);
 
-    if (ev.type == EVENT_POINTER_MOVE) {
-        snprintf(buf, n, "pointer_move<%d, %d>", ev.pointer_x, ev.pointer_y);
-    } else if (ev.type == EVENT_POINTER_DOWN) {
-        snprintf(buf, n, "pointer_down<%d, %d>", ev.pointer_x, ev.pointer_y);
-    } else if (ev.type == EVENT_POINTER_UP) {
-        snprintf(buf, n, "pointer_up<%d, %d>", ev.pointer_x, ev.pointer_y);
-    } else if (ev.type == EVENT_POINTER_ALT) {
-        snprintf(buf, n, "pointer_alt<%d, %d>", ev.pointer_x, ev.pointer_y);
-    } else if (ev.type == EVENT_KEY_DOWN) {
+    if (ev.type == EVENT_KEY_DOWN) {
         snprintf(buf, n, "key_down<%d, %c>", ev.key_code, ev.key_char);
     } else if (ev.type == EVENT_KEY_UP) {
         snprintf(buf, n, "key_up<%d, %c>", ev.key_code, ev.key_char);
@@ -69,21 +61,6 @@ krn_event_ipush(event_st event)
         krn_event_queue.events[krn_event_queue.head].type == EVENT_TIMER_TICK) {
 
         krn_event_queue.events[krn_event_queue.head].timer_msecs = event.timer_msecs;
-
-        if (EVENT_QUEUE_DEBUG) {
-            krn_debug_printf("%s: squashed %s\n", krn_event_format_queue(),
-                krn_event_format(event));
-        }
-
-        return 0;
-    }
-
-    if (event.type == EVENT_POINTER_MOVE &&
-        krn_event_queue.head != krn_event_queue.tail &&
-        krn_event_queue.events[krn_event_queue.head].type == EVENT_POINTER_MOVE) {
-
-        krn_event_queue.events[krn_event_queue.head].pointer_x = event.pointer_x;
-        krn_event_queue.events[krn_event_queue.head].pointer_y = event.pointer_y;
 
         if (EVENT_QUEUE_DEBUG) {
             krn_debug_printf("%s: squashed %s\n", krn_event_format_queue(),
