@@ -50,14 +50,12 @@ extern rect_st gui_rect_limit(rect_st r, rect_st container);
 extern rect_st gui_rect_shrink(rect_st r, int amount);
 extern rect_st gui_rect_enclose(rect_st a, rect_st b);
 extern rect_st gui_rect_clip(rect_st r, rect_st clipper);
-extern void gui_rect_translate_diff(rect_st r1, rect_st r2, rect_st *hdiff, rect_st *vdiff);
 extern const char *gui_rect_format(rect_st r);
 /* gui/status.c */
 extern void gui_status_set(const char *fmt, ...);
 extern void gui_status_set_alert(const char *fmt, ...);
 extern void gui_status_init(void);
 /* gui/surface.c */
-extern void gui_surface_copy(surface_st *dst_sf, int dst_x, int dst_y, surface_st *src_sf, rect_st src_rect);
 extern void gui_surface_draw_h_seg(surface_st *surface, int x, int y, int w, uint8_t color);
 extern void gui_surface_draw_v_seg(surface_st *surface, int x, int y, int h, uint8_t color);
 extern void gui_surface_draw_border(surface_st *surface, rect_st r, uint8_t color);

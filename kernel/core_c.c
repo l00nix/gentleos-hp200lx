@@ -22,12 +22,7 @@ uint32_t krn_core_mboot_header[] = {
     0,
     GUI_WIDTH,
     GUI_HEIGHT,
-
-#if GUI_PLANAR_MODE
     4,
-#else
-    8,
-#endif
 };
 
 mboot_info_st *krn_core_mboot_info;

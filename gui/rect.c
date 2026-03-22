@@ -148,40 +148,6 @@ gui_rect_clip(rect_st r, rect_st clipper)
     return r;
 }
 
-//
-// Calculate the difference between two rectangles which
-// only differ in position. The result is two rectangles,
-// one for the horizontal difference and one for the vertical difference
-//
-// This function is used to select a part of the screen that needs
-// to be redrawn after a window is moved
-//
-void
-gui_rect_translate_diff(rect_st r1, rect_st r2, rect_st *hdiff, rect_st *vdiff)
-{
-    if (r1.x > r2.x) {
-        hdiff->x = r2.x + r2.width;
-        hdiff->width = r1.x - r2.x;
-    } else {
-        hdiff->x = r1.x;
-        hdiff->width = r2.x - r1.x;
-    }
-
-    hdiff->y = MIN(r1.y, r2.y);
-    hdiff->height = MAX(r1.y + r1.height, r2.y + r2.height) - hdiff->y;
-
-    if (r1.y > r2.y) {
-        vdiff->y = r2.y + r2.height;
-        vdiff->height = r1.y - r2.y;
-    } else {
-        vdiff->y = r1.y;
-        vdiff->height = r2.y - r1.y;
-    }
-
-    vdiff->x = MIN(r1.x, r2.x);
-    vdiff->width = MAX(r1.x + r1.width, r2.x + r2.width) - vdiff->x;
-}
-
 const char *
 gui_rect_format(rect_st r)
 {

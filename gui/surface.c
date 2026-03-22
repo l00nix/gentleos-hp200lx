@@ -8,41 +8,6 @@
 #include <gui.h>
 
 void
-gui_surface_copy(surface_st *dst_sf, int dst_x, int dst_y,
-    surface_st *src_sf, rect_st src_rect)
-{
-    if (dst_x + src_rect.width > dst_sf->size.width) {
-        src_rect.width = dst_sf->size.width - dst_x;
-        src_rect.width = MAX(src_rect.width, 0);
-    }
-
-    if (dst_y + src_rect.height > dst_sf->size.height) {
-        src_rect.height = dst_sf->size.height - dst_y;
-        src_rect.height = MAX(src_rect.height, 0);
-    }
-
-    if (dst_y < 0 || dst_y + src_rect.height > dst_sf->size.height) {
-        krn_debug_printf("err: dst_y: %d, src_rect.height: %d, dst_sf->size.height: %d\n",
-            dst_y, src_rect.height, dst_sf->size.height);
-        return;
-    }
-
-    if (dst_x < 0 || dst_x + src_rect.width > dst_sf->size.width) {
-        krn_debug_printf("err: dst_x: %d, src_rect.width: %d, dst_sf->size.width: %d\n",
-            dst_x, src_rect.width, dst_sf->size.width);
-        return;
-    }
-
-    for (int i = 0; i < src_rect.height; ++i) {
-        memcpy(
-            dst_sf->pixels + (dst_y + i) * dst_sf->pitch + dst_x,
-            src_sf->pixels + (src_rect.y + i) * src_sf->pitch + src_rect.x,
-            src_rect.width
-        );
-    }
-}
-
-void
 gui_surface_draw_h_seg(surface_st *surface, int x, int y, int w, uint8_t color)
 {
     memset(surface->pixels + y * surface->pitch + x, color, w);
