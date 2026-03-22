@@ -8,8 +8,6 @@ extern app_st app_calc;
 extern app_st app_calendar;
 /* apps/clock.c */
 extern app_st app_clock;
-/* apps/colors.c */
-extern app_st app_colors;
 /* apps/fonts.c */
 extern app_st app_fonts;
 /* apps/launcher.c */
@@ -21,6 +19,7 @@ extern app_st app_pairs;
 /* apps/patterns.c */
 extern app_st app_patterns;
 /* apps/snake.c */
+extern uint8_t cell_colors[4];
 extern app_st app_snake;
 /* apps/sounds.c */
 extern app_st app_sounds;
