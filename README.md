@@ -1,20 +1,12 @@
 # gentleOS
 
-A hobby operating system for vintage 32-bit PCs
-
-<img src="misc/screenshot-01.png" width="320"> <img src="misc/screenshot-02.png" width="320">
-<img src="misc/screenshot-03.png" width="320"> <img src="misc/screenshot-t4800ct.jpg" width="320">
-<img src="misc/screenshot-380z.jpg" width="320"> <img src="misc/screenshot-t2130ct.jpg" width="320">
+TODO: A hobby operating system for vintage 16-bit PCs
 
 ## Requirements
 
 ### Building
 
-- GNU Make
-- Clang (supporting i486 targets)
-- Binutils (supporting i486 targets)
-- NASM
-- Mtools
+TODO
 
 ### Running
 
@@ -23,15 +15,14 @@ A hobby operating system for vintage 32-bit PCs
 
 ### Development
 
+TODO
+
 - cproto (for rebuilding includes)
-- util-linux (for rebuilding disk image)
-- GRUB (for rebuilding disk image)
 - Python with PIL library (for processing images)
 
 ## Building
 
-- Copy `include/config.sample.h` to `include/config.h` and optionally edit
-- Run `make`
+TODO
 
 ## Testing ###
 
