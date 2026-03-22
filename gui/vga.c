@@ -40,8 +40,7 @@ gui_vga_set_bit_mask(uint8_t mask)
 void
 gui_vga_init(void)
 {
-    gui_vga_set_color(0x09, 0x3366aa);
-    gui_vga_set_color(0x0e, 0xffcc00);
+    gui_vga_set_color(0x0f, 0x00ff00);
     gui_vga_set_write_mode(0);
     gui_vga_set_bit_mask(0xFF);
 }
