@@ -94,15 +94,15 @@ draw_button(widget_st *widget)
     int pressed = 0;
 
     if (state == BUTTON_STATE_HIDDEN && !pressed) {
-        gui_surface_draw_rect(window.surface, rect, COLOR_WINDOW);
-        gui_surface_draw_h_seg(window.surface, rect.x, rect.y, rect.width, COLOR_WHITE);
-        gui_surface_draw_v_seg(window.surface, rect.x, rect.y, rect.height, COLOR_WHITE);
+        gui_surface_draw_rect(window.surface, rect, COLOR_BG);
+        gui_surface_draw_h_seg(window.surface, rect.x, rect.y, rect.width, COLOR_BG);
+        gui_surface_draw_v_seg(window.surface, rect.x, rect.y, rect.height, COLOR_BG);
     } else if (state == BUTTON_STATE_HIDDEN && pressed) {
-        gui_surface_draw_rect(window.surface, rect, COLOR_WINDOW);
+        gui_surface_draw_rect(window.surface, rect, COLOR_BG);
     } else {
-        gui_surface_draw_rect(window.surface, rect, COLOR_WINDOW);
+        gui_surface_draw_rect(window.surface, rect, COLOR_BG);
         gui_surface_draw_bitmap_centered(window.surface, rect, icons[button_icons[idx]],
-            COLOR_TEXT_ACTIVE);
+            COLOR_FG);
     }
 
     gui_wm_render_window_region(&window, rect);
@@ -225,7 +225,7 @@ init_window(void)
 
     window.surface = &window_surface;
     window.title = "Pairs";
-    window.bg_color = COLOR_BORDER;
+    window.bg_color = COLOR_FG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
     window.on_active_change = on_active_change;

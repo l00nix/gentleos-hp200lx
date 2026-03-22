@@ -36,7 +36,7 @@ static void
 draw_cell(int x, int y, int active)
 {
     rect_st r = gui_grid_cell_rect(&grid, x, y);
-    uint8_t color = active ? COLOR_TEXT_ACTIVE : COLOR_WINDOW;
+    uint8_t color = active ? COLOR_FG : COLOR_BG;
     gui_surface_draw_rect(window.surface, r, color);
     gui_wm_render_window_region(&window, r);
 }
@@ -99,7 +99,7 @@ init_window(void)
 
     window.surface = &window_surface;
     window.title = "Clock";
-    window.bg_color = COLOR_WINDOW;
+    window.bg_color = COLOR_BG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
 

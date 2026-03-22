@@ -34,11 +34,13 @@ static widget_st *widgets[1];
 static grid_st grid;
 
 enum {
-    CELL_FLOOR = COLOR_WINDOW,
-    CELL_WALL = COLOR_BLACK,
-    CELL_SNAKE = 0x10,
-    CELL_FRUIT = COLOR_TITLE_BAR_ACTIVE,
+    CELL_FLOOR = 0,
+    CELL_WALL = 1,
+    CELL_SNAKE = 2,
+    CELL_FRUIT = 3,
 };
+
+uint8_t cell_colors[4] = { COLOR_BG, COLOR_FG, COLOR_FG, COLOR_FG };
 
 static uint8_t cells[GRID_COLS][GRID_ROWS];
 
@@ -103,21 +105,21 @@ resume_game(void)
 }
 
 static void
-draw_cell(int x, int y, uint8_t val)
+draw_cell(int x, int y, uint8_t cell_type)
 {
-    cells[x][y] = val;
+    cells[x][y] = cell_type;
 
     rect_st r = gui_grid_cell_rect(&grid, x, y);
-    gui_surface_draw_rect(window.surface, r, val);
+    gui_surface_draw_rect(window.surface, r, cell_colors[cell_type]);
     gui_wm_render_window_region(&window, r);
 }
 
 static void
-draw_region(int x, int y, int w, int h, uint8_t val)
+draw_region(int x, int y, int w, int h, uint8_t cell_type)
 {
     for (int j = 0; j < h; ++j) {
         for (int i = 0; i < w; ++i) {
-            draw_cell(x + i, y + j, val);
+            draw_cell(x + i, y + j, cell_type);
         }
     }
 }
@@ -275,7 +277,7 @@ init_window(void)
 
     window.surface = &window_surface;
     window.title = "Snake";
-    window.bg_color = COLOR_WINDOW;
+    window.bg_color = COLOR_BG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
     window.on_key_down = on_keyboard;

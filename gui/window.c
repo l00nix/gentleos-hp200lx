@@ -29,7 +29,7 @@ gui_window_init_frame(window_st *window, widget_st *title_bar)
     };
     window->rect = gui_rect_center(window->rect, gui_wm_container);
 
-    gui_surface_draw_border(window->surface, gui_window_area(window), COLOR_BORDER);
+    gui_surface_draw_border(window->surface, gui_window_area(window), COLOR_FG);
 
     rect_st content_area = {
         .x = 1,

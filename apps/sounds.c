@@ -39,7 +39,7 @@ static void
 draw_key_w(widget_st *widget)
 {
     rect_st rect_base = gui_rect_shrink(widget->rect, 1);
-    uint8_t color = COLOR_WINDOW;
+    uint8_t color = COLOR_BG;
 
     int octave = widget->tag2 / 7;
     int ofs = widget->tag2 % 7;
@@ -65,7 +65,7 @@ draw_key_w(widget_st *widget)
 static void
 draw_key_b(widget_st *widget)
 {
-    uint8_t color = COLOR_BLACK;
+    uint8_t color = COLOR_FG;
 
     gui_surface_draw_rect(widget->window->surface, widget->rect, color);
 
@@ -120,7 +120,7 @@ init_window(void)
 
     window.surface = &window_surface;
     window.title = "Sounds";
-    window.bg_color = COLOR_BORDER;
+    window.bg_color = COLOR_FG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
 

@@ -69,7 +69,7 @@ init_window(void)
 
     window.surface = &window_surface;
     window.title = "Launcher";
-    window.bg_color = COLOR_WINDOW;
+    window.bg_color = COLOR_BG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
     window.focused_widget = &app_buttons[0];

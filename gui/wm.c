@@ -17,8 +17,6 @@ static window_st *gui_wm_status_window = NULL;
 static window_st *gui_wm_current_window = NULL;
 
 bitmap_st *gui_wm_bg_pattern = NULL;
-uint8_t gui_wm_desktop_color = COLOR_DESKTOP;
-uint8_t gui_wm_desktop_alt_color = COLOR_DESKTOP_ALT;
 
 void
 gui_wm_toggle_window_active(window_st *w, int active)
@@ -59,10 +57,9 @@ gui_wm_render_wallpaper(rect_st rect)
 {
     gui_fb_draw_start();
     if (gui_wm_bg_pattern) {
-        gui_fb_draw_pattern(rect, gui_wm_bg_pattern, gui_wm_desktop_color,
-            gui_wm_desktop_alt_color);
+        gui_fb_draw_pattern(rect, gui_wm_bg_pattern, COLOR_FG, COLOR_BG);
     } else {
-        gui_fb_draw_rect(rect, gui_wm_desktop_color);
+        gui_fb_draw_rect(rect, COLOR_BG);
     }
     gui_fb_draw_end();
 }

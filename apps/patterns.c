@@ -77,16 +77,16 @@ draw_pattern_button(widget_st *widget)
     int is_active = (widget == active_pattern_button);
 
     if (is_active) {
-        gui_surface_draw_rect(sf, rect, COLOR_BORDER);
+        gui_surface_draw_rect(sf, rect, COLOR_FG);
         rect = gui_rect_shrink(rect, 1);
     }
 
     int idx = widget->tag1;
 
     if (widget->tag1 == 0) {
-        gui_surface_draw_rect(sf, rect, COLOR_WINDOW);
+        gui_surface_draw_rect(sf, rect, COLOR_BG);
     } else {
-        gui_surface_draw_pattern(sf, rect, patterns[idx], COLOR_BLACK, COLOR_WINDOW);
+        gui_surface_draw_pattern(sf, rect, patterns[idx], COLOR_BG, COLOR_BG);
     }
 
     gui_wm_render_window_region(widget->window, widget->rect);
@@ -116,7 +116,7 @@ draw_color_button(widget_st *widget)
     surface_st *sf = widget->window->surface;
 
     if (widget == active_color1_button || widget == active_color2_button) {
-        gui_surface_draw_rect(sf, rect, COLOR_BORDER);
+        gui_surface_draw_rect(sf, rect, COLOR_FG);
         rect = gui_rect_shrink(rect, 1);
     }
 
@@ -130,8 +130,6 @@ on_color1_button_press(widget_st *widget, event_st event _unsd, point_st pos _un
 {
     widget_st *prev = active_color1_button;
     active_color1_button = widget;
-
-    gui_wm_desktop_color = widget->tag2;
 
     if (prev && prev != widget) {
         gui_widget_draw(prev);
@@ -147,8 +145,6 @@ on_color2_button_press(widget_st *widget, event_st event _unsd, point_st pos _un
 {
     widget_st *prev = active_color2_button;
     active_color2_button = widget;
-
-    gui_wm_desktop_alt_color = widget->tag2;
 
     if (prev && prev != widget) {
         gui_widget_draw(prev);
@@ -169,7 +165,7 @@ init_window(void)
 
     window.surface = &window_surface;
     window.title = "Patterns";
-    window.bg_color = COLOR_BLACK;
+    window.bg_color = COLOR_BG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
 
@@ -238,11 +234,11 @@ select_active_buttons(void)
     }
 
     for (int i = 0; i < COLOR_COUNT; i++) {
-        if (gui_wm_desktop_color == i) {
+        if (COLOR_FG == i) {
             active_color1_button = &color1_buttons[i];
         }
 
-        if (gui_wm_desktop_alt_color == i) {
+        if (COLOR_BG == i) {
             active_color2_button = &color2_buttons[i];
         }
     }

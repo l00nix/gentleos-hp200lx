@@ -92,9 +92,9 @@ draw_month_label(void)
         .height = TOOL_BAR_HEIGHT,
     };
 
-    gui_surface_draw_border(window.surface, rect, COLOR_BORDER);
+    gui_surface_draw_border(window.surface, rect, COLOR_FG);
     gui_surface_draw_str_centered(window.surface, rect, font_8x16, buf,
-        COLOR_TEXT_ACTIVE, COLOR_WINDOW);
+        COLOR_FG, COLOR_BG);
     gui_wm_render_window_region(&window, rect);
 }
 
@@ -107,18 +107,15 @@ draw_day_button(widget_st *widget)
     int is_in_month = day >= 0 && day < num_days;
     int is_current = (day == current_day - 1 && selected_month == current_month
         && selected_year == current_year);
-    int is_pressed = widget->active;
 
     if (!is_in_month) {
-        gui_surface_draw_rect(widget->window->surface, widget->rect, COLOR_WINDOW);
+        gui_surface_draw_rect(widget->window->surface, widget->rect, COLOR_BG);
         gui_wm_render_window_region(widget->window, widget->rect);
         return;
     }
 
-    int fg = is_pressed ? COLOR_WINDOW : COLOR_TEXT_ACTIVE;
-    int bg = is_pressed
-        ? COLOR_BUTTON_PRESSED
-        : (is_current ? COLOR_TITLE_BAR_ACTIVE : COLOR_WINDOW);
+    int fg = is_current ? COLOR_BG : COLOR_FG;
+    int bg = is_current ? COLOR_FG : COLOR_BG;
 
     gui_surface_draw_rect(widget->window->surface, widget->rect, bg);
 
@@ -162,9 +159,9 @@ draw_week_bar(void)
             .height = WEEK_BAR_HEIGHT,
         };
 
-        gui_surface_draw_border(window.surface, rect, COLOR_BORDER);
+        gui_surface_draw_border(window.surface, rect, COLOR_FG);
         gui_surface_draw_str_centered(window.surface, rect, font_8x16,
-            day_names[y], COLOR_TEXT_ACTIVE, COLOR_WINDOW);
+            day_names[y], COLOR_FG, COLOR_BG);
     }
 }
 
@@ -212,7 +209,7 @@ init_window(void)
 
     window.surface = &window_surface;
     window.title = "Calendar";
-    window.bg_color = COLOR_WINDOW;
+    window.bg_color = COLOR_BG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
 
@@ -252,7 +249,7 @@ init_day_buttons(void)
     grid.x = GRID_X;
     grid.y = GRID_Y;
 
-    gui_grid_draw_background(&grid, &window, COLOR_BORDER);
+    gui_grid_draw_background(&grid, &window, COLOR_FG);
 
     for (size_t i = 0; i < GRID_CELLS_COUNT; ++i) {
         int col = i % GRID_COLS;

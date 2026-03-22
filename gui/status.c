@@ -93,8 +93,8 @@ gui_status_set(const char *fmt, ...)
     (void) vsnprintf(buf, sizeof(buf), fmt, args);
     va_end(args);
 
-    gui_status_set_bg_color(COLOR_WINDOW);
-    gui_status_set_text(buf, COLOR_TEXT_ACTIVE);
+    gui_status_set_bg_color(COLOR_BG);
+    gui_status_set_text(buf, COLOR_FG);
 }
 
 
@@ -109,8 +109,8 @@ gui_status_set_alert(const char *fmt, ...)
     (void) vsnprintf(buf, sizeof(buf), fmt, args);
     va_end(args);
 
-    gui_status_set_bg_color(COLOR_RED);
-    gui_status_set_text(buf, COLOR_WHITE);
+    gui_status_set_bg_color(COLOR_FG);
+    gui_status_set_text(buf, COLOR_BG);
 }
 
 void
@@ -128,9 +128,9 @@ gui_status_init(void)
     window.surface = &window_surface;
     window.visible = 1;
 
-    gui_surface_draw_h_seg(window.surface, 0, 0, STATUS_WIDTH, COLOR_BORDER);
+    gui_surface_draw_h_seg(window.surface, 0, 0, STATUS_WIDTH, COLOR_FG);
 
-    gui_status_set("", COLOR_TEXT_ACTIVE);
+    gui_status_set("", COLOR_FG);
 
     gui_wm_set_status_window(&window);
 }

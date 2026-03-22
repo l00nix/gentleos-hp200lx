@@ -17,19 +17,19 @@ gui_button_draw(widget_st *widget)
     int is_focused = (widget == widget->window->focused_widget);
 
     if (!widget->hide_border) {
-        gui_surface_draw_border(widget->window->surface, rect, COLOR_BORDER);
+        gui_surface_draw_border(widget->window->surface, rect, COLOR_FG);
         rect = gui_rect_shrink(rect, 1);
     }
 
     if (is_focused && !is_pressed) {
-        gui_surface_draw_border(widget->window->surface, rect, COLOR_BORDER);
+        gui_surface_draw_border(widget->window->surface, rect, COLOR_FG);
         rect = gui_rect_shrink(rect, 1);
     }
 
     gui_surface_draw_rect(
         widget->window->surface,
         rect,
-        is_pressed ? COLOR_BUTTON_PRESSED : COLOR_WINDOW
+        is_pressed ? COLOR_FG : COLOR_BG
     );
 
     if (widget->bitmap) {
@@ -37,7 +37,7 @@ gui_button_draw(widget_st *widget)
             widget->window->surface,
             rect,
             widget->bitmap,
-            is_pressed ? COLOR_WINDOW : COLOR_TEXT_ACTIVE
+            is_pressed ? COLOR_BG : COLOR_FG
         );
     } else if (widget->label) {
         gui_surface_draw_str_centered(
@@ -45,8 +45,8 @@ gui_button_draw(widget_st *widget)
             rect,
             widget->font ? widget->font : font_8x16,
             widget->label,
-            is_pressed ? COLOR_WINDOW : COLOR_TEXT_ACTIVE,
-            is_pressed ? COLOR_BUTTON_PRESSED : COLOR_WINDOW
+            is_pressed ? COLOR_BG : COLOR_FG,
+            is_pressed ? COLOR_FG : COLOR_BG
         );
     }
 

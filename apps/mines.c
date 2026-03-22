@@ -110,31 +110,31 @@ draw_cell(widget_st *widget)
     char num_str[2] = { 0, 0 };
 
     if (state == CELL_STATE_HIDDEN && !pressed) {
-        gui_surface_draw_rect(window.surface, rect, COLOR_WINDOW);
-        gui_surface_draw_h_seg(window.surface, rect.x, rect.y, rect.width, COLOR_WHITE);
-        gui_surface_draw_v_seg(window.surface, rect.x, rect.y, rect.height, COLOR_WHITE);
+        gui_surface_draw_rect(window.surface, rect, COLOR_BG);
+        gui_surface_draw_h_seg(window.surface, rect.x, rect.y, rect.width, COLOR_BG);
+        gui_surface_draw_v_seg(window.surface, rect.x, rect.y, rect.height, COLOR_BG);
     } else if (state == CELL_STATE_HIDDEN && pressed) {
-        gui_surface_draw_rect(window.surface, rect, COLOR_WINDOW);
+        gui_surface_draw_rect(window.surface, rect, COLOR_BG);
     } else if (state == CELL_STATE_FLAGGED) {
-        gui_surface_draw_rect(window.surface, rect, COLOR_WINDOW);
-        gui_surface_draw_h_seg(window.surface, rect.x, rect.y, rect.width, COLOR_WHITE);
-        gui_surface_draw_v_seg(window.surface, rect.x, rect.y, rect.height, COLOR_WHITE);
+        gui_surface_draw_rect(window.surface, rect, COLOR_BG);
+        gui_surface_draw_h_seg(window.surface, rect.x, rect.y, rect.width, COLOR_BG);
+        gui_surface_draw_v_seg(window.surface, rect.x, rect.y, rect.height, COLOR_BG);
         gui_surface_draw_bitmap_centered(window.surface, rect, &bitmap_sprite_flag,
-            COLOR_TEXT_ACTIVE);
+            COLOR_FG);
     } else if (state == CELL_STATE_REVEALED && type == CELL_TYPE_MINE) {
-        gui_surface_draw_rect(window.surface, rect, COLOR_WINDOW);
+        gui_surface_draw_rect(window.surface, rect, COLOR_BG);
         gui_surface_draw_bitmap_centered(window.surface, rect, &bitmap_sprite_mine,
-            COLOR_TEXT_ACTIVE);
+            COLOR_FG);
     } else if (state == CELL_STATE_REVEALED && type == CELL_TYPE_EMPTY) {
-        gui_surface_draw_rect(window.surface, rect, COLOR_WINDOW);
+        gui_surface_draw_rect(window.surface, rect, COLOR_BG);
     } else if (state == CELL_STATE_REVEALED) {
         num_str[0] = '0' + type;
         rect_st num_rect = gui_rect_make(rect.x + 1, rect.y + 1,
             rect.width - 1, rect.height - 1);
 
-        gui_surface_draw_rect(window.surface, rect, COLOR_WINDOW);
+        gui_surface_draw_rect(window.surface, rect, COLOR_BG);
         gui_surface_draw_str_centered(window.surface, num_rect, font_8x8,
-            num_str, COLOR_TEXT_ACTIVE, COLOR_WINDOW);
+            num_str, COLOR_FG, COLOR_BG);
     }
 
     gui_wm_render_window_region(&window, rect);
@@ -345,7 +345,7 @@ init_window(void)
 
     window.surface = &window_surface;
     window.title = "Mines";
-    window.bg_color = COLOR_BORDER;
+    window.bg_color = COLOR_FG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
     window.on_active_change = on_active_change;

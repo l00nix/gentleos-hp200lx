@@ -72,7 +72,7 @@ draw_color_button(widget_st *widget)
     rect_st rect = widget->rect;
 
     if (widget == active_color_button) {
-        gui_surface_draw_rect(widget->window->surface, rect, COLOR_BORDER);
+        gui_surface_draw_rect(widget->window->surface, rect, COLOR_FG);
         gui_surface_draw_rect(widget->window->surface, gui_rect_shrink(rect, 1),
             widget->tag2);
     } else {
@@ -100,7 +100,7 @@ init_window(void)
 
     window.surface = &window_surface;
     window.title = "Colors";
-    window.bg_color = COLOR_BLACK;
+    window.bg_color = COLOR_BG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
     window.on_active_change = on_active_change;

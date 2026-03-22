@@ -59,15 +59,15 @@ draw_char_button(widget_st *widget)
     int is_active = widget == active_char_button;
 
     gui_surface_draw_rect(window.surface, widget->rect,
-        is_active ? COLOR_BUTTON_PRESSED : COLOR_WINDOW);
+        is_active ? COLOR_FG : COLOR_BG);
 
     gui_surface_draw_str_centered(
         window.surface,
         widget->rect,
         &fonts[current_font],
         (const char *)str,
-        is_active ? COLOR_WINDOW : COLOR_TEXT_ACTIVE,
-        is_active ? COLOR_BUTTON_PRESSED : COLOR_WINDOW
+        is_active ? COLOR_BG : COLOR_FG,
+        is_active ? COLOR_FG : COLOR_BG
     );
 
     gui_wm_render_window_region(widget->window, widget->rect);
@@ -91,10 +91,10 @@ draw_font_label(void)
         .height = TOOL_BAR_HEIGHT,
     };
 
-    gui_surface_draw_border(window.surface, r, COLOR_BORDER);
-    gui_surface_draw_rect(window.surface, gui_rect_shrink(r, 1), COLOR_WINDOW);
+    gui_surface_draw_border(window.surface, r, COLOR_FG);
+    gui_surface_draw_rect(window.surface, gui_rect_shrink(r, 1), COLOR_BG);
     gui_surface_draw_str_centered(window.surface, r, font_8x16,
-        fonts[current_font].name, COLOR_TEXT_ACTIVE, COLOR_WINDOW);
+        fonts[current_font].name, COLOR_FG, COLOR_BG);
 
     gui_wm_render_window_region(&window, r);
 }
@@ -159,7 +159,7 @@ init_window(void)
 
     window.surface = &window_surface;
     window.title = "Fonts";
-    window.bg_color = COLOR_WINDOW;
+    window.bg_color = COLOR_BG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
     window.on_active_change = on_active_change;
@@ -200,7 +200,7 @@ init_char_buttons(void)
     grid.x = GRID_X;
     grid.y = GRID_Y;
 
-    gui_grid_draw_background(&grid, &window, COLOR_BORDER);
+    gui_grid_draw_background(&grid, &window, COLOR_FG);
 
     for (size_t i = 0; i < GRID_CELLS_COUNT; ++i) {
         int col = i % grid.cols;
