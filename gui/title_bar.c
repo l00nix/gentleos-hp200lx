@@ -8,25 +8,6 @@
 #include <gui.h>
 
 static void
-gui_title_bar_on_pointer_down(widget_st *widget, event_st event, point_st pos _unsd)
-{
-    gui_drag_start(widget->window, event);
-}
-
-static void
-gui_title_bar_on_pointer_move(widget_st *widget _unsd, event_st event, point_st pos _unsd)
-{
-    gui_drag_move(event);
-}
-
-static void
-gui_title_bar_on_pointer_up(widget_st *widget _unsd, event_st event _unsd,
-    point_st pos _unsd)
-{
-    gui_drag_end();
-}
-
-static void
 gui_title_bar_draw(widget_st *widget)
 {
     char title[64];
@@ -56,7 +37,4 @@ gui_title_bar_init(widget_st *bar, window_st *window)
     bar->press_sticky = 1;
 
     bar->draw = gui_title_bar_draw;
-    bar->on_pointer_down = gui_title_bar_on_pointer_down;
-    bar->on_pointer_move = gui_title_bar_on_pointer_move;
-    bar->on_pointer_up = gui_title_bar_on_pointer_up;
 }

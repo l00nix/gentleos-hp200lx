@@ -51,26 +51,17 @@ gui_fb_draw_surface(int dst_x, int dst_y, surface_st *src_sf, rect_st src_rect)
 }
 
 void
-gui_fb_draw_outline(rect_st rect)
-{
-    gui_planar_xor_corners(rect);
-}
-
-void
 gui_fb_flush(void)
 {
     if (gui_rect_is_empty(dirty_rect)) {
         return;
     }
 
-    gui_drag_clear_outline();
-
     rect_st rect = dirty_rect;
     dirty_rect = (rect_st) { 0 };
 
     gui_planar_flush(rect);
     gui_pointer_draw();
-    gui_drag_draw_outline();
 }
 
 void

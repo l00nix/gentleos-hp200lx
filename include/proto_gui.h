@@ -5,12 +5,6 @@ extern void gui_button_on_pointer_out(widget_st *widget, event_st event, point_s
 extern void gui_button_draw(widget_st *widget);
 /* gui/close_button.c */
 extern void gui_close_button_init(widget_st *button, window_st *window);
-/* gui/drag.c */
-extern void gui_drag_start(window_st *window, event_st event);
-extern void gui_drag_move(event_st event);
-extern void gui_drag_end(void);
-extern void gui_drag_draw_outline(void);
-extern void gui_drag_clear_outline(void);
 /* gui/fb.c */
 extern surface_st *gui_fb_vram_surface;
 extern void gui_fb_draw_start(void);
@@ -34,7 +28,6 @@ extern void gui_planar_draw_rect(rect_st rect, uint8_t color);
 extern void gui_planar_draw_pattern(rect_st dst_rect, bitmap_st *pattern, uint8_t c1, uint8_t c2);
 extern void gui_planar_draw_surface(int dst_x, int dst_y, surface_st *src, rect_st src_rect);
 extern void gui_planar_draw_pointer(int dst_x, int dst_y);
-extern void gui_planar_xor_corners(rect_st rect);
 /* gui/pointer.c */
 extern void gui_pointer_draw(void);
 extern void gui_pointer_move(uint16_t x, uint16_t y);
@@ -95,6 +88,7 @@ extern rect_st gui_wm_container;
 extern bitmap_st *gui_wm_bg_pattern;
 extern uint8_t gui_wm_desktop_color;
 extern uint8_t gui_wm_desktop_alt_color;
+extern void gui_wm_toggle_window_active(window_st *w, int active);
 extern int gui_wm_add_window(struct window *w);
 extern void gui_wm_render_window_surface(window_st *window, rect_st desktop_reg);
 extern void gui_wm_render_desktop_region(rect_st rect, window_st *bottom_window);
