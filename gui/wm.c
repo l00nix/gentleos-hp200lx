@@ -237,4 +237,5 @@ gui_wm_init(void)
     gui_status_init();
 
     app_panel.show();
+    app_launcher.show();
 }
