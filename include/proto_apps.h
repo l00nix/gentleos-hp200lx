@@ -16,8 +16,6 @@ extern app_st app_launcher;
 extern app_st app_mines;
 /* apps/pairs.c */
 extern app_st app_pairs;
-/* apps/patterns.c */
-extern app_st app_patterns;
 /* apps/snake.c */
 extern uint8_t cell_colors[4];
 extern app_st app_snake;

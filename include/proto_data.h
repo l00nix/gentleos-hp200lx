@@ -19,17 +19,9 @@ extern bitmap_st bitmap_icon_pairs_ghost;
 extern bitmap_st bitmap_icon_pairs_rabbit;
 extern bitmap_st bitmap_icon_pairs_snake;
 extern bitmap_st bitmap_icon_pairs_turtle;
-extern bitmap_st bitmap_icon_patterns;
 extern bitmap_st bitmap_icon_snake;
 extern bitmap_st bitmap_icon_sounds;
 extern bitmap_st bitmap_icon_tetris;
-extern bitmap_st bitmap_pattern_1;
-extern bitmap_st bitmap_pattern_2;
-extern bitmap_st bitmap_pattern_3;
-extern bitmap_st bitmap_pattern_4;
-extern bitmap_st bitmap_pattern_5;
-extern bitmap_st bitmap_pattern_6;
-extern bitmap_st bitmap_pattern_7;
 extern bitmap_st bitmap_sprite_flag;
 extern bitmap_st bitmap_sprite_mine;
 /* data/data_fonts.c */
