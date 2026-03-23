@@ -341,13 +341,9 @@ on_keyboard(window_st *w _unsd, event_st event)
 }
 
 static void
-on_active_change(window_st *win)
+on_close(window_st *win _unsd)
 {
-    if (win->active) {
-        update_status();
-    } else {
-        pause_game();
-    }
+    pause_game();
 }
 
 static void
@@ -364,7 +360,7 @@ init_window(void)
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
     window.on_key_down = on_keyboard;
-    window.on_active_change = on_active_change;
+    window.on_close = on_close;
 
     gui_window_init_frame(&window, &title_bar);
 }

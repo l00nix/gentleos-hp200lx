@@ -63,12 +63,11 @@ extern void gui_widget_draw(widget_st *widget);
 extern rect_st gui_window_area(window_st *window);
 extern void gui_window_init_frame(window_st *window, widget_st *title_bar);
 extern int gui_window_add_widget(window_st *window, widget_st *widget);
-extern void gui_window_on_active_change(window_st *window);
+extern void gui_window_on_close(window_st *window);
 extern void gui_window_on_key_down(window_st *window, event_st event);
 /* gui/wm.c */
 extern rect_st gui_wm_container;
 extern bitmap_st *gui_wm_bg_pattern;
-extern void gui_wm_toggle_window_active(window_st *w, int active);
 extern int gui_wm_add_window(struct window *w);
 extern void gui_wm_render_window_surface(window_st *window, rect_st desktop_reg);
 extern void gui_wm_render_desktop_region(rect_st rect, window_st *bottom_window);

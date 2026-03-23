@@ -18,35 +18,21 @@ static window_st *gui_wm_current_window = NULL;
 
 bitmap_st *gui_wm_bg_pattern = NULL;
 
-void
-gui_wm_toggle_window_active(window_st *w, int active)
-{
-    if (w->active == active) {
-        return;
-    }
-
-    w->active = active;
-
-    if (active) {
-        gui_status_set("");
-    }
-
-    gui_window_on_active_change(w);
-}
-
 int
 gui_wm_add_window(struct window *w)
 {
     if (gui_wm_current_window) {
         gui_wm_current_window->visible = 0;
-        gui_wm_toggle_window_active(gui_wm_current_window, 0);
+        gui_wm_current_window->active = 0;
+        gui_window_on_close(gui_wm_current_window);
         gui_wm_current_window = NULL;
     }
 
     gui_wm_current_window = w;
     gui_wm_current_window->visible = 1;
-    gui_wm_toggle_window_active(gui_wm_current_window, 1);
+    gui_wm_current_window->active = 1;
 
+    gui_status_set("");
     gui_wm_render_desktop_region(gui_wm_container, NULL);
 
     return 0;

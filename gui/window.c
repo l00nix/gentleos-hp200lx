@@ -59,16 +59,10 @@ gui_window_add_widget(window_st *window, widget_st *widget)
 }
 
 void
-gui_window_on_active_change(window_st *window)
+gui_window_on_close(window_st *window)
 {
-    for (size_t i = 0; i < window->widgets_count; i++) {
-        if (window->widgets[i]->rect.y == 0) {
-            gui_widget_draw(window->widgets[i]);
-        }
-    }
-
-    if (window->on_active_change) {
-        window->on_active_change(window);
+    if (window->on_close) {
+        window->on_close(window);
     }
 }
 
