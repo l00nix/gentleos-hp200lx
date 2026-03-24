@@ -250,8 +250,6 @@ init_day_buttons(void)
     grid.x = GRID_X;
     grid.y = GRID_Y;
 
-    gui_grid_draw_background(&grid, &window, COLOR_FG);
-
     for (size_t i = 0; i < GRID_CELLS_COUNT; ++i) {
         int col = i % GRID_COLS;
         int row = i / GRID_COLS;
@@ -291,11 +289,13 @@ show_app(void)
         init_day_buttons();
         init_current_date();
 
-        draw_week_bar();
-        draw_selected_month();
-
         initialized = 1;
     }
+
+    gui_window_draw(&window);
+    draw_week_bar();
+    draw_selected_month();
+
 
     (void)gui_wm_add_window(&window);
 }

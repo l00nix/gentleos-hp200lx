@@ -277,6 +277,7 @@ init_window(void)
     window.on_key_down = on_keyboard;
     window.on_close = on_close;
 
+    gui_window_init_frame(&window);
 }
 
 static void
@@ -301,7 +302,7 @@ show_app(void)
         initialized = 1;
     }
 
-    gui_window_init_frame(&window);
+    gui_window_draw(&window);
     restart_game();
 
     (void)gui_wm_add_window(&window);

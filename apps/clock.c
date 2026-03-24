@@ -122,10 +122,12 @@ show_app(void)
     if (!initialized) {
         init_window();
         init_grid();
-        draw_time();
         on_timeout(NULL);
         initialized = 1;
     }
+
+    gui_window_draw(&window);
+    draw_time();
 
     gui_wm_add_window(&window);
 }

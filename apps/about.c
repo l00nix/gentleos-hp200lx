@@ -186,6 +186,7 @@ show_app(void)
         initialized = 1;
     }
 
+    gui_window_draw(&window);
     draw_info();
 
     gui_wm_add_window(&window);

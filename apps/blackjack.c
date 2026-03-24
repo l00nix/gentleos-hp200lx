@@ -363,8 +363,6 @@ init_window(void)
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
 
     gui_window_init_frame(&window);
-
-    gui_surface_draw_h_seg(window.surface, 1, DIVIDER_Y, WINDOW_WIDTH - 2, COLOR_FG);
 }
 
 static void
@@ -402,6 +400,9 @@ show_app(void)
         init_buttons();
         initialized = 1;
     }
+
+    gui_window_draw(&window);
+    gui_surface_draw_h_seg(window.surface, 1, DIVIDER_Y, WINDOW_WIDTH - 2, COLOR_FG);
 
     restart_game();
 

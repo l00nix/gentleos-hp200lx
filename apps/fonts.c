@@ -152,7 +152,7 @@ init_window(void)
     window.size.height = WINDOW_HEIGHT;
     window.surface = &window_surface;
     window.title = "Fonts";
-    window.bg_color = COLOR_BG;
+    window.bg_color = COLOR_FG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
 
@@ -192,8 +192,6 @@ init_char_buttons(void)
     grid.x = GRID_X;
     grid.y = GRID_Y;
 
-    gui_grid_draw_background(&grid, &window, COLOR_FG);
-
     for (size_t i = 0; i < GRID_CELLS_COUNT; ++i) {
         int col = i % grid.cols;
         int row = i / grid.cols;
@@ -219,9 +217,11 @@ show_app(void)
         init_window();
         init_buttons();
         init_char_buttons();
-        draw_font_label();
         initialized = 1;
     }
+
+    gui_window_draw(&window);
+    draw_font_label();
 
     gui_wm_add_window(&window);
 }

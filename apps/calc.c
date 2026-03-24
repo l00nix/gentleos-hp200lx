@@ -232,8 +232,6 @@ init_buttons(void)
     grid.x = GRID_X;
     grid.y = GRID_Y;
 
-    gui_grid_draw_background(&grid, &window, COLOR_FG);
-
     for (int row = 0; row < BUTTON_ROWS; ++row) {
         for (int col = 0; col < BUTTON_COLS; ++col) {
             int idx = row * BUTTON_COLS + col;
@@ -262,6 +260,8 @@ show_app(void)
         init_buttons();
         initialized = 1;
     }
+
+    gui_window_draw(&window);
 
     gui_wm_add_window(&window);
     update_display();

@@ -382,6 +382,7 @@ show_app(void)
         initialized = 1;
     }
 
+    gui_window_draw(&window);
     restart_game();
 
     (void)gui_wm_add_window(&window);

@@ -29,7 +29,11 @@ gui_window_init_frame(window_st *window)
     };
     window->rect = gui_rect_center(window->rect, gui_wm_container);
     window->origin = gui_rect_center(window->rect, gui_wm_container).pos;
+}
 
+void
+gui_window_draw(window_st *window)
+{
     gui_surface_draw_border(window->surface, gui_window_area(window), COLOR_FG);
 
     rect_st title_rect = {
@@ -51,6 +55,10 @@ gui_window_init_frame(window_st *window)
         .height = window->surface->size.height - TITLE_BAR_HEIGHT - 2,
     };
     gui_surface_draw_rect(window->surface, content_rect, window->bg_color);
+
+    for (size_t i = 0; i < window->widgets_count; ++i) {
+        gui_widget_draw(window->widgets[i]);
+    }
 }
 
 int
@@ -62,8 +70,6 @@ gui_window_add_widget(window_st *window, widget_st *widget)
 
     widget->window = window;
     window->widgets[window->widgets_count++] = widget;
-
-    gui_widget_draw(widget);
 
     return 0;
 }

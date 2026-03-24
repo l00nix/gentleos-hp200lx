@@ -60,6 +60,7 @@ extern void gui_widget_draw(widget_st *widget);
 /* gui/window.c */
 extern rect_st gui_window_area(window_st *window);
 extern void gui_window_init_frame(window_st *window);
+extern void gui_window_draw(window_st *window);
 extern int gui_window_add_widget(window_st *window, widget_st *widget);
 extern void gui_window_on_close(window_st *window);
 extern void gui_window_on_key_down(window_st *window, event_st event);

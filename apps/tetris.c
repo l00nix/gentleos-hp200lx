@@ -389,6 +389,7 @@ show_app(void)
         timeout_id = 0;
     }
 
+    gui_window_draw(&window);
     restart_game();
 
     (void)gui_wm_add_window(&window);
