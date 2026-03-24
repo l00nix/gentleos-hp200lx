@@ -29,8 +29,6 @@ enum {
     DISPLAY_WIDTH = GRID_WIDTH,
 };
 
-static uint8_t window_pixels[WINDOW_WIDTH * WINDOW_HEIGHT];
-static surface_st window_surface;
 static window_st window;
 
 static widget_st button_widgets[BUTTONS_COUNT];
@@ -135,13 +133,13 @@ update_display(void)
 
     rect_st rect = gui_rect_make(DISPLAY_X, DISPLAY_Y, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
-    gui_surface_draw_rect(window.surface, rect, COLOR_BG);
+    gui_surface_draw_rect(window.origin, rect, COLOR_BG);
 
     font_st *font = font_8x16;
     int text_width = strlen(buf) * font->size.width;
     int text_x = rect.x + rect.width - text_width - 10;
     int text_y = rect.y + (rect.height - font_8x16->size.height) / 2;
-    gui_surface_draw_str(window.surface, text_x, text_y, font,
+    gui_surface_draw_str(window.origin, text_x, text_y, font,
         buf, COLOR_FG, COLOR_BG);
 
     gui_wm_render_window_region(&window, rect);
@@ -206,14 +204,8 @@ on_button_press(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 static void
 init_window(void)
 {
-    window_surface.size.width = WINDOW_WIDTH;
-    window_surface.size.height = WINDOW_HEIGHT;
-    window_surface.pitch = WINDOW_WIDTH;
-    window_surface.pixels = window_pixels;
-
     window.size.width = WINDOW_WIDTH;
     window.size.height = WINDOW_HEIGHT;
-    window.surface = &window_surface;
     window.title = "Calculator";
     window.bg_color = COLOR_FG;
     window.widgets = widgets;
@@ -261,9 +253,8 @@ show_app(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window);
-
     gui_wm_add_window(&window);
+    gui_window_draw(&window);
     update_display();
 }
 

@@ -21,8 +21,6 @@ enum {
     WINDOW_HEIGHT = GRID_Y + GRID_HEIGHT + 1,
 };
 
-static uint8_t window_pixels[WINDOW_WIDTH * WINDOW_HEIGHT];
-static surface_st window_surface;
 static window_st window;
 
 static grid_st grid;
@@ -34,7 +32,7 @@ draw_cell(int x, int y, int active)
 {
     rect_st r = gui_grid_cell_rect(&grid, x, y);
     uint8_t color = active ? COLOR_FG : COLOR_BG;
-    gui_surface_draw_rect(window.surface, r, color);
+    gui_surface_draw_rect(window.origin, r, color);
     gui_wm_render_window_region(&window, r);
 }
 
@@ -81,22 +79,15 @@ on_timeout(void *unused _unsd)
 {
     if (window.visible) {
         draw_time();
+        gui_timeout_add(200, on_timeout, NULL);
     }
-
-    gui_timeout_add(200, on_timeout, NULL);
 }
 
 static void
 init_window(void)
 {
-    window_surface.size.width = WINDOW_WIDTH;
-    window_surface.size.height = WINDOW_HEIGHT;
-    window_surface.pitch = WINDOW_WIDTH;
-    window_surface.pixels = window_pixels;
-
     window.size.width = WINDOW_WIDTH;
     window.size.height = WINDOW_HEIGHT;
-    window.surface = &window_surface;
     window.title = "Clock";
     window.bg_color = COLOR_BG;
 
@@ -122,14 +113,13 @@ show_app(void)
     if (!initialized) {
         init_window();
         init_grid();
-        on_timeout(NULL);
         initialized = 1;
     }
 
+    gui_wm_add_window(&window);
     gui_window_draw(&window);
     draw_time();
-
-    gui_wm_add_window(&window);
+    on_timeout(NULL);
 }
 
 app_st app_clock = {

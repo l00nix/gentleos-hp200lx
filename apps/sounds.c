@@ -26,8 +26,6 @@ enum {
     TAG_KEY_B = 2,
 };
 
-static uint8_t window_pixels[WINDOW_WIDTH * WINDOW_HEIGHT];
-static surface_st window_surface;
 static window_st window;
 
 static widget_st keys_w[KEY_W_COUNT];
@@ -51,12 +49,12 @@ draw_key_w(widget_st *widget)
     if ((ofs == 0 && octave < 2) || ofs == 1 || ofs == 3 || ofs == 4 || ofs == 5) {
         rect_top.width -= KEY_B_WIDTH / 2;
     }
-    gui_surface_draw_rect(widget->window->surface, rect_top, color);
+    gui_surface_draw_rect(widget->window->origin, rect_top, color);
 
     rect_st rect_bottom = rect_base;
     rect_bottom.y += KEY_B_HEIGHT;
     rect_bottom.height -= KEY_B_HEIGHT;
-    gui_surface_draw_rect(widget->window->surface, rect_bottom, color);
+    gui_surface_draw_rect(widget->window->origin, rect_bottom, color);
 
     gui_wm_render_window_region(widget->window, widget->rect);
 }
@@ -66,7 +64,7 @@ draw_key_b(widget_st *widget)
 {
     uint8_t color = COLOR_FG;
 
-    gui_surface_draw_rect(widget->window->surface, widget->rect, color);
+    gui_surface_draw_rect(widget->window->origin, widget->rect, color);
 
     gui_wm_render_window_region(widget->window, widget->rect);
 }
@@ -112,14 +110,8 @@ on_key_pointer_out(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 static void
 init_window(void)
 {
-    window_surface.size.width = WINDOW_WIDTH;
-    window_surface.size.height = WINDOW_HEIGHT;
-    window_surface.pitch = WINDOW_WIDTH;
-    window_surface.pixels = window_pixels;
-
     window.size.width = WINDOW_WIDTH;
     window.size.height = WINDOW_HEIGHT;
-    window.surface = &window_surface;
     window.title = "Sounds";
     window.bg_color = COLOR_FG;
     window.widgets = widgets;
@@ -179,8 +171,8 @@ show_app(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window);
     gui_wm_add_window(&window);
+    gui_window_draw(&window);
 }
 
 app_st app_sounds = {

@@ -39,8 +39,6 @@ static app_st *apps[APPS_COUNT] = {
     &app_blackjack,
 };
 
-static uint8_t window_pixels[WINDOW_WIDTH * WINDOW_HEIGHT];
-static surface_st window_surface;
 static window_st window;
 
 static widget_st app_buttons[APPS_COUNT];
@@ -59,14 +57,8 @@ on_button_pointer_up(widget_st *widget, event_st event _unsd, point_st pos _unsd
 static void
 init_window(void)
 {
-    window_surface.size.width = WINDOW_WIDTH;
-    window_surface.size.height = WINDOW_HEIGHT;
-    window_surface.pitch = WINDOW_WIDTH;
-    window_surface.pixels = window_pixels;
-
     window.size.width = WINDOW_WIDTH;
     window.size.height = WINDOW_HEIGHT;
-    window.surface = &window_surface;
     window.title = "Launcher";
     window.bg_color = COLOR_BG;
     window.widgets = widgets;
@@ -110,9 +102,8 @@ show_app(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window);
-
     gui_wm_add_window(&window);
+    gui_window_draw(&window);
 }
 
 app_st app_launcher = {

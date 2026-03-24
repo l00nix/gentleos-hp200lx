@@ -23,8 +23,6 @@ enum {
     DROP_INTERVAL = 300,
 };
 
-static uint8_t window_pixels[WINDOW_WIDTH * WINDOW_HEIGHT];
-static surface_st window_surface;
 static window_st window;
 
 static grid_st grid;
@@ -105,7 +103,7 @@ static void
 draw_cell(int row, int col, int active)
 {
     rect_st cell = gui_grid_cell_rect(&grid, col, row);
-    gui_surface_draw_rect(window.surface, cell, active ? COLOR_FG : COLOR_BG);
+    gui_surface_draw_rect(window.origin, cell, active ? COLOR_FG : COLOR_BG);
     gui_wm_render_window_region(&window, cell);
 }
 
@@ -346,14 +344,8 @@ on_close(window_st *win _unsd)
 static void
 init_window(void)
 {
-    window_surface.size.width = WINDOW_WIDTH;
-    window_surface.size.height = WINDOW_HEIGHT;
-    window_surface.pitch = WINDOW_WIDTH;
-    window_surface.pixels = window_pixels;
-
     window.size.width = WINDOW_WIDTH;
     window.size.height = WINDOW_HEIGHT;
-    window.surface = &window_surface;
     window.title = "Tetris";
     window.bg_color = COLOR_BG;
     window.on_key_down = on_keyboard;
@@ -389,10 +381,9 @@ show_app(void)
         timeout_id = 0;
     }
 
+    gui_wm_add_window(&window);
     gui_window_draw(&window);
     restart_game();
-
-    (void)gui_wm_add_window(&window);
 }
 
 app_st app_tetris = {

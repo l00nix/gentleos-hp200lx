@@ -7,6 +7,18 @@
 
 #include <gui.h>
 
+const rect_st GUI_RECT_ZERO = {
+    .x = 0,
+    .y = 0,
+    .width = 0,
+    .height = 0,
+};
+
+const point_st GUI_POINT_ZERO = {
+    .x = 0,
+    .y = 0,
+};
+
 int
 gui_rect_is_empty(rect_st r)
 {

@@ -25,8 +25,6 @@ enum {
     WINDOW_HEIGHT = GRID_Y + GRID_HEIGHT + 1,
 };
 
-static uint8_t window_pixels[WINDOW_WIDTH * WINDOW_HEIGHT];
-static surface_st window_surface;
 static window_st window;
 
 static widget_st prev_button;
@@ -57,11 +55,11 @@ draw_char_button(widget_st *widget)
     char str[2] = { widget->tag2 ? widget->tag2 : ' ', 0 };
     int is_active = widget == active_char_button;
 
-    gui_surface_draw_rect(window.surface, widget->rect,
+    gui_surface_draw_rect(window.origin, widget->rect,
         is_active ? COLOR_FG : COLOR_BG);
 
     gui_surface_draw_str_centered(
-        window.surface,
+        window.origin,
         widget->rect,
         &fonts[current_font],
         (const char *)str,
@@ -90,9 +88,9 @@ draw_font_label(void)
         .height = TOOL_BAR_HEIGHT,
     };
 
-    gui_surface_draw_border(window.surface, r, COLOR_FG);
-    gui_surface_draw_rect(window.surface, gui_rect_shrink(r, 1), COLOR_BG);
-    gui_surface_draw_str_centered(window.surface, r, font_8x16,
+    gui_surface_draw_border(window.origin, r, COLOR_FG);
+    gui_surface_draw_rect(window.origin, gui_rect_shrink(r, 1), COLOR_BG);
+    gui_surface_draw_str_centered(window.origin, r, font_8x16,
         fonts[current_font].name, COLOR_FG, COLOR_BG);
 
     gui_wm_render_window_region(&window, r);
@@ -143,14 +141,8 @@ on_char_button_press(widget_st *widget, event_st event _unsd, point_st pos _unsd
 static void
 init_window(void)
 {
-    window_surface.size.width = WINDOW_WIDTH;
-    window_surface.size.height = WINDOW_HEIGHT;
-    window_surface.pitch = WINDOW_WIDTH;
-    window_surface.pixels = window_pixels;
-
     window.size.width = WINDOW_WIDTH;
     window.size.height = WINDOW_HEIGHT;
-    window.surface = &window_surface;
     window.title = "Fonts";
     window.bg_color = COLOR_FG;
     window.widgets = widgets;
@@ -220,10 +212,9 @@ show_app(void)
         initialized = 1;
     }
 
+    gui_wm_add_window(&window);
     gui_window_draw(&window);
     draw_font_label();
-
-    gui_wm_add_window(&window);
 }
 
 app_st app_fonts = {

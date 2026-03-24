@@ -22,8 +22,6 @@ enum {
     TEXT_MAX_LEN = (STATUS_WIDTH / FONT_WIDTH) - 2,
 };
 
-static uint8_t window_pixels[STATUS_WIDTH * STATUS_HEIGHT];
-static surface_st window_surface;
 static window_st window;
 
 static size_t status_text_len = 0;
@@ -43,7 +41,7 @@ gui_status_set_bg_color(uint8_t color)
         .height = STATUS_HEIGHT - 1,
     };
 
-    gui_surface_draw_rect(window.surface, bg_rect, color);
+    gui_surface_draw_rect(window.origin, bg_rect, color);
     gui_wm_render_window_region(&window, bg_rect);
 
     status_bg_color = color;
@@ -55,7 +53,7 @@ gui_status_set_text(const char *text, uint8_t color)
     size_t len = strlen(text);
     font_st *font = font_8x16;
 
-    gui_surface_draw_str(window.surface, TEXT_X, TEXT_Y, font, text, color,
+    gui_surface_draw_str(window.origin, TEXT_X, TEXT_Y, font, text, color,
         status_bg_color);
 
     // If the new text is shorter than previous, clear the remaining space
@@ -67,7 +65,7 @@ gui_status_set_text(const char *text, uint8_t color)
             .height = font->size.height,
         };
 
-        gui_surface_draw_rect(window.surface, clear_rect, status_bg_color);
+        gui_surface_draw_rect(window.origin, clear_rect, status_bg_color);
     }
 
     rect_st text_rect = {
@@ -116,19 +114,13 @@ gui_status_set_alert(const char *fmt, ...)
 void
 gui_status_init(void)
 {
-    window_surface.size.width = STATUS_WIDTH;
-    window_surface.size.height = STATUS_HEIGHT;
-    window_surface.pitch = STATUS_WIDTH;
-    window_surface.pixels = window_pixels;
-
-    window.rect.x = 0;
-    window.rect.y = GUI_HEIGHT - STATUS_HEIGHT;
-    window.rect.width = STATUS_WIDTH;
-    window.rect.height = STATUS_HEIGHT;
-    window.surface = &window_surface;
+    window.size.width = STATUS_WIDTH;
+    window.size.height = STATUS_HEIGHT;
+    window.origin.x = 0;
+    window.origin.y = GUI_HEIGHT - STATUS_HEIGHT;
     window.visible = 1;
 
-    gui_surface_draw_h_seg(window.surface, 0, 0, STATUS_WIDTH, COLOR_FG);
+    gui_surface_draw_h_seg(window.origin, 0, 0, STATUS_WIDTH, COLOR_FG);
 
     gui_status_set("", COLOR_FG);
 

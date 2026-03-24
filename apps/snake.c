@@ -25,8 +25,6 @@ enum {
     TIMEOUT_DURATION = 120,
 };
 
-static uint8_t window_pixels[WINDOW_WIDTH * WINDOW_HEIGHT];
-static surface_st window_surface;
 static window_st window;
 
 static grid_st grid;
@@ -108,7 +106,7 @@ draw_cell(int x, int y, uint8_t cell_type)
     cells[x][y] = cell_type;
 
     rect_st r = gui_grid_cell_rect(&grid, x, y);
-    gui_surface_draw_rect(window.surface, r, cell_colors[cell_type]);
+    gui_surface_draw_rect(window.origin, r, cell_colors[cell_type]);
     gui_wm_render_window_region(&window, r);
 }
 
@@ -264,14 +262,8 @@ on_close(window_st *window _unsd)
 static void
 init_window(void)
 {
-    window_surface.size.width = WINDOW_WIDTH;
-    window_surface.size.height = WINDOW_HEIGHT;
-    window_surface.pitch = WINDOW_WIDTH;
-    window_surface.pixels = window_pixels;
-
     window.size.width = WINDOW_WIDTH;
     window.size.height = WINDOW_HEIGHT;
-    window.surface = &window_surface;
     window.title = "Snake";
     window.bg_color = COLOR_BG;
     window.on_key_down = on_keyboard;
@@ -302,10 +294,9 @@ show_app(void)
         initialized = 1;
     }
 
+    gui_wm_add_window(&window);
     gui_window_draw(&window);
     restart_game();
-
-    (void)gui_wm_add_window(&window);
 }
 
 app_st app_snake = {

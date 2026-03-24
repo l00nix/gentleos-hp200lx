@@ -26,8 +26,6 @@ enum {
     VALUE_LEN = GRID_COLS - VALUE_COL - 2,
 };
 
-static uint8_t window_pixels[WINDOW_WIDTH * WINDOW_HEIGHT];
-static surface_st window_surface;
 static window_st window;
 
 static grid_st grid;
@@ -40,7 +38,7 @@ draw_text_lg(int col, int row, const char *text)
     }
 
     rect_st r = gui_grid_cell_rect(&grid, col, row);
-    gui_surface_draw_str(window.surface, r.x, r.y, font_8x16,
+    gui_surface_draw_str(window.origin, r.x, r.y, font_8x16,
         text, COLOR_FG, COLOR_BG);
 }
 
@@ -52,7 +50,7 @@ draw_text_sm(int col, int row, const char *text)
     }
 
     rect_st r = gui_grid_cell_rect(&grid, col, row);
-    gui_surface_draw_str(window.surface, r.x, r.y, font_8x8,
+    gui_surface_draw_str(window.origin, r.x, r.y, font_8x8,
         text, COLOR_FG, COLOR_BG);
 }
 
@@ -63,7 +61,7 @@ draw_cpu_usage(void)
     snprintf(buf, sizeof(buf), "%u%%   ", krn_timer_get_cpu_usage());
 
     rect_st r = gui_grid_cell_rect(&grid, VALUE_COL, 6);
-    gui_surface_draw_str(window.surface, r.x, r.y, font_8x8,
+    gui_surface_draw_str(window.origin, r.x, r.y, font_8x8,
         buf, COLOR_FG, COLOR_BG);
 
     r.width = (sizeof(buf) - 1) * 8;
@@ -83,7 +81,7 @@ draw_github_line(void)
     rect_st r = gui_grid_cell_rect(&grid, col, line);
     r.y -= 5;
     r.size = bitmap_icon_github.size;
-    gui_surface_draw_bitmap_centered(window.surface, r, &bitmap_icon_github,
+    gui_surface_draw_bitmap_centered(window.origin, window.size, r, &bitmap_icon_github,
         COLOR_FG);
 }
 
@@ -96,7 +94,7 @@ draw_info(void)
     int line = 0;
     const char *title = "-=[ GENTLE OS ]=-";
 
-    gui_surface_draw_rect(window.surface, r, window.bg_color);
+    gui_surface_draw_rect(window.origin, r, window.bg_color);
 
     line++;
     draw_text_lg((GRID_COLS - strlen(title)) / 2, line++, title);
@@ -139,14 +137,8 @@ draw_info(void)
 static void
 init_window(void)
 {
-    window_surface.size.width = WINDOW_WIDTH;
-    window_surface.size.height = WINDOW_HEIGHT;
-    window_surface.pitch = WINDOW_WIDTH;
-    window_surface.pixels = window_pixels;
-
     window.size.width = WINDOW_WIDTH;
     window.size.height = WINDOW_HEIGHT;
-    window.surface = &window_surface;
     window.title = "About";
     window.bg_color = COLOR_BG;
 
@@ -186,10 +178,9 @@ show_app(void)
         initialized = 1;
     }
 
+    gui_wm_add_window(&window);
     gui_window_draw(&window);
     draw_info();
-
-    gui_wm_add_window(&window);
 }
 
 app_st app_about = {

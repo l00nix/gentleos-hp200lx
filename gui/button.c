@@ -16,32 +16,31 @@ gui_button_draw(widget_st *widget)
     int is_pressed = widget->active;
     int is_focused = (widget == widget->window->focused_widget);
 
+    point_st origin = widget->window->origin;
+
     if (!widget->hide_border) {
-        gui_surface_draw_border(widget->window->surface, rect, COLOR_FG);
+        gui_surface_draw_border(origin, rect, COLOR_FG);
         rect = gui_rect_shrink(rect, 1);
     }
 
     if (is_focused && !is_pressed) {
-        gui_surface_draw_border(widget->window->surface, rect, COLOR_FG);
+        gui_surface_draw_border(origin, rect, COLOR_FG);
         rect = gui_rect_shrink(rect, 1);
     }
 
-    gui_surface_draw_rect(
-        widget->window->surface,
-        rect,
-        is_pressed ? COLOR_FG : COLOR_BG
-    );
+    gui_surface_draw_rect(origin, rect, is_pressed ? COLOR_FG : COLOR_BG);
 
     if (widget->bitmap) {
         gui_surface_draw_bitmap_centered(
-            widget->window->surface,
+            origin,
+            widget->window->size,
             rect,
             widget->bitmap,
             is_pressed ? COLOR_BG : COLOR_FG
         );
     } else if (widget->label) {
         gui_surface_draw_str_centered(
-            widget->window->surface,
+            origin,
             rect,
             widget->font ? widget->font : font_8x16,
             widget->label,

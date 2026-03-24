@@ -54,12 +54,6 @@ typedef struct {
     const uint8_t *pixels;
 } bitmap_st;
 
-typedef struct {
-    size_st size;
-    int pitch;
-    uint8_t *pixels;
-} surface_st;
-
 enum {
     WIDGET_TYPE_UNKNOWN = 0,
     WIDGET_TYPE_BUTTON = 1,
@@ -102,8 +96,6 @@ struct widget {
 };
 
 struct window {
-    rect_st rect;
-    surface_st *surface;
     point_st origin;
     size_st size;
 
@@ -159,6 +151,12 @@ enum {
 enum {
     TITLE_BAR_HEIGHT = 24,
     STATUS_HEIGHT = 24,
+};
+
+
+enum {
+    GUI_FB_PITCH = GUI_WIDTH / 8,
+    GUI_FB_PLANE_SIZE = GUI_HEIGHT * GUI_FB_PITCH,
 };
 
 #define GRID_WIDTH_SPACED(cell_width, cols) ((cell_width) * (cols) + (cols) - 1)

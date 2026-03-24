@@ -34,8 +34,6 @@ static widget_st next_button;
 static widget_st day_buttons[GRID_CELLS_COUNT];
 static widget_st *widgets[GRID_CELLS_COUNT + 2];
 
-static uint8_t window_pixels[WINDOW_WIDTH * WINDOW_HEIGHT];
-static surface_st window_surface;
 static window_st window;
 
 enum {
@@ -91,8 +89,8 @@ draw_month_label(void)
         .height = TOOL_BAR_HEIGHT,
     };
 
-    gui_surface_draw_border(window.surface, rect, COLOR_FG);
-    gui_surface_draw_str_centered(window.surface, rect, font_8x16, buf,
+    gui_surface_draw_border(window.origin, rect, COLOR_FG);
+    gui_surface_draw_str_centered(window.origin, rect, font_8x16, buf,
         COLOR_FG, COLOR_BG);
     gui_wm_render_window_region(&window, rect);
 }
@@ -108,7 +106,7 @@ draw_day_button(widget_st *widget)
         && selected_year == current_year);
 
     if (!is_in_month) {
-        gui_surface_draw_rect(widget->window->surface, widget->rect, COLOR_BG);
+        gui_surface_draw_rect(widget->window->origin, widget->rect, COLOR_BG);
         gui_wm_render_window_region(widget->window, widget->rect);
         return;
     }
@@ -116,12 +114,12 @@ draw_day_button(widget_st *widget)
     int fg = is_current ? COLOR_BG : COLOR_FG;
     int bg = is_current ? COLOR_FG : COLOR_BG;
 
-    gui_surface_draw_rect(widget->window->surface, widget->rect, bg);
+    gui_surface_draw_rect(widget->window->origin, widget->rect, bg);
 
     char buf[3];
     snprintf(buf, sizeof(buf), "%d", day + 1);
     gui_surface_draw_str_centered(
-        widget->window->surface,
+        widget->window->origin,
         widget->rect,
         widget->font ? widget->font : font_8x16,
         buf,
@@ -158,8 +156,8 @@ draw_week_bar(void)
             .height = WEEK_BAR_HEIGHT,
         };
 
-        gui_surface_draw_border(window.surface, rect, COLOR_FG);
-        gui_surface_draw_str_centered(window.surface, rect, font_8x16,
+        gui_surface_draw_border(window.origin, rect, COLOR_FG);
+        gui_surface_draw_str_centered(window.origin, rect, font_8x16,
             day_names[y], COLOR_FG, COLOR_BG);
     }
 }
@@ -201,14 +199,8 @@ on_next_button(widget_st *widget _unsd, event_st event _unsd, point_st pos _unsd
 static void
 init_window(void)
 {
-    window_surface.size.width = WINDOW_WIDTH;
-    window_surface.size.height = WINDOW_HEIGHT;
-    window_surface.pitch = WINDOW_WIDTH;
-    window_surface.pixels = window_pixels;
-
     window.size.width = WINDOW_WIDTH;
     window.size.height = WINDOW_HEIGHT;
-    window.surface = &window_surface;
     window.title = "Calendar";
     window.bg_color = COLOR_BG;
     window.widgets = widgets;
@@ -292,12 +284,10 @@ show_app(void)
         initialized = 1;
     }
 
+    gui_wm_add_window(&window);
     gui_window_draw(&window);
     draw_week_bar();
     draw_selected_month();
-
-
-    (void)gui_wm_add_window(&window);
 }
 
 

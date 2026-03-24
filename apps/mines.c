@@ -26,8 +26,6 @@ enum {
     MINE_COUNT = 18,
 };
 
-static uint8_t window_pixels[WINDOW_WIDTH * WINDOW_HEIGHT];
-static surface_st window_surface;
 static window_st window;
 
 static widget_st cell_widgets[GRID_CELL_COUNT];
@@ -109,30 +107,30 @@ draw_cell(widget_st *widget)
     char num_str[2] = { 0, 0 };
 
     if (state == CELL_STATE_HIDDEN && !pressed) {
-        gui_surface_draw_rect(window.surface, rect, COLOR_BG);
-        gui_surface_draw_h_seg(window.surface, rect.x, rect.y, rect.width, COLOR_BG);
-        gui_surface_draw_v_seg(window.surface, rect.x, rect.y, rect.height, COLOR_BG);
+        gui_surface_draw_rect(window.origin, rect, COLOR_BG);
+        gui_surface_draw_h_seg(window.origin, rect.x, rect.y, rect.width, COLOR_BG);
+        gui_surface_draw_v_seg(window.origin, rect.x, rect.y, rect.height, COLOR_BG);
     } else if (state == CELL_STATE_HIDDEN && pressed) {
-        gui_surface_draw_rect(window.surface, rect, COLOR_BG);
+        gui_surface_draw_rect(window.origin, rect, COLOR_BG);
     } else if (state == CELL_STATE_FLAGGED) {
-        gui_surface_draw_rect(window.surface, rect, COLOR_BG);
-        gui_surface_draw_h_seg(window.surface, rect.x, rect.y, rect.width, COLOR_BG);
-        gui_surface_draw_v_seg(window.surface, rect.x, rect.y, rect.height, COLOR_BG);
-        gui_surface_draw_bitmap_centered(window.surface, rect, &bitmap_sprite_flag,
+        gui_surface_draw_rect(window.origin, rect, COLOR_BG);
+        gui_surface_draw_h_seg(window.origin, rect.x, rect.y, rect.width, COLOR_BG);
+        gui_surface_draw_v_seg(window.origin, rect.x, rect.y, rect.height, COLOR_BG);
+        gui_surface_draw_bitmap_centered(window.origin, window.size, rect, &bitmap_sprite_flag,
             COLOR_FG);
     } else if (state == CELL_STATE_REVEALED && type == CELL_TYPE_MINE) {
-        gui_surface_draw_rect(window.surface, rect, COLOR_BG);
-        gui_surface_draw_bitmap_centered(window.surface, rect, &bitmap_sprite_mine,
+        gui_surface_draw_rect(window.origin, rect, COLOR_BG);
+        gui_surface_draw_bitmap_centered(window.origin, window.size, rect, &bitmap_sprite_mine,
             COLOR_FG);
     } else if (state == CELL_STATE_REVEALED && type == CELL_TYPE_EMPTY) {
-        gui_surface_draw_rect(window.surface, rect, COLOR_BG);
+        gui_surface_draw_rect(window.origin, rect, COLOR_BG);
     } else if (state == CELL_STATE_REVEALED) {
         num_str[0] = '0' + type;
         rect_st num_rect = gui_rect_make(rect.x + 1, rect.y + 1,
             rect.width - 1, rect.height - 1);
 
-        gui_surface_draw_rect(window.surface, rect, COLOR_BG);
-        gui_surface_draw_str_centered(window.surface, num_rect, font_8x8,
+        gui_surface_draw_rect(window.origin, rect, COLOR_BG);
+        gui_surface_draw_str_centered(window.origin, num_rect, font_8x8,
             num_str, COLOR_FG, COLOR_BG);
     }
 
@@ -329,14 +327,8 @@ on_cell_pointer_alt(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 static void
 init_window(void)
 {
-    window_surface.size.width = WINDOW_WIDTH;
-    window_surface.size.height = WINDOW_HEIGHT;
-    window_surface.pitch = WINDOW_WIDTH;
-    window_surface.pixels = window_pixels;
-
     window.size.width = WINDOW_WIDTH;
     window.size.height = WINDOW_HEIGHT;
-    window.surface = &window_surface;
     window.title = "Mines";
     window.bg_color = COLOR_FG;
     window.widgets = widgets;
@@ -382,10 +374,9 @@ show_app(void)
         initialized = 1;
     }
 
+    gui_wm_add_window(&window);
     gui_window_draw(&window);
     restart_game();
-
-    (void)gui_wm_add_window(&window);
 }
 
 app_st app_mines = {

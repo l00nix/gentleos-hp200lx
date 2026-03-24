@@ -13,9 +13,9 @@ gui_main(void)
     event_st event;
 
     gui_vga_init();
-    gui_fb_init();
+    gui_surface_init();
     gui_wm_init();
-    gui_fb_flush();
+    gui_surface_flush();
 
     while (1) {
         if (krn_event_count() == 0) {
@@ -46,7 +46,7 @@ gui_main(void)
         }
 
         if (krn_event_count() == 0) {
-            gui_fb_flush();
+            gui_surface_flush();
         }
     }
 }
