@@ -44,7 +44,6 @@ void cpu_cli(void);
 void cpu_hlt(void);
 uint8_t inb(uint16_t port);
 void outb(uint8_t value, uint16_t port);
-void outw(uint16_t value, uint16_t port);
 
 #include "p_lib.h"
 

@@ -25,22 +25,8 @@ gui_vga_set_color(int index, uint32_t rgb)
     outb((rgb >>  2) & 0x3F, 0x3C9);
 }
 
-static void
-gui_vga_set_write_mode(uint8_t mode)
-{
-    outw((mode << 8) | 0x05, 0x3CE);
-}
-
-static void
-gui_vga_set_bit_mask(uint8_t mask)
-{
-    outw((mask << 8) | 0x08, 0x3CE);
-}
-
 void
 gui_vga_init(void)
 {
     gui_vga_set_color(0x0f, 0x00ff00);
-    gui_vga_set_write_mode(0);
-    gui_vga_set_bit_mask(0xFF);
 }
