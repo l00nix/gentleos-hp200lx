@@ -104,6 +104,8 @@ struct widget {
 struct window {
     rect_st rect;
     surface_st *surface;
+    point_st origin;
+    size_st size;
 
     int visible;
     int active;

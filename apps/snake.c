@@ -272,6 +272,8 @@ init_window(void)
     window_surface.pitch = WINDOW_WIDTH;
     window_surface.pixels = window_pixels;
 
+    window.size.width = WINDOW_WIDTH;
+    window.size.height = WINDOW_HEIGHT;
     window.surface = &window_surface;
     window.title = "Snake";
     window.bg_color = COLOR_BG;
