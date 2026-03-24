@@ -35,13 +35,14 @@ static const unsigned char krn_keyboard_map_shift[] = {
 };
 
 static void
-krn_keyboard_handle_intr(isr_stack_st *isr_stack __attribute__((unused)))
+krn_keyboard_handle_intr(isr_stack_st *isr_stack _unsd)
 {
     static uint8_t shift = 0;
     static uint8_t ctrl = 0;
     static uint8_t alt = 0;
 
     uint8_t scan;
+    event_st ev;
     int evtype;
 
     scan = inb(PS2_PORT_DATA);
@@ -57,11 +58,9 @@ krn_keyboard_handle_intr(isr_stack_st *isr_stack __attribute__((unused)))
         return;
     }
 
-    event_st ev = {
-        .type = evtype,
-        .key_code = scan,
-        .key_char = shift ? krn_keyboard_map_shift[scan] : krn_keyboard_map_default[scan],
-    };
+    ev.type = evtype;
+    ev.key_code = scan;
+    ev.key_char = shift ? krn_keyboard_map_shift[scan] : krn_keyboard_map_default[scan];
 
     if (KBD_DEBUG) {
         krn_debug_printf("keyboard event: %s code=%02X char=%02X (%c)\n",

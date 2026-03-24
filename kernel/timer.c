@@ -19,8 +19,10 @@ static uint32_t idle_ticks = 0;
 static uint32_t total_ticks = 0;
 
 static void
-krn_timer_handle_intr(isr_stack_st *isr_stack __attribute__((unused)))
+krn_timer_handle_intr(isr_stack_st *isr_stack _unsd)
 {
+    event_st event;
+
     timer_msecs += 10;
 
     total_ticks++;
@@ -28,10 +30,8 @@ krn_timer_handle_intr(isr_stack_st *isr_stack __attribute__((unused)))
         idle_ticks++;
     }
 
-    event_st event = {
-        .type = EVENT_TIMER_TICK,
-        .timer_msecs = timer_msecs,
-    };
+    event.type = EVENT_TIMER_TICK;
+    event.timer_msecs = timer_msecs;
 
     (void)krn_event_ipush(event);
 }
@@ -45,11 +45,13 @@ krn_timer_get_msecs(void)
 uint8_t
 krn_timer_get_cpu_usage(void)
 {
+    uint32_t idle, total;
     uint32_t eflags = cpu_get_eflags();
+
     cpu_cli();
 
-    uint32_t idle = idle_ticks;
-    uint32_t total = total_ticks;
+    idle = idle_ticks;
+    total = total_ticks;
     idle_ticks = 0;
     total_ticks = 0;
 

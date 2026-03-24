@@ -22,7 +22,7 @@ typedef struct {
 
     uint32_t int_no;
     uint32_t error;
-} __attribute__((packed)) isr_stack_st;
+} _packed isr_stack_st;
 
 typedef void (*isr_handler_fn)(isr_stack_st *isr_stack);
 
@@ -31,7 +31,7 @@ typedef struct {
     uint64_t addr;
     uint64_t len;
     uint32_t type;
-} __attribute__((packed)) mboot_mmap_entry_st;
+} _packed mboot_mmap_entry_st;
 
 typedef struct {
     uint32_t flags;
@@ -53,7 +53,7 @@ typedef struct {
     uint32_t fb_width;
     uint32_t fb_height;
     uint8_t fb_bpp;
-} __attribute__ ((packed)) mboot_info_st;
+} _packed mboot_info_st;
 
 typedef struct {
     uint8_t second;

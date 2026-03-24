@@ -16,7 +16,8 @@ rand_init(void)
 
 	krn_rtc_get_time(&t);
 
-    rand_seed = (t.second << 24) | (t.minute << 16) | (t.hour << 8) | t.day;
+    rand_seed = ((uint32_t)t.second << 24) | ((uint32_t)t.minute << 16) |
+        ((uint32_t)t.hour << 8) | t.day;
 }
 
 uint32_t

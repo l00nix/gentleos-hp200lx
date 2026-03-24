@@ -141,11 +141,12 @@ uint16_t
 krn_event_count(void)
 {
     uint32_t eflags;
+    uint16_t ret;
 
     eflags = cpu_get_eflags();
     cpu_cli();
 
-    uint16_t ret = (krn_event_queue.head - krn_event_queue.tail) % EVENT_QUEUE_SIZE;
+    ret = (krn_event_queue.head - krn_event_queue.tail) % EVENT_QUEUE_SIZE;
 
     cpu_set_eflags(eflags);
     return ret;

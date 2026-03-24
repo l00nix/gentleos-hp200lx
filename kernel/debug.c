@@ -10,7 +10,7 @@
 void
 krn_debug_printf(const char *fmt, ...)
 {
-    int count;
+    int i, count;
     static char buf[4096];
 
     va_list args;
@@ -19,7 +19,7 @@ krn_debug_printf(const char *fmt, ...)
     count = vsnprintf(buf, sizeof(buf), fmt, args);
     va_end(args);
 
-    for (int i = 0; i < count; i++) {
+    for (i = 0; i < count; i++) {
         outb(buf[i], 0xe9);
     }
 }
@@ -27,7 +27,9 @@ krn_debug_printf(const char *fmt, ...)
 void
 krn_debug_beep(unsigned hz, unsigned msecs, unsigned count)
 {
-    for (unsigned i = 0; i < count; i++) {
+    unsigned i;
+
+    for (i = 0; i < count; i++) {
         krn_speaker_play(hz);
         sleep(msecs);
         krn_speaker_stop();

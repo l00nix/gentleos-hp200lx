@@ -19,7 +19,13 @@
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define ABS(a) ((a) < 0 ? -(a) : (a))
 
+#ifdef __TURBOC__
+#define _unsd
+#define _packed
+#else
 #define _unsd __attribute__((unused))
+#define _packed __attribute__((packed))
+#endif
 
 #define RETURN_IF_ALREADY_CALLED        \
     static int _already_called = 0;     \
