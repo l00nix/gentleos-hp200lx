@@ -60,7 +60,7 @@ draw_cpu_usage(void)
     static char buf[8];
     snprintf(buf, sizeof(buf), "%u%%   ", krn_timer_get_cpu_usage());
 
-    rect_st r = gui_grid_cell_rect(&grid, VALUE_COL, 6);
+    rect_st r = gui_grid_cell_rect(&grid, VALUE_COL, 5);
     gui_surface_draw_str(window.origin, r.x, r.y, font_8x8,
         buf, COLOR_FG, COLOR_BG);
 
@@ -108,10 +108,6 @@ draw_info(void)
 
     snprintf(buf, sizeof(buf), "%dx%dx%d", m->fb_width, m->fb_height, 1 << m->fb_bpp);
     draw_text_sm(LABEL_COL, line, "Display:");
-    draw_text_sm(VALUE_COL, line++, buf);
-
-    snprintf(buf, sizeof(buf), "%s", krn_system_get_cpu_vendor());
-    draw_text_sm(LABEL_COL, line, "CPU:");
     draw_text_sm(VALUE_COL, line++, buf);
 
     draw_text_sm(LABEL_COL, line++, "Busy:");

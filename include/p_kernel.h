@@ -6,8 +6,6 @@ extern void krn_core_c_isr_handle(isr_stack_st *isr_stack);
 /* kernel/debug.c */
 extern void krn_debug_printf(const char *fmt, ...);
 extern void krn_debug_beep(unsigned hz, unsigned msecs, unsigned count);
-extern void krn_debug_dump_multiboot_info(void);
-extern void krn_debug_dump_kernel_location(void);
 /* kernel/event.c */
 extern int krn_event_ipush(event_st event);
 extern int krn_event_push(event_st event);
@@ -27,7 +25,6 @@ extern void krn_rtc_get_time(time_st *t);
 extern void krn_speaker_stop(void);
 extern void krn_speaker_play(unsigned hz);
 /* kernel/system.c */
-extern const char *krn_system_get_cpu_vendor(void);
 extern uint32_t krn_system_get_total_mem(void);
 extern uint32_t krn_system_get_used_mem(void);
 extern uint32_t krn_system_get_avail_mem(void);
