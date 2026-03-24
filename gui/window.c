@@ -19,7 +19,7 @@ gui_window_area(window_st *window)
 }
 
 void
-gui_window_init_frame(window_st *window, widget_st *title_bar)
+gui_window_init_frame(window_st *window)
 {
     window->rect = (rect_st) {
         .x = 0,
@@ -32,16 +32,25 @@ gui_window_init_frame(window_st *window, widget_st *title_bar)
 
     gui_surface_draw_border(window->surface, gui_window_area(window), COLOR_FG);
 
-    rect_st content_area = {
-        .x = 1,
-        .y = TITLE_BAR_HEIGHT,
-        .width = window->surface->size.width - 2,
-        .height = window->surface->size.height - TITLE_BAR_HEIGHT - 1,
+    rect_st title_rect = {
+        .x = 0,
+        .y = 0,
+        .width = window->size.width,
+        .height = TITLE_BAR_HEIGHT,
     };
-    gui_surface_draw_rect(window->surface, content_area, window->bg_color);
 
-    gui_title_bar_init(title_bar, window);
-    gui_window_add_widget(window, title_bar);
+    gui_surface_draw_border(window->surface, title_rect, COLOR_FG);
+    gui_surface_draw_rect(window->surface, gui_rect_shrink(title_rect, 1), COLOR_BG);
+    gui_surface_draw_str_centered(window->surface, title_rect,
+        font_8x16, window->title, COLOR_FG, COLOR_BG);
+
+    rect_st content_rect = {
+        .x = 1,
+        .y = TITLE_BAR_HEIGHT + 1,
+        .width = window->surface->size.width - 2,
+        .height = window->surface->size.height - TITLE_BAR_HEIGHT - 2,
+    };
+    gui_surface_draw_rect(window->surface, content_rect, window->bg_color);
 }
 
 int

@@ -27,9 +27,6 @@ static uint8_t window_pixels[WINDOW_WIDTH * WINDOW_HEIGHT];
 static surface_st window_surface;
 static window_st window;
 
-static widget_st title_bar;
-static widget_st *widgets[1];
-
 static grid_st grid;
 
 static uint16_t pieces[7][4] = {
@@ -359,12 +356,10 @@ init_window(void)
     window.surface = &window_surface;
     window.title = "Tetris";
     window.bg_color = COLOR_BG;
-    window.widgets = widgets;
-    window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
     window.on_key_down = on_keyboard;
     window.on_close = on_close;
 
-    gui_window_init_frame(&window, &title_bar);
+    gui_window_init_frame(&window);
 }
 
 static void

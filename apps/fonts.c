@@ -29,11 +29,10 @@ static uint8_t window_pixels[WINDOW_WIDTH * WINDOW_HEIGHT];
 static surface_st window_surface;
 static window_st window;
 
-static widget_st title_bar;
 static widget_st prev_button;
 static widget_st next_button;
 static widget_st char_buttons[GRID_CELLS_COUNT];
-static widget_st *widgets[GRID_CELLS_COUNT + 3];
+static widget_st *widgets[GRID_CELLS_COUNT + 2];
 
 static widget_st *active_char_button = NULL;
 static size_t current_font = 0;
@@ -157,7 +156,7 @@ init_window(void)
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
 
-    gui_window_init_frame(&window, &title_bar);
+    gui_window_init_frame(&window);
 }
 
 static void

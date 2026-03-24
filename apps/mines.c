@@ -30,9 +30,8 @@ static uint8_t window_pixels[WINDOW_WIDTH * WINDOW_HEIGHT];
 static surface_st window_surface;
 static window_st window;
 
-static widget_st title_bar;
 static widget_st cell_widgets[GRID_CELL_COUNT];
-static widget_st *widgets[GRID_CELL_COUNT + 1];
+static widget_st *widgets[GRID_CELL_COUNT];
 
 static grid_st grid;
 
@@ -343,7 +342,7 @@ init_window(void)
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
 
-    gui_window_init_frame(&window, &title_bar);
+    gui_window_init_frame(&window);
 }
 
 static void

@@ -53,15 +53,13 @@ extern void gui_surface_draw_pattern(surface_st *surface, rect_st reg, bitmap_st
 extern void gui_timeout_remove(uint64_t id);
 extern int gui_timeout_add(uint32_t msecs, timeout_callback_fn callback, timeout_payload payload);
 extern void gui_timeout_on_tick(event_st event);
-/* gui/title_bar.c */
-extern void gui_title_bar_init(widget_st *bar, window_st *window);
 /* gui/vga.c */
 extern void gui_vga_init(void);
 /* gui/widget.c */
 extern void gui_widget_draw(widget_st *widget);
 /* gui/window.c */
 extern rect_st gui_window_area(window_st *window);
-extern void gui_window_init_frame(window_st *window, widget_st *title_bar);
+extern void gui_window_init_frame(window_st *window);
 extern int gui_window_add_widget(window_st *window, widget_st *widget);
 extern void gui_window_on_close(window_st *window);
 extern void gui_window_on_key_down(window_st *window, event_st event);

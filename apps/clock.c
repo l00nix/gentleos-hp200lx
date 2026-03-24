@@ -25,9 +25,6 @@ static uint8_t window_pixels[WINDOW_WIDTH * WINDOW_HEIGHT];
 static surface_st window_surface;
 static window_st window;
 
-static widget_st title_bar;
-static widget_st *widgets[1];
-
 static grid_st grid;
 
 static time_st last_time;
@@ -102,10 +99,8 @@ init_window(void)
     window.surface = &window_surface;
     window.title = "Clock";
     window.bg_color = COLOR_BG;
-    window.widgets = widgets;
-    window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
 
-    gui_window_init_frame(&window, &title_bar);
+    gui_window_init_frame(&window);
 }
 
 static void

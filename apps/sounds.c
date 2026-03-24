@@ -32,8 +32,7 @@ static window_st window;
 
 static widget_st keys_w[KEY_W_COUNT];
 static widget_st keys_b[KEY_B_COUNT];
-static widget_st title_bar;
-static widget_st *widgets[KEY_W_COUNT + KEY_B_COUNT + 1];
+static widget_st *widgets[KEY_W_COUNT + KEY_B_COUNT];
 
 static void
 draw_key_w(widget_st *widget)
@@ -126,7 +125,7 @@ init_window(void)
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
 
-    gui_window_init_frame(&window, &title_bar);
+    gui_window_init_frame(&window);
 }
 
 static void
