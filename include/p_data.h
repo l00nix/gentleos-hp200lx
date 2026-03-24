@@ -1,4 +1,4 @@
-/* data/data_bitmaps.c */
+/* data/data_bmp.c */
 extern bitmap_st bitmap_icon_about;
 extern bitmap_st bitmap_icon_blackjack;
 extern bitmap_st bitmap_icon_calc;
@@ -24,7 +24,7 @@ extern bitmap_st bitmap_icon_sounds;
 extern bitmap_st bitmap_icon_tetris;
 extern bitmap_st bitmap_sprite_flag;
 extern bitmap_st bitmap_sprite_mine;
-/* data/data_fonts.c */
+/* data/data_fnt.c */
 extern uint8_t gui_font_pixels_8[256 * 8];
 extern uint8_t gui_font_pixels_16[256 * 16];
 extern font_st fonts[FONT_COUNT];

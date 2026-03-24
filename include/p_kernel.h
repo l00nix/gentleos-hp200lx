@@ -13,7 +13,7 @@ extern int krn_event_ipush(event_st event);
 extern int krn_event_push(event_st event);
 extern int krn_event_pop(event_st *event);
 extern uint16_t krn_event_count(void);
-/* kernel/interrupt.c */
+/* kernel/intr.c */
 extern void krn_interrupt_handle(isr_stack_st *isr_stack);
 extern void krn_interrupt_set_handler(uint8_t int_no, isr_handler_fn handler);
 /* kernel/keyboard.c */

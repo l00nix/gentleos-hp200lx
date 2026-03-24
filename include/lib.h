@@ -42,6 +42,6 @@ void outw(uint16_t value, uint16_t port);
 int cpu_has_cpuid(void);
 void cpu_cpuid(uint32_t eax, uint32_t *ebx, uint32_t *ecx, uint32_t *edx);
 
-#include "proto_lib.h"
+#include "p_lib.h"
 
 #endif // _LIB_H_

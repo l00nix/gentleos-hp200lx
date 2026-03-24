@@ -2,7 +2,7 @@
 // Copyright (c) 2026 luke8086
 // Distributed under the terms of GPL-2 License
 // --------------------------------------------------------------------------------------
-// File: blackjack.c - Blackjack game
+// File: bjack.c - Blackjack game
 // --------------------------------------------------------------------------------------
 
 #include <gui.h>

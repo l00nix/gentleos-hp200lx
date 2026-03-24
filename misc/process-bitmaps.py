@@ -73,7 +73,7 @@ def main():
         *bitmaps,
     ]
 
-    with open("data/data_bitmaps.c", "w") as f:
+    with open("data/data_bmp.c", "w") as f:
         f.write("\n".join(lines))
 
 if __name__ == "__main__":
