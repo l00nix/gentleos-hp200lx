@@ -9,7 +9,29 @@
 #define _LIB_H_
 
 #include <stdarg.h>
+
+#ifdef __TURBOC__
+
+typedef char int8_t;
+typedef unsigned char uint8_t;
+
+typedef short int16_t;
+typedef unsigned short uint16_t;
+
+typedef long int32_t;
+typedef unsigned long uint32_t;
+
+typedef long ssize_t;
+typedef unsigned long size_t;
+
+#else
+
 #include <stdint.h>
+
+typedef uint32_t size_t;
+typedef int32_t ssize_t;
+
+#endif
 
 #include <config.h>
 
@@ -33,9 +55,6 @@
         return;                         \
     }                                   \
     _already_called = 1;
-
-typedef uint32_t size_t;
-typedef int32_t ssize_t;
 
 /* lib/cpu.s */
 uint32_t cpu_get_eflags(void);

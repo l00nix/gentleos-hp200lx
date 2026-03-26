@@ -7,12 +7,6 @@
 
 #include <lib.h>
 
-#ifdef __SIZE_TYPE__
-typedef __SIZE_TYPE__ size_t;
-#else
-typedef unsigned long size_t;
-#endif
-
 enum {
     PF_STATE_DEFAULT,
     PF_STATE_FLAGS,
