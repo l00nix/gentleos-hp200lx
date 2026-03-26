@@ -33,7 +33,7 @@ enum {
 
     WINDOW_HEIGHT = BUTTONS_Y + BUTTON_HEIGHT + SPACING,
 
-    HAND_SIZE_MAX = 11, // 4*A + 4*2 + 3*3
+    HAND_SIZE_MAX = 11, /* 4*A + 4*2 + 3*3 */
     DECK_SIZE = 52,
 };
 

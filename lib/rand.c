@@ -23,7 +23,7 @@ rand_init(void)
 uint32_t
 rand(void)
 {
-    // See https://en.wikipedia.org/wiki/Xorshift
+    /* See https://en.wikipedia.org/wiki/Xorshift */
 	uint32_t x = rand_seed;
 
 	x ^= x << 13;

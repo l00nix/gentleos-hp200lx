@@ -56,7 +56,7 @@ gui_status_set_text(const char *text, uint8_t color)
     gui_surface_draw_str(window.origin, TEXT_X, TEXT_Y, font, text, color,
         status_bg_color);
 
-    // If the new text is shorter than previous, clear the remaining space
+    /* If the new text is shorter than previous, clear the remaining space */
     if (len < status_text_len) {
         rect_st clear_rect = {
             .x = TEXT_X + len * font->size.width,

@@ -37,7 +37,7 @@
 typedef uint32_t size_t;
 typedef int32_t ssize_t;
 
-// lib/cpu.s
+/* lib/cpu.s */
 uint32_t cpu_get_eflags(void);
 void cpu_set_eflags(uint32_t eflags);
 void cpu_cli(void);
@@ -47,4 +47,4 @@ void outb(uint8_t value, uint16_t port);
 
 #include "p_lib.h"
 
-#endif // _LIB_H_
+#endif /* _LIB_H_ */

@@ -84,7 +84,7 @@ gui_timeout_on_tick(event_st event)
             continue;
         }
 
-        // Check timeout that was scheduled before overflow of the timer
+        /* Check timeout that was scheduled before overflow of the timer */
         if (tm->expires_at >= tm->added_at &&
             (event.timer_msecs >= tm->expires_at || event.timer_msecs < tm->added_at)) {
 
@@ -93,7 +93,7 @@ gui_timeout_on_tick(event_st event)
             break;
         }
 
-        // Check timeout that was scheduled after overflow of the timer
+        /* Check timeout that was scheduled after overflow of the timer */
         if (tm->expires_at < tm->added_at &&
             (event.timer_msecs >= tm->expires_at && event.timer_msecs < tm->added_at)) {
 

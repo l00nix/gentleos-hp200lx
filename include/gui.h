@@ -166,4 +166,4 @@ enum {
 #include "p_data.h"
 #include "p_apps.h"
 
-#endif // _GUI_H_
+#endif /* _GUI_H_ */

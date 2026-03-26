@@ -8,7 +8,7 @@
 #include <kernel.h>
 
 enum {
-    MBOOT_FLAGS = 0x07, // page align & mem info & video mode
+    MBOOT_FLAGS = 0x07, /* page align & mem info & video mode */
     MBOOT_MAGIC = 0x1BADB002,
     MBOOT_CKSUM = -(MBOOT_MAGIC + MBOOT_FLAGS),
 };

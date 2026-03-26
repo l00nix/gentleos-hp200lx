@@ -89,4 +89,4 @@ extern void *krn_link_end;
 
 #include "p_kernel.h"
 
-#endif // _KERNEL_H_
+#endif /* _KERNEL_H_ */
