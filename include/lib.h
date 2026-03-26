@@ -28,6 +28,7 @@ typedef unsigned long size_t;
 #define _packed
 
 #pragma warn -rch
+#pragma warn -par
 
 #else
 
