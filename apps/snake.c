@@ -236,7 +236,7 @@ on_timeout(void *unused _unsd)
 static void
 on_keyboard(window_st *window _unsd, event_st event)
 {
-    if (event.key_char == 'p') {
+    if (event.payload.key.key_char == 'p') {
         if (is_game_paused()) {
             resume_game();
         } else {
@@ -245,7 +245,7 @@ on_keyboard(window_st *window _unsd, event_st event)
         return;
     }
 
-    int key = event.key_code;
+    int key = event.payload.key.key_code;
 
     if (key == KEY_UP && prev_dir != DIR_DOWN) next_dir = DIR_UP;
     else if (key == KEY_DOWN && prev_dir != DIR_UP) next_dir = DIR_DOWN;

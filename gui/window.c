@@ -138,20 +138,20 @@ gui_window_on_key_down(window_st *window, event_st event)
     widget_st *focused = window->focused_widget;
 
     if (focused) {
-        switch (event.key_code) {
+        switch (event.payload.key.key_code) {
             case KEY_LEFT:  gui_window_update_focus(window, -1, 0); return;
             case KEY_RIGHT: gui_window_update_focus(window, 1, 0); return;
             case KEY_UP:    gui_window_update_focus(window, 0, -1); return;
             case KEY_DOWN:  gui_window_update_focus(window, 0, 1); return;
         }
 
-        if (event.key_code == KEY_ENTER && focused->on_pointer_up) {
+        if (event.payload.key.key_code == KEY_ENTER && focused->on_pointer_up) {
             focused->on_pointer_up(focused, event, (point_st){0, 0});
             return;
         }
     }
 
-    if (event.key_code == KEY_ESC) {
+    if (event.payload.key.key_code == KEY_ESC) {
         app_launcher.show();
     }
 

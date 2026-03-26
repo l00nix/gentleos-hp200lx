@@ -79,14 +79,14 @@ gui_timeout_on_tick(event_st event)
 
         if (tm->initialized == 0) {
             tm->initialized = 1;
-            tm->added_at = event.timer_msecs;
-            tm->expires_at = event.timer_msecs + tm->msecs;
+            tm->added_at = event.payload.timer.timer_msecs;
+            tm->expires_at = event.payload.timer.timer_msecs + tm->msecs;
             continue;
         }
 
         /* Check timeout that was scheduled before overflow of the timer */
         if (tm->expires_at >= tm->added_at &&
-            (event.timer_msecs >= tm->expires_at || event.timer_msecs < tm->added_at)) {
+            (event.payload.timer.timer_msecs >= tm->expires_at || event.payload.timer.timer_msecs < tm->added_at)) {
 
             tm->callback(tm->payload);
             gui_timeout_remove(tm->id);
@@ -95,7 +95,7 @@ gui_timeout_on_tick(event_st event)
 
         /* Check timeout that was scheduled after overflow of the timer */
         if (tm->expires_at < tm->added_at &&
-            (event.timer_msecs >= tm->expires_at && event.timer_msecs < tm->added_at)) {
+            (event.payload.timer.timer_msecs >= tm->expires_at && event.payload.timer.timer_msecs < tm->added_at)) {
 
             tm->callback(tm->payload);
             gui_timeout_remove(tm->id);

@@ -59,25 +59,25 @@ krn_keyboard_handle_intr(isr_stack_st *isr_stack _unsd)
     }
 
     ev.type = evtype;
-    ev.key_code = scan;
-    ev.key_char = shift ? krn_keyboard_map_shift[scan] : krn_keyboard_map_default[scan];
+    ev.payload.key.key_code = scan;
+    ev.payload.key.key_char = shift ? krn_keyboard_map_shift[scan] : krn_keyboard_map_default[scan];
 
     if (KBD_DEBUG) {
         krn_debug_printf("keyboard event: %s code=%02X char=%02X (%c)\n",
             ev.type == EVENT_KEY_UP ? "up" : "down",
-            ev.key_code,
-            ev.key_char,
-            ev.key_char ? ev.key_char : ' '
+            ev.payload.key.key_code,
+            ev.payload.key.key_char,
+            ev.payload.key.key_char ? ev.payload.key.key_char : ' '
         );
     }
 
-    if (ev.key_code == 0x2a || ev.key_code == 0x36) {
+    if (ev.payload.key.key_code == 0x2a || ev.payload.key.key_code == 0x36) {
         shift = (ev.type == EVENT_KEY_UP) ? 0 : 1;
-    } else if (ev.key_code == 0x1d) {
+    } else if (ev.payload.key.key_code == 0x1d) {
         ctrl = (ev.type == EVENT_KEY_UP) ? 0 : 1;
-    } else if (ev.key_code == 0x38) {
+    } else if (ev.payload.key.key_code == 0x38) {
         alt = (ev.type == EVENT_KEY_UP) ? 0 : 1;
-    } else if (ev.key_code == 0x53 && ctrl && alt && ev.type == EVENT_KEY_DOWN) {
+    } else if (ev.payload.key.key_code == 0x53 && ctrl && alt && ev.type == EVENT_KEY_DOWN) {
         outb(0xFE, PS2_PORT_CMD);
     } else {
         (void)krn_event_ipush(ev);

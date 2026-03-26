@@ -31,7 +31,7 @@ krn_timer_handle_intr(isr_stack_st *isr_stack _unsd)
     }
 
     event.type = EVENT_TIMER_TICK;
-    event.timer_msecs = timer_msecs;
+    event.payload.timer.timer_msecs = timer_msecs;
 
     (void)krn_event_ipush(event);
 }

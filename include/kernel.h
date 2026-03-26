@@ -28,8 +28,8 @@ typedef void (*isr_handler_fn)(isr_stack_st *isr_stack);
 
 typedef struct {
     uint32_t size;
-    uint64_t addr;
-    uint64_t len;
+    uint32_t addr[2];
+    uint32_t len[2];
     uint32_t type;
 } _packed mboot_mmap_entry_st;
 
@@ -77,11 +77,11 @@ typedef struct {
         struct {
             uint8_t key_code;
             uint8_t key_char;
-        };
+        } key;
         struct {
             uint32_t timer_msecs;
-        };
-    };
+        } timer;
+    } payload;
 } event_st;
 
 extern void *krn_link_start;

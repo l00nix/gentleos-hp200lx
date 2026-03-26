@@ -302,12 +302,15 @@ on_timeout(void *unused _unsd)
 static void
 on_keyboard(window_st *w _unsd, event_st event)
 {
+    int key_char = event.payload.key.key_char;
+    int key_code = event.payload.key.key_code;
+
     if (game_over) {
         restart_game();
         return;
     }
 
-    if (event.key_char == 'p') {
+    if (key_char == 'p') {
         if (is_game_paused()) {
             resume_game();
         } else {
@@ -320,15 +323,15 @@ on_keyboard(window_st *w _unsd, event_st event)
         return;
     }
 
-    if (event.key_code == KEY_LEFT) {
+    if (key_code == KEY_LEFT) {
         move_current_piece(0, -1, 0);
-    } else if (event.key_code == KEY_RIGHT) {
+    } else if (key_code == KEY_RIGHT) {
         move_current_piece(0, 1, 0);
-    } else if (event.key_code == KEY_DOWN) {
+    } else if (key_code == KEY_DOWN) {
         move_current_piece(1, 0, 0);
-    } else if (event.key_code == KEY_UP) {
+    } else if (key_code == KEY_UP) {
         move_current_piece(0, 0, 1);
-    } else if (event.key_char == ' ') {
+    } else if (key_char == ' ') {
         while (move_current_piece(1, 0, 0)) {
             /* drop */
         };

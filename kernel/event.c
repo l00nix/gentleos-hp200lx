@@ -39,11 +39,11 @@ krn_event_format(event_st ev)
     size_t n = sizeof(buf);
 
     if (ev.type == EVENT_KEY_DOWN) {
-        snprintf(buf, n, "key_down<%d, %c>", ev.key_code, ev.key_char);
+        snprintf(buf, n, "key_down<%d, %c>", ev.payload.key.key_code, ev.payload.key.key_char);
     } else if (ev.type == EVENT_KEY_UP) {
-        snprintf(buf, n, "key_up<%d, %c>", ev.key_code, ev.key_char);
+        snprintf(buf, n, "key_up<%d, %c>", ev.payload.key.key_code, ev.payload.key.key_char);
     } else if (ev.type == EVENT_TIMER_TICK) {
-        snprintf(buf, n, "timer_tick<%u>", ev.timer_msecs);
+        snprintf(buf, n, "timer_tick<%u>", ev.payload.timer.timer_msecs);
     } else {
         snprintf(buf, n, "unknown<%d>", ev.type);
     }
@@ -60,7 +60,7 @@ krn_event_ipush(event_st event)
         krn_event_queue.head != krn_event_queue.tail &&
         krn_event_queue.events[krn_event_queue.head].type == EVENT_TIMER_TICK) {
 
-        krn_event_queue.events[krn_event_queue.head].timer_msecs = event.timer_msecs;
+        krn_event_queue.events[krn_event_queue.head].payload.timer.timer_msecs = event.payload.timer.timer_msecs;
 
         if (EVENT_QUEUE_DEBUG) {
             krn_debug_printf("%s: squashed %s\n", krn_event_format_queue(),

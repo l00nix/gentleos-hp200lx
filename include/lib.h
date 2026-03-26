@@ -24,12 +24,20 @@ typedef unsigned long uint32_t;
 typedef long ssize_t;
 typedef unsigned long size_t;
 
+#define _unsd
+#define _packed
+
+#pragma warn -rch
+
 #else
 
 #include <stdint.h>
 
 typedef uint32_t size_t;
 typedef int32_t ssize_t;
+
+#define _unsd __attribute__((unused))
+#define _packed __attribute__((packed))
 
 #endif
 
@@ -40,14 +48,6 @@ typedef int32_t ssize_t;
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 #define ABS(a) ((a) < 0 ? -(a) : (a))
-
-#ifdef __TURBOC__
-#define _unsd
-#define _packed
-#else
-#define _unsd __attribute__((unused))
-#define _packed __attribute__((packed))
-#endif
 
 #define RETURN_IF_ALREADY_CALLED        \
     static int _already_called = 0;     \
