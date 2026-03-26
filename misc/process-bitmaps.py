@@ -57,7 +57,7 @@ def load_image_1bpp(path):
         "",
     ]
 
-    return("\n".join(lines))
+    return("\r\n".join(lines))
 
 def load_image(path):
     name = os.path.splitext(os.path.basename(path))[0]
@@ -74,7 +74,7 @@ def main():
     ]
 
     with open("data/data_bmp.c", "w") as f:
-        f.write("\n".join(lines))
+        f.write("\r\n".join(lines))
 
 if __name__ == "__main__":
     main()
