@@ -11,51 +11,6 @@
 #include <lib.h>
 
 typedef struct {
-    uint32_t edi;
-    uint32_t esi;
-    uint32_t ebp;
-    uint32_t esp;
-    uint32_t ebx;
-    uint32_t edx;
-    uint32_t ecx;
-    uint32_t eax;
-
-    uint32_t int_no;
-    uint32_t error;
-} _packed isr_stack_st;
-
-typedef void (*isr_handler_fn)(isr_stack_st *isr_stack);
-
-typedef struct {
-    uint32_t size;
-    uint32_t addr[2];
-    uint32_t len[2];
-    uint32_t type;
-} _packed mboot_mmap_entry_st;
-
-typedef struct {
-    uint32_t flags;
-
-    uint32_t unused_1[10];
-
-    uint32_t mmap_length;
-    mboot_mmap_entry_st *mmap_addr;
-
-    uint32_t unused_2[3];
-
-    const char *boot_loader_name;
-
-    uint32_t unused_3[5];
-
-    uint8_t *fb_addr;
-    uint32_t unused_4;
-    uint32_t fb_pitch;
-    uint32_t fb_width;
-    uint32_t fb_height;
-    uint8_t fb_bpp;
-} _packed mboot_info_st;
-
-typedef struct {
     uint8_t second;
     uint8_t minute;
     uint8_t hour;

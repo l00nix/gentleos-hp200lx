@@ -6,7 +6,6 @@
  */
 
 #include <kernel.h>
-#include <lib.h>
 
 void
 sleep(uint32_t msecs)

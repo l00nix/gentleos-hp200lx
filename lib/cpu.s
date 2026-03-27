@@ -5,56 +5,105 @@
 ; File: cpu.s - CPU-related functions in assembly
 ; ---------------------------------------------------------------------------------------
 
-[cpu 386]
+[cpu 8086]
 
-global cpu_get_eflags:function
-cpu_get_eflags:
-    pushfd
-    pop eax
+section _TEXT class=CODE
+
+global cpu_get_flags
+cpu_get_flags:
+    pushf
+    pop ax
     ret
 
-global cpu_set_eflags:function
-cpu_set_eflags:
-    mov eax, [esp + 4]
-    push eax
-    popfd
+global cpu_set_flags
+cpu_set_flags:
+    push bp
+    mov bp, sp
+    mov ax, [bp + 4]
+    push ax
+    popf
+    pop bp
     ret
 
-global cpu_cli:function
+global cpu_cli
 cpu_cli:
     cli
     ret
 
-global cpu_hlt:function
+global cpu_hlt
 cpu_hlt:
     hlt
     ret
 
-global inb:function
+global inb
 inb:
-    push ebp
-    mov ebp, esp
+    push bp
+    mov bp, sp
 
-    push edx
-    mov dx, [ebp + 8]
+    push dx
+    mov dx, [bp + 4]
     in al, dx
-    pop edx
+    pop dx
 
-    mov esp, ebp
-    pop ebp
+    mov sp, bp
+    pop bp
     ret
 
-global outb:function
+global outb
 outb:
-    push ebp
-    mov ebp, esp
-    pusha
+    push bp
+    mov bp, sp
+    push dx
+    push ax
 
-    mov dx, [ebp + 12]
-    mov al, [ebp + 8]
+    mov dx, [bp + 6]
+    mov al, [bp + 4]
     out dx, al
 
-    popa
-    mov esp, ebp
-    pop ebp
+    pop ax
+    pop dx
+    mov sp, bp
+    pop bp
+    ret
+
+
+global intr
+intr:
+    push bp
+    mov bp, sp
+
+    push si
+    push di
+    push bp
+
+    mov ax, [bp+4]
+    mov byte [intr_int+1], al
+
+    mov si, [bp+6]
+    mov ax, [si+0]
+    mov bx, [si+2]
+    mov cx, [si+4]
+    mov dx, [si+6]
+    mov bp, [si+8]
+    mov di, [si+10]
+    mov si, [si+12]
+
+intr_int:
+    int 0
+
+    pop bp
+
+    mov si, [bp+6]
+    mov [si+0], ax
+    mov [si+2], bx
+    mov [si+4], cx
+    mov [si+6], dx
+
+    pushf
+    pop word [si+14]
+
+    pop di
+    pop si
+
+    pop bp
     ret

@@ -5,6 +5,7 @@
  * File: keyboard.c - Driver for PS/2 keyboard
  */
 
+#include "gui.h"
 #include <kernel.h>
 
 enum {
@@ -35,7 +36,17 @@ static const unsigned char krn_keyboard_map_shift[] = {
 };
 
 static void
-krn_keyboard_handle_intr(isr_stack_st *isr_stack _unsd)
+krn_keyboard_finish_handling()
+{
+    uint8_t p61 = inb(0x61);
+    outb(p61 | 0x80, 0x61);
+    outb(p61, 0x61);
+
+    outb(0x20, 0x20);
+}
+
+static void interrupt
+krn_keyboard_handle_intr()
 {
     static uint8_t shift = 0;
     static uint8_t ctrl = 0;
@@ -48,6 +59,7 @@ krn_keyboard_handle_intr(isr_stack_st *isr_stack _unsd)
     scan = inb(PS2_PORT_DATA);
 
     if (scan == 0xe0) {
+        krn_keyboard_finish_handling();
         return;
     }
 
@@ -55,6 +67,7 @@ krn_keyboard_handle_intr(isr_stack_st *isr_stack _unsd)
     scan = scan & 0x7f;
 
     if (scan >= sizeof(krn_keyboard_map_default)) {
+        krn_keyboard_finish_handling();
         return;
     }
 
@@ -80,12 +93,15 @@ krn_keyboard_handle_intr(isr_stack_st *isr_stack _unsd)
     } else if (ev.payload.key.key_code == 0x53 && ctrl && alt && ev.type == EVENT_KEY_DOWN) {
         outb(0xFE, PS2_PORT_CMD);
     } else {
-        (void)krn_event_ipush(ev);
+        (void)krn_event_ipush(&ev);
     }
+
+    krn_keyboard_finish_handling();
 }
 
 void
 krn_keyboard_init(void)
 {
-    krn_interrupt_set_handler(0x21, krn_keyboard_handle_intr);
+    isr_handler_fn far *ivt = MK_FP(0, 0);
+    ivt[0x09] = krn_keyboard_handle_intr;
 }

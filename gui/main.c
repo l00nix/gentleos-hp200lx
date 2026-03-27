@@ -13,6 +13,7 @@ gui_main(void)
     event_st event;
 
     gui_vga_init();
+    gui_timeout_init();
     gui_surface_init();
     gui_wm_init();
     gui_surface_flush();
@@ -30,18 +31,18 @@ gui_main(void)
         }
 
         if (event.type == EVENT_TIMER_TICK) {
-            gui_timeout_on_tick(event);
+            gui_timeout_on_tick(&event);
         } else if (event.type == EVENT_KEY_DOWN) {
             window_st *w = gui_wm_top_window();
 
             if (w) {
-                gui_window_on_key_down(w, event);
+                gui_window_on_key_down(w, &event);
             }
         } else if (event.type == EVENT_KEY_UP) {
             window_st *w = gui_wm_top_window();
 
             if (w && w->on_key_up) {
-                w->on_key_up(w, event);
+                w->on_key_up(w, &event);
             }
         }
 

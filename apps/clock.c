@@ -8,8 +8,8 @@
 #include <gui.h>
 
 enum {
-    GRID_CELL_WIDTH = 9,
-    GRID_CELL_HEIGHT = 9,
+    GRID_CELL_WIDTH = 6,
+    GRID_CELL_HEIGHT = 6,
     GRID_COLS = 29,
     GRID_ROWS = 7,
     GRID_X = 1,
@@ -30,10 +30,11 @@ static time_st last_time;
 static void
 draw_cell(int x, int y, int active)
 {
-    rect_st r = gui_grid_cell_rect(&grid, x, y);
+    rect_st r;
     uint8_t color = active ? COLOR_FG : COLOR_BG;
-    gui_surface_draw_rect(window.origin, r, color);
-    gui_wm_render_window_region(&window, r);
+    gui_grid_cell_rect(&grid, x, y, &r);
+    gui_surface_draw_rect(&window.origin, &r, color);
+    gui_wm_render_window_region(&window, &r);
 }
 
 static void
@@ -43,9 +44,11 @@ draw_digit(int x, int y, int digit)
         0xf6de, 0x592e, 0xe7ce, 0xe79e, 0xb792,
         0xf39e, 0xf3de, 0xe492, 0xf7de, 0xf79e,
     };
+    int i;
+    uint8_t active;
 
-    for (int i = 0; i < 15; ++i) {
-        uint8_t active = !!(digit_pixels[digit] & (1 << (15 - i)));
+    for (i = 0; i < 15; ++i) {
+        active = !!(digit_pixels[digit] & (1 << (15 - i)));
         draw_cell(x + i % 3, y + i / 3, active);
     }
 }
@@ -60,7 +63,7 @@ draw_time(void)
         return;
     }
 
-    last_time = t;
+    memcpy(&last_time, &t, sizeof(last_time));
 
     draw_digit(1, 1, t.hour / 10);
     draw_digit(5, 1, t.hour % 10);
@@ -86,12 +89,10 @@ on_timeout(void *unused _unsd)
 static void
 init_window(void)
 {
-    window.size.width = WINDOW_WIDTH;
-    window.size.height = WINDOW_HEIGHT;
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
     window.title = "Clock";
     window.bg_color = COLOR_BG;
-
-    gui_window_init_frame(&window);
 }
 
 static void

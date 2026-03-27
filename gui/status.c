@@ -24,25 +24,22 @@ enum {
 
 static window_st window;
 
-static size_t status_text_len = 0;
+static uint16_t status_text_len = 0;
 static uint8_t status_bg_color = 0;
 
 static void
 gui_status_set_bg_color(uint8_t color)
 {
+    rect_st bg_rect;
+
+    gui_rect_init(&bg_rect, 0, 1, STATUS_WIDTH, STATUS_HEIGHT - 1);
+
     if (color == status_bg_color) {
         return;
     }
 
-    rect_st bg_rect = {
-        .x = 0,
-        .y = 1,
-        .width = STATUS_WIDTH,
-        .height = STATUS_HEIGHT - 1,
-    };
-
-    gui_surface_draw_rect(window.origin, bg_rect, color);
-    gui_wm_render_window_region(&window, bg_rect);
+    gui_surface_draw_rect(&window.origin, &bg_rect, color);
+    gui_wm_render_window_region(&window, &bg_rect);
 
     status_bg_color = color;
 }
@@ -50,32 +47,33 @@ gui_status_set_bg_color(uint8_t color)
 static void
 gui_status_set_text(const char *text, uint8_t color)
 {
-    size_t len = strlen(text);
+    uint16_t len = strlen(text);
     font_st *font = font_8x8;
+    rect_st clear_rect, text_rect;
 
-    gui_surface_draw_str(window.origin, TEXT_X, TEXT_Y, font, text, color,
+    gui_surface_draw_str(&window.origin, TEXT_X, TEXT_Y, font, text, color,
         status_bg_color);
 
     /* If the new text is shorter than previous, clear the remaining space */
     if (len < status_text_len) {
-        rect_st clear_rect = {
-            .x = TEXT_X + len * font->size.width,
-            .y = TEXT_Y,
-            .width = (status_text_len - len) * font->size.width,
-            .height = font->size.height,
-        };
+        gui_rect_init(&clear_rect,
+            TEXT_X + len * font->size.width,
+            TEXT_Y,
+            (status_text_len - len) * font->size.width,
+            font->size.height
+        );
 
-        gui_surface_draw_rect(window.origin, clear_rect, status_bg_color);
+        gui_surface_draw_rect(&window.origin, &clear_rect, status_bg_color);
     }
 
-    rect_st text_rect = {
-        .x = TEXT_X,
-        .y = TEXT_Y,
-        .width = STATUS_WIDTH - TEXT_X * 2,
-        .height = font->size.height,
-    };
+    gui_rect_init(&text_rect,
+        TEXT_X,
+        TEXT_Y,
+        STATUS_WIDTH - TEXT_X * 2,
+        font->size.height
+    );
 
-    gui_wm_render_window_region(&window, text_rect);
+    gui_wm_render_window_region(&window, &text_rect);
 
     status_text_len = len;
 }
@@ -120,7 +118,7 @@ gui_status_init(void)
     window.origin.y = GUI_HEIGHT - STATUS_HEIGHT;
     window.visible = 1;
 
-    gui_surface_draw_h_seg(window.origin, 0, 0, STATUS_WIDTH, COLOR_FG);
+    gui_surface_draw_h_seg(&window.origin, 0, 0, STATUS_WIDTH, COLOR_FG);
 
     gui_status_set("", COLOR_FG);
 

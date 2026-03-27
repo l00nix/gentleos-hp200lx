@@ -21,21 +21,10 @@ typedef struct {
 } size_st;
 
 typedef struct {
-    union {
-        point_st pos;
-        struct {
-            int x;
-            int y;
-        };
-    };
-
-    union {
-        size_st size;
-        struct {
-            int width;
-            int height;
-        };
-    };
+    int x;
+    int y;
+    int width;
+    int height;
 } rect_st;
 
 enum {
@@ -84,11 +73,11 @@ struct widget {
     int focus_y;
 
     void (*draw)(widget_st *);
-    void (*on_pointer_down)(widget_st *, event_st event, point_st pos);
-    void (*on_pointer_up)(widget_st *, event_st event, point_st pos);
-    void (*on_pointer_out)(widget_st *, event_st event, point_st pos);
-    void (*on_pointer_move)(widget_st *, event_st event, point_st pos);
-    void (*on_pointer_alt)(widget_st *, event_st event, point_st pos);
+    void (*on_pointer_down)(widget_st *, const event_st *, const point_st *);
+    void (*on_pointer_up)(widget_st *, const event_st *, const point_st *);
+    void (*on_pointer_out)(widget_st *, const event_st *, const point_st *);
+    void (*on_pointer_move)(widget_st *, const event_st *, const point_st *);
+    void (*on_pointer_alt)(widget_st *, const event_st *, const point_st *);
 
     const char *label;
     font_st *font;
@@ -110,10 +99,10 @@ struct window {
     size_t widgets_capacity;
     widget_st *focused_widget;
 
-    void (*render_region)(window_st *, rect_st reg);
-    void (*on_pointer)(window_st *, event_st event);
-    void (*on_key_down)(window_st *, event_st event);
-    void (*on_key_up)(window_st *, event_st event);
+    void (*render_region)(window_st *, const rect_st *);
+    void (*on_pointer)(window_st *, const event_st *);
+    void (*on_key_down)(window_st *, const event_st *);
+    void (*on_key_up)(window_st *, const event_st *);
     void (*on_close)(window_st *);
 };
 

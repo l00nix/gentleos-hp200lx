@@ -7,7 +7,7 @@
 
 #include <kernel.h>
 
-static uint32_t rand_seed = 1;
+static uint16_t rand_seed = 1;
 
 void
 rand_init(void)
@@ -16,19 +16,18 @@ rand_init(void)
 
 	krn_rtc_get_time(&t);
 
-    rand_seed = ((uint32_t)t.second << 24) | ((uint32_t)t.minute << 16) |
-        ((uint32_t)t.hour << 8) | t.day;
+    rand_seed = ((uint16_t)t.second << 8) | t.minute;
 }
 
-uint32_t
+uint16_t
 rand(void)
 {
     /* See https://en.wikipedia.org/wiki/Xorshift */
-	uint32_t x = rand_seed;
+	uint16_t x = rand_seed;
 
-	x ^= x << 13;
-	x ^= x >> 17;
-	x ^= x << 5;
+	x ^= x << 7;
+	x ^= x >> 9;
+	x ^= x << 8;
 
 	rand_seed = x;
 

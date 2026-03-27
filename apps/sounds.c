@@ -9,11 +9,11 @@
 
 enum {
     KEY_W_WIDTH = 30,
-    KEY_W_HEIGHT = 130,
+    KEY_W_HEIGHT = 100,
     KEY_W_COUNT = 15,
 
     KEY_B_WIDTH = 17,
-    KEY_B_HEIGHT = 80,
+    KEY_B_HEIGHT = 60,
     KEY_B_COUNT = 10,
 
     KEYBOARD_Y = (TITLE_BAR_HEIGHT - 1),
@@ -35,13 +35,19 @@ static widget_st *widgets[KEY_W_COUNT + KEY_B_COUNT];
 static void
 draw_key_w(widget_st *widget)
 {
-    rect_st rect_base = gui_rect_shrink(widget->rect, 1);
+    rect_st rect_base;
     uint8_t color = COLOR_BG;
 
     int octave = widget->tag2 / 7;
     int ofs = widget->tag2 % 7;
 
-    rect_st rect_top = rect_base;
+    rect_st rect_top;
+    rect_st rect_bottom;
+
+    gui_rect_copy(&rect_base, &widget->rect);
+    gui_rect_shrink(&rect_base, 1);
+
+    gui_rect_copy(&rect_top, &rect_base);
     if (ofs == 1 || ofs == 2 || ofs == 4 || ofs == 5 || ofs == 6) {
         rect_top.x += KEY_B_WIDTH / 2;
         rect_top.width -= KEY_B_WIDTH / 2;
@@ -49,14 +55,14 @@ draw_key_w(widget_st *widget)
     if ((ofs == 0 && octave < 2) || ofs == 1 || ofs == 3 || ofs == 4 || ofs == 5) {
         rect_top.width -= KEY_B_WIDTH / 2;
     }
-    gui_surface_draw_rect(widget->window->origin, rect_top, color);
+    gui_surface_draw_rect(&widget->window->origin, &rect_top, color);
 
-    rect_st rect_bottom = rect_base;
+    gui_rect_copy(&rect_bottom, &rect_base);
     rect_bottom.y += KEY_B_HEIGHT;
     rect_bottom.height -= KEY_B_HEIGHT;
-    gui_surface_draw_rect(widget->window->origin, rect_bottom, color);
+    gui_surface_draw_rect(&widget->window->origin, &rect_bottom, color);
 
-    gui_wm_render_window_region(widget->window, widget->rect);
+    gui_wm_render_window_region(widget->window, &widget->rect);
 }
 
 static void
@@ -64,9 +70,9 @@ draw_key_b(widget_st *widget)
 {
     uint8_t color = COLOR_FG;
 
-    gui_surface_draw_rect(widget->window->origin, widget->rect, color);
+    gui_surface_draw_rect(&widget->window->origin, &widget->rect, color);
 
-    gui_wm_render_window_region(widget->window, widget->rect);
+    gui_wm_render_window_region(widget->window, &widget->rect);
 }
 
 static unsigned
@@ -84,7 +90,7 @@ key_frequency(widget_st *widget)
 }
 
 static void
-on_key_pointer_down(widget_st *widget, event_st event _unsd, point_st pos _unsd)
+on_key_pointer_down(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
 {
     krn_speaker_play(key_frequency(widget));
 
@@ -92,7 +98,7 @@ on_key_pointer_down(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 }
 
 static void
-on_key_pointer_up(widget_st *widget, event_st event _unsd, point_st pos _unsd)
+on_key_pointer_up(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
 {
     krn_speaker_stop();
 
@@ -100,7 +106,7 @@ on_key_pointer_up(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 }
 
 static void
-on_key_pointer_out(widget_st *widget, event_st event _unsd, point_st pos _unsd)
+on_key_pointer_out(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
 {
     krn_speaker_stop();
 
@@ -110,23 +116,27 @@ on_key_pointer_out(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 static void
 init_window(void)
 {
-    window.size.width = WINDOW_WIDTH;
-    window.size.height = WINDOW_HEIGHT;
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
     window.title = "Sounds";
     window.bg_color = COLOR_FG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
-
-    gui_window_init_frame(&window);
 }
 
 static void
 init_keys(void)
 {
-    for (int i = 0; i < KEY_B_COUNT; i++) {
-        int octave_no = i / 5;
-        int octave_ofs = i % 5;
-        int key_w_idx = (octave_no * 7) + octave_ofs + 1 + (octave_ofs > 1 ? 1 : 0);
+    int i;
+    int octave_no, octave_ofs, key_w_idx;
+
+    memset(keys_b, 0, sizeof(keys_b));
+    memset(keys_w, 0, sizeof(keys_w));
+
+    for (i = 0; i < KEY_B_COUNT; i++) {
+        octave_no = i / 5;
+        octave_ofs = i % 5;
+        key_w_idx = (octave_no * 7) + octave_ofs + 1 + (octave_ofs > 1 ? 1 : 0);
 
         keys_b[i].type = WIDGET_TYPE_BUTTON;
         keys_b[i].rect.x = (key_w_idx * KEY_W_WIDTH) - key_w_idx - (KEY_B_WIDTH / 2);
@@ -143,7 +153,7 @@ init_keys(void)
         gui_window_add_widget(&window, &keys_b[i]);
     }
 
-    for (int i = 0; i < KEY_W_COUNT; i++) {
+    for (i = 0; i < KEY_W_COUNT; i++) {
         keys_w[i].type = WIDGET_TYPE_BUTTON;
         keys_w[i].rect.x = (i * KEY_W_WIDTH) - i;
         keys_w[i].rect.y = TITLE_BAR_HEIGHT - 1;

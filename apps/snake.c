@@ -10,7 +10,7 @@
 
 enum {
     GRID_CELL_WIDTH = 12,
-    GRID_CELL_HEIGHT = 12,
+    GRID_CELL_HEIGHT = 6,
     GRID_ROWS = 14,
     GRID_COLS = 24,
     GRID_COUNT = GRID_ROWS * GRID_COLS,
@@ -57,7 +57,7 @@ static enum {
 
 static int score = 0;
 static int best_score = 0;
-static uint64_t timeout_id = 0;
+static uint32_t timeout_id = 0;
 
 static void on_timeout(void *);
 
@@ -103,18 +103,22 @@ resume_game(void)
 static void
 draw_cell(int x, int y, uint8_t cell_type)
 {
+    rect_st r;
+
     cells[x][y] = cell_type;
 
-    rect_st r = gui_grid_cell_rect(&grid, x, y);
-    gui_surface_draw_rect(window.origin, r, cell_colors[cell_type]);
-    gui_wm_render_window_region(&window, r);
+    gui_grid_cell_rect(&grid, x, y, &r);
+    gui_surface_draw_rect(&window.origin, &r, cell_colors[cell_type]);
+    gui_wm_render_window_region(&window, &r);
 }
 
 static void
 draw_region(int x, int y, int w, int h, uint8_t cell_type)
 {
-    for (int j = 0; j < h; ++j) {
-        for (int i = 0; i < w; ++i) {
+    int i, j;
+
+    for (j = 0; j < h; ++j) {
+        for (i = 0; i < w; ++i) {
             draw_cell(x + i, y + j, cell_type);
         }
     }
@@ -154,6 +158,8 @@ move_head(coords_st head)
 static void
 move_snake(coords_st next_head)
 {
+    coords_st *c;
+
     if (body.grow) {
         ++body.tail;
         --body.grow;
@@ -162,7 +168,7 @@ move_snake(coords_st next_head)
         draw_cell(body.tail->x, body.tail->y, CELL_FLOOR);
     }
 
-    for (coords_st *c = body.tail; c != body.head; --c) {
+    for (c = body.tail; c != body.head; --c) {
         *c = *(c - 1);
     }
 
@@ -197,13 +203,16 @@ restart_game(void)
 static void
 on_timeout(void *unused _unsd)
 {
+    coords_st next_head;
+    uint8_t next_block;
+
     if (!window.visible) {
         return;
     }
 
     timeout_id = gui_timeout_add(TIMEOUT_DURATION, on_timeout, NULL);
 
-    coords_st next_head = move_head(*body.head);
+    next_head = move_head(*body.head);
 
     if (next_head.x < 0 || next_head.x >= GRID_COLS ||
         next_head.y < 0 || next_head.y >= GRID_ROWS) {
@@ -211,7 +220,7 @@ on_timeout(void *unused _unsd)
         return;
     }
 
-    uint8_t next_block = cells[next_head.x][next_head.y];
+    next_block = cells[next_head.x][next_head.y];
 
     if (next_block != CELL_FRUIT && next_block != CELL_FLOOR) {
         restart_game();
@@ -234,9 +243,11 @@ on_timeout(void *unused _unsd)
 }
 
 static void
-on_keyboard(window_st *window _unsd, event_st event)
+on_keyboard(window_st *window _unsd, const event_st *event)
 {
-    if (event.payload.key.key_char == 'p') {
+    int key = event->payload.key.key_code;
+
+    if (event->payload.key.key_char == 'p') {
         if (is_game_paused()) {
             resume_game();
         } else {
@@ -244,8 +255,6 @@ on_keyboard(window_st *window _unsd, event_st event)
         }
         return;
     }
-
-    int key = event.payload.key.key_code;
 
     if (key == KEY_UP && prev_dir != DIR_DOWN) next_dir = DIR_UP;
     else if (key == KEY_DOWN && prev_dir != DIR_UP) next_dir = DIR_DOWN;
@@ -262,14 +271,12 @@ on_close(window_st *window _unsd)
 static void
 init_window(void)
 {
-    window.size.width = WINDOW_WIDTH;
-    window.size.height = WINDOW_HEIGHT;
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
     window.title = "Snake";
     window.bg_color = COLOR_BG;
     window.on_key_down = on_keyboard;
     window.on_close = on_close;
-
-    gui_window_init_frame(&window);
 }
 
 static void

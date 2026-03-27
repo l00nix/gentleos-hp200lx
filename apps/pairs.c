@@ -64,20 +64,22 @@ static void
 shuffle_icons(void)
 {
     uint8_t deck[GRID_CELL_COUNT];
+    int i, j;
+    uint8_t tmp;
 
-    for (int i = 0; i < PAIR_COUNT; i++) {
+    for (i = 0; i < PAIR_COUNT; i++) {
         deck[i * 2] = i;
         deck[i * 2 + 1] = i;
     }
 
-    for (int i = GRID_CELL_COUNT - 1; i > 0; i--) {
-        int j = rand() % (i + 1);
-        uint8_t tmp = deck[i];
+    for (i = GRID_CELL_COUNT - 1; i > 0; i--) {
+        j = rand() % (i + 1);
+        tmp = deck[i];
         deck[i] = deck[j];
         deck[j] = tmp;
     }
 
-    for (int i = 0; i < GRID_CELL_COUNT; i++) {
+    for (i = 0; i < GRID_CELL_COUNT; i++) {
         button_icons[i] = deck[i];
     }
 }
@@ -87,22 +89,24 @@ draw_button(widget_st *widget)
 {
     int idx = widget->tag1;
     uint8_t state = button_states[idx];
-    rect_st rect = widget->rect;
+    rect_st rect;
     int pressed = 0;
 
+    gui_rect_copy(&rect, &widget->rect);
+
     if (state == BUTTON_STATE_HIDDEN && !pressed) {
-        gui_surface_draw_rect(window.origin, rect, COLOR_BG);
-        gui_surface_draw_h_seg(window.origin, rect.x, rect.y, rect.width, COLOR_BG);
-        gui_surface_draw_v_seg(window.origin, rect.x, rect.y, rect.height, COLOR_BG);
+        gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
+        gui_surface_draw_h_seg(&window.origin, rect.x, rect.y, rect.width, COLOR_BG);
+        gui_surface_draw_v_seg(&window.origin, rect.x, rect.y, rect.height, COLOR_BG);
     } else if (state == BUTTON_STATE_HIDDEN && pressed) {
-        gui_surface_draw_rect(window.origin, rect, COLOR_BG);
+        gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
     } else {
-        gui_surface_draw_rect(window.origin, rect, COLOR_BG);
-        gui_surface_draw_bitmap_centered(window.origin, window.size, rect, icons[button_icons[idx]],
+        gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
+        gui_surface_draw_bitmap_centered(&window.origin, &window.size, &rect, icons[button_icons[idx]],
             COLOR_FG);
     }
 
-    gui_wm_render_window_region(&window, rect);
+    gui_wm_render_window_region(&window, &rect);
 }
 
 static void
@@ -132,6 +136,8 @@ update_status(void)
 static void
 restart_game(void)
 {
+    int i;
+
     shuffle_icons();
 
     first_pick = -1;
@@ -140,7 +146,7 @@ restart_game(void)
     matched_count = 0;
     waiting = 0;
 
-    for (int i = 0; i < GRID_CELL_COUNT; i++) {
+    for (i = 0; i < GRID_CELL_COUNT; i++) {
         button_states[i] = BUTTON_STATE_HIDDEN;
         draw_button(&buttons[i]);
     }
@@ -163,8 +169,10 @@ on_mismatch_timeout(timeout_payload payload _unsd)
 }
 
 static void
-on_cell_pointer_up(widget_st *widget, event_st event _unsd, point_st pos _unsd)
+on_cell_pointer_up(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
 {
+    int idx = widget->tag1;
+
     if (matched_count == PAIR_COUNT) {
         restart_game();
         return;
@@ -173,8 +181,6 @@ on_cell_pointer_up(widget_st *widget, event_st event _unsd, point_st pos _unsd)
     if (waiting) {
         return;
     }
-
-    int idx = widget->tag1;
 
     if (button_states[idx] != BUTTON_STATE_HIDDEN) {
         return;
@@ -207,19 +213,19 @@ on_cell_pointer_up(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 static void
 init_window(void)
 {
-    window.size.width = WINDOW_WIDTH;
-    window.size.height = WINDOW_HEIGHT;
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
     window.title = "Pairs";
     window.bg_color = COLOR_FG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
-
-    gui_window_init_frame(&window);
 }
 
 static void
 init_grid(void)
 {
+    int i, col, row;
+
     grid.cell_width = GRID_CELL_WIDTH;
     grid.cell_height = GRID_CELL_HEIGHT;
     grid.cols = GRID_COLS;
@@ -227,12 +233,12 @@ init_grid(void)
     grid.x = GRID_X;
     grid.y = GRID_Y;
 
-    for (int i = 0; i < GRID_CELL_COUNT; i++) {
-        int col = i % GRID_COLS;
-        int row = i / GRID_COLS;
+    for (i = 0; i < GRID_CELL_COUNT; i++) {
+        col = i % GRID_COLS;
+        row = i / GRID_COLS;
 
         buttons[i].type = WIDGET_TYPE_BUTTON;
-        buttons[i].rect = gui_grid_cell_rect(&grid, col, row);
+        gui_grid_cell_rect(&grid, col, row, &buttons[i].rect);
         buttons[i].tag1 = i;
         buttons[i].draw = draw_button;
         buttons[i].on_pointer_up = on_cell_pointer_up;

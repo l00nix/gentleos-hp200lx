@@ -72,15 +72,17 @@ static int losses;
 static void
 shuffle_deck(void)
 {
+    int i, j;
+    uint8_t tmp;
     deck_pos = 0;
 
-    for (int i = 0; i < DECK_SIZE; i++) {
+    for (i = 0; i < DECK_SIZE; i++) {
         deck[i] = i;
     }
 
-    for (int i = DECK_SIZE - 1; i > 0; i--) {
-        int j = rand() % (i + 1);
-        uint8_t tmp = deck[i];
+    for (i = DECK_SIZE - 1; i > 0; i--) {
+        j = rand() % (i + 1);
+        tmp = deck[i];
         deck[i] = deck[j];
         deck[j] = tmp;
     }
@@ -107,11 +109,13 @@ card_suit(uint8_t card)
 static int
 hand_score(uint8_t *hand, int count)
 {
+    int i;
     int score = 0;
     int aces = 0;
+    int rank;
 
-    for (int i = 0; i < count; i++) {
-        int rank = card_rank(hand[i]);
+    for (i = 0; i < count; i++) {
+        rank = card_rank(hand[i]);
 
         if (rank == 0) {
             score += 11;
@@ -140,26 +144,30 @@ is_blackjack(uint8_t *hand, int count)
 static void
 draw_card(int x, int y, uint8_t card, int face_up)
 {
-    rect_st r = gui_rect_make(x, y, CARD_WIDTH, CARD_HEIGHT);
+    rect_st r;
+    int rank, suit;
+    uint8_t fg, bg;
+
+    gui_rect_init(&r, x, y, CARD_WIDTH, CARD_HEIGHT);
 
     if (!face_up) {
-        gui_surface_draw_rect(window.origin, r, COLOR_BG);
-        gui_surface_draw_border(window.origin, r, COLOR_FG);
-        gui_surface_draw_str_centered(window.origin, r, font_8x8,
+        gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
+        gui_surface_draw_border(&window.origin, &r, COLOR_FG);
+        gui_surface_draw_str_centered(&window.origin, &r, font_8x8,
             "?", COLOR_FG, COLOR_BG);
         return;
     }
 
-    int rank = card_rank(card);
-    int suit = card_suit(card);
-    uint8_t fg = COLOR_FG;
-    uint8_t bg = COLOR_BG;
+    rank = card_rank(card);
+    suit = card_suit(card);
+    fg = COLOR_FG;
+    bg = COLOR_BG;
 
-    gui_surface_draw_rect(window.origin, r, bg);
-    gui_surface_draw_border(window.origin, r, COLOR_FG);
-    gui_surface_draw_str(window.origin, x + 3, y + 2, font_8x8, rank_str[rank], fg, bg);
-    gui_surface_draw_str_centered(window.origin, r, font_8x8, suit_str[suit], fg, bg);
-    gui_surface_draw_str(window.origin,
+    gui_surface_draw_rect(&window.origin, &r, bg);
+    gui_surface_draw_border(&window.origin, &r, COLOR_FG);
+    gui_surface_draw_str(&window.origin, x + 3, y + 2, font_8x8, rank_str[rank], fg, bg);
+    gui_surface_draw_str_centered(&window.origin, &r, font_8x8, suit_str[suit], fg, bg);
+    gui_surface_draw_str(&window.origin,
         x + CARD_WIDTH - strlen(rank_str[rank]) * 8 - 3,
         y + CARD_HEIGHT - 10,
         font_8x8, rank_str[rank], fg, bg);
@@ -172,39 +180,43 @@ draw_hand(uint8_t *hand)
     int count = is_player ? player_hand_count : dealer_hand_count;
     int y = is_player ? CARDS_PLAYER_Y : CARDS_DEALER_Y;
     int all_face_up = is_player || game_state == STATE_OVER;
+    int step, max_step, x, i;
+    rect_st r;
 
-    rect_st r = gui_rect_make(CARDS_X, y, CARDS_WIDTH, CARD_HEIGHT);
-    gui_surface_draw_rect(window.origin, r, COLOR_BG);
+    gui_rect_init(&r, CARDS_X, y, CARDS_WIDTH, CARD_HEIGHT);
+    gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
 
-    int step = CARD_WIDTH + CARD_SPACING;
+    step = CARD_WIDTH + CARD_SPACING;
     if (count > 1) {
-        int max_step = (CARDS_WIDTH - CARD_WIDTH) / (count - 1);
+        max_step = (CARDS_WIDTH - CARD_WIDTH) / (count - 1);
         step = MIN(step, max_step);
     }
 
-    for (int i = 0; i < count; i++) {
-        int x = CARDS_X + i * step;
+    for (i = 0; i < count; i++) {
+        x = CARDS_X + i * step;
         draw_card(x, y, hand[i], all_face_up || i == 0);
     }
 
-    gui_wm_render_window_region(&window, r);
+    gui_wm_render_window_region(&window, &r);
 }
 
 static void
 update_buttons(void)
 {
+    rect_st r;
+
     hit_button.hidden = game_state == STATE_OVER;
     stand_button.hidden = game_state == STATE_OVER;
     deal_button.hidden = game_state == STATE_PLAYING;
 
-    rect_st r = gui_rect_make(1, BUTTONS_Y, WINDOW_WIDTH - 2, BUTTON_HEIGHT);
-    gui_surface_draw_rect(window.origin, r, COLOR_BG);
+    gui_rect_init(&r, 1, BUTTONS_Y, WINDOW_WIDTH - 2, BUTTON_HEIGHT);
+    gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
 
     gui_widget_draw(&hit_button);
     gui_widget_draw(&stand_button);
     gui_widget_draw(&deal_button);
 
-    gui_wm_render_window_region(&window, r);
+    gui_wm_render_window_region(&window, &r);
 }
 
 static void
@@ -236,6 +248,9 @@ end_game(const char *msg)
 static void
 restart_game(void)
 {
+    int player_blackjack;
+    int dealer_blackjack;
+
     shuffle_deck();
 
     player_hand_count = 0;
@@ -251,8 +266,8 @@ restart_game(void)
     draw_hand(player_hand);
     draw_hand(dealer_hand);
 
-    int player_blackjack = is_blackjack(player_hand, player_hand_count);
-    int dealer_blackjack = is_blackjack(dealer_hand, dealer_hand_count);
+    player_blackjack = is_blackjack(player_hand, player_hand_count);
+    dealer_blackjack = is_blackjack(dealer_hand, dealer_hand_count);
 
     if (player_blackjack && dealer_blackjack) {
         end_game("Both Blackjack! Push");
@@ -295,6 +310,8 @@ player_stand(void)
 static void
 player_hit(void)
 {
+    int score;
+
     if (player_hand_count >= HAND_SIZE_MAX) {
         return;
     }
@@ -302,7 +319,7 @@ player_hit(void)
     player_hand[player_hand_count++] = deal_card();
     draw_hand(player_hand);
 
-    int score = hand_score(player_hand, player_hand_count);
+    score = hand_score(player_hand, player_hand_count);
 
     if (score > 21) {
         losses++;
@@ -315,7 +332,7 @@ player_hit(void)
 }
 
 static void
-on_hit_button(widget_st *widget, event_st event _unsd, point_st pos _unsd)
+on_hit_button(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
 {
     gui_widget_draw(widget);
 
@@ -325,7 +342,7 @@ on_hit_button(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 }
 
 static void
-on_stand_button(widget_st *widget, event_st event _unsd, point_st pos _unsd)
+on_stand_button(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
 {
     gui_widget_draw(widget);
 
@@ -335,7 +352,7 @@ on_stand_button(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 }
 
 static void
-on_deal_button(widget_st *widget, event_st event _unsd, point_st pos _unsd)
+on_deal_button(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
 {
     gui_widget_draw(widget);
 
@@ -347,34 +364,32 @@ on_deal_button(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 static void
 init_window(void)
 {
-    window.size.width = WINDOW_WIDTH;
-    window.size.height = WINDOW_HEIGHT;
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
     window.title = "Blackjack";
     window.bg_color = COLOR_BG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
-
-    gui_window_init_frame(&window);
 }
 
 static void
 init_buttons(void)
 {
     hit_button.type = WIDGET_TYPE_BUTTON;
-    hit_button.rect = gui_rect_make(BUTTON_HIT_X, BUTTONS_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
+    gui_rect_init(&hit_button.rect, BUTTON_HIT_X, BUTTONS_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
     hit_button.label = "Hit";
     hit_button.on_pointer_up = on_hit_button;
     gui_window_add_widget(&window, &hit_button);
 
     stand_button.type = WIDGET_TYPE_BUTTON;
-    stand_button.rect = gui_rect_make(BUTTON_STAND_X, BUTTONS_Y, BUTTON_WIDTH,
+    gui_rect_init(&stand_button.rect, BUTTON_STAND_X, BUTTONS_Y, BUTTON_WIDTH,
         BUTTON_HEIGHT);
     stand_button.label = "Stand";
     stand_button.on_pointer_up = on_stand_button;
     gui_window_add_widget(&window, &stand_button);
 
     deal_button.type = WIDGET_TYPE_BUTTON;
-    deal_button.rect = gui_rect_make(BUTTON_DEAL_X, BUTTONS_Y, BUTTON_WIDTH,
+    gui_rect_init(&deal_button.rect, BUTTON_DEAL_X, BUTTONS_Y, BUTTON_WIDTH,
         BUTTON_HEIGHT);
     deal_button.label = "Deal";
     deal_button.hidden = 1;
@@ -395,7 +410,7 @@ show_app(void)
 
     gui_wm_add_window(&window);
     gui_window_draw(&window);
-    gui_surface_draw_h_seg(window.origin, 1, DIVIDER_Y, WINDOW_WIDTH - 2, COLOR_FG);
+    gui_surface_draw_h_seg(&window.origin, 1, DIVIDER_Y, WINDOW_WIDTH - 2, COLOR_FG);
 
     restart_game();
 }

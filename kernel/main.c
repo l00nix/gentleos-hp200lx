@@ -11,11 +11,13 @@
 void
 krn_main(void)
 {
-    krn_timer_init();
     krn_keyboard_init();
-
+    krn_timer_init();
     rand_init();
+
     gui_main();
 
-    while (1);
+    while (1) {
+        /* UNREACHABLE */
+    };
 }

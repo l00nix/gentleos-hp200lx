@@ -80,19 +80,17 @@ draw_month_label(void)
     };
 
     char buf[16];
-    snprintf(buf, sizeof(buf), "%s %d", month_names[selected_month - 1], selected_year);
-
     rect_st rect = {
-        .x = TOOL_BAR_HEIGHT - 1,
-        .y = TOOL_BAR_Y,
-        .width = WINDOW_WIDTH - (2 * TOOL_BAR_HEIGHT) + 2,
-        .height = TOOL_BAR_HEIGHT,
+        TOOL_BAR_HEIGHT - 1, TOOL_BAR_Y,
+        WINDOW_WIDTH - (2 * TOOL_BAR_HEIGHT) + 2, TOOL_BAR_HEIGHT
     };
 
-    gui_surface_draw_border(window.origin, rect, COLOR_FG);
-    gui_surface_draw_str_centered(window.origin, rect, font_8x8, buf,
+    snprintf(buf, sizeof(buf), "%s %d", month_names[selected_month - 1], selected_year);
+
+    gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
+    gui_surface_draw_str_centered(&window.origin, &rect, font_8x8, buf,
         COLOR_FG, COLOR_BG);
-    gui_wm_render_window_region(&window, rect);
+    gui_wm_render_window_region(&window, &rect);
 }
 
 static void
@@ -100,42 +98,43 @@ draw_day_button(widget_st *widget)
 {
     int day = widget->tag1;
     int num_days = get_num_days_in_month(selected_month, selected_year);
-
     int is_in_month = day >= 0 && day < num_days;
     int is_current = (day == current_day - 1 && selected_month == current_month
         && selected_year == current_year);
+    int fg, bg;
+    char buf[3];
 
     if (!is_in_month) {
-        gui_surface_draw_rect(widget->window->origin, widget->rect, COLOR_BG);
-        gui_wm_render_window_region(widget->window, widget->rect);
+        gui_surface_draw_rect(&widget->window->origin, &widget->rect, COLOR_BG);
+        gui_wm_render_window_region(widget->window, &widget->rect);
         return;
     }
 
-    int fg = is_current ? COLOR_BG : COLOR_FG;
-    int bg = is_current ? COLOR_FG : COLOR_BG;
+    fg = is_current ? COLOR_BG : COLOR_FG;
+    bg = is_current ? COLOR_FG : COLOR_BG;
 
-    gui_surface_draw_rect(widget->window->origin, widget->rect, bg);
+    gui_surface_draw_rect(&widget->window->origin, &widget->rect, bg);
 
-    char buf[3];
     snprintf(buf, sizeof(buf), "%d", day + 1);
     gui_surface_draw_str_centered(
-        widget->window->origin,
-        widget->rect,
+        &widget->window->origin,
+        &widget->rect,
         widget->font ? widget->font : font_8x8,
         buf,
         fg,
         bg
     );
 
-    gui_wm_render_window_region(widget->window, widget->rect);
+    gui_wm_render_window_region(widget->window, &widget->rect);
 }
 
 static void
 draw_selected_month(void)
 {
     int day_of_week = get_day_of_week(1, selected_month, selected_year);
+    size_t i;
 
-    for (size_t i = 0; i < GRID_CELLS_COUNT; ++i) {
+    for (i = 0; i < GRID_CELLS_COUNT; ++i) {
         day_buttons[i].tag1 = i - day_of_week;
         gui_widget_draw(&day_buttons[i]);
     }
@@ -147,23 +146,23 @@ static void
 draw_week_bar(void)
 {
     static const char *day_names[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+    int y;
+    rect_st rect;
 
-    for (int y = 0; y < 7; y++) {
-        rect_st rect = {
-            .x = y * (GRID_CELL_WIDTH + 2) - y,
-            .y = WEEK_BAR_Y,
-            .width = GRID_CELL_WIDTH + 2,
-            .height = WEEK_BAR_HEIGHT,
-        };
+    for (y = 0; y < 7; y++) {
+        rect.x = y * (GRID_CELL_WIDTH + 2) - y;
+        rect.y = WEEK_BAR_Y;
+        rect.width = GRID_CELL_WIDTH + 2;
+        rect.height = WEEK_BAR_HEIGHT;
 
-        gui_surface_draw_border(window.origin, rect, COLOR_FG);
-        gui_surface_draw_str_centered(window.origin, rect, font_8x8,
+        gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
+        gui_surface_draw_str_centered(&window.origin, &rect, font_8x8,
             day_names[y], COLOR_FG, COLOR_BG);
     }
 }
 
 static void
-on_prev_button(widget_st *widget _unsd, event_st event _unsd, point_st pos _unsd)
+on_prev_button(widget_st *widget _unsd, const event_st *event _unsd, const point_st *pos _unsd)
 {
     gui_widget_draw(widget);
 
@@ -180,7 +179,7 @@ on_prev_button(widget_st *widget _unsd, event_st event _unsd, point_st pos _unsd
 }
 
 static void
-on_next_button(widget_st *widget _unsd, event_st event _unsd, point_st pos _unsd)
+on_next_button(widget_st *widget _unsd, const event_st *event _unsd, const point_st *pos _unsd)
 {
     gui_widget_draw(widget);
 
@@ -199,19 +198,18 @@ on_next_button(widget_st *widget _unsd, event_st event _unsd, point_st pos _unsd
 static void
 init_window(void)
 {
-    window.size.width = WINDOW_WIDTH;
-    window.size.height = WINDOW_HEIGHT;
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
     window.title = "Calendar";
     window.bg_color = COLOR_BG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
-
-    gui_window_init_frame(&window);
 }
 
 static void
 init_buttons(void)
 {
+    memset(&prev_button, 0, sizeof(prev_button));
     prev_button.type = WIDGET_TYPE_BUTTON;
     prev_button.rect.x = 0;
     prev_button.rect.y = TOOL_BAR_Y;
@@ -220,6 +218,7 @@ init_buttons(void)
     prev_button.label = "<";
     prev_button.on_pointer_up = on_prev_button;
 
+    memset(&next_button, 0, sizeof(prev_button));
     next_button.type = WIDGET_TYPE_BUTTON;
     next_button.rect.x = WINDOW_WIDTH - TOOL_BAR_HEIGHT;
     next_button.rect.y = TOOL_BAR_Y;
@@ -235,6 +234,9 @@ init_buttons(void)
 static void
 init_day_buttons(void)
 {
+    size_t i;
+    int col, row;
+
     grid.cell_width = GRID_CELL_WIDTH;
     grid.cell_height = GRID_CELL_HEIGHT;
     grid.cols = GRID_COLS;
@@ -242,12 +244,12 @@ init_day_buttons(void)
     grid.x = GRID_X;
     grid.y = GRID_Y;
 
-    for (size_t i = 0; i < GRID_CELLS_COUNT; ++i) {
-        int col = i % GRID_COLS;
-        int row = i / GRID_COLS;
+    for (i = 0; i < GRID_CELLS_COUNT; ++i) {
+        col = i % GRID_COLS;
+        row = i / GRID_COLS;
 
         day_buttons[i].type = WIDGET_TYPE_BUTTON;
-        day_buttons[i].rect = gui_grid_cell_rect(&grid, col, row);
+        gui_grid_cell_rect(&grid, col, row, &day_buttons[i].rect);
         day_buttons[i].draw = draw_day_button;
         day_buttons[i].font = font_8x8;
         day_buttons[i].press_on_move_in = 1;

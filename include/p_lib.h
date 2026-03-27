@@ -6,7 +6,7 @@ extern int vsnprintf(char *buf, size_t nbyte, const char *fmt, va_list va);
 extern int snprintf(char *buf, size_t nbyte, const char *fmt, ...);
 /* lib/rand.c */
 extern void rand_init(void);
-extern uint32_t rand(void);
+extern uint16_t rand(void);
 /* lib/sleep.c */
 extern void sleep(uint32_t msecs);
 /* lib/string.c */

@@ -45,7 +45,7 @@ static int cur_row;
 static int game_over;
 static size_t score;
 static size_t best_score;
-static uint64_t timeout_id;
+static uint32_t timeout_id;
 
 static void on_timeout(void *);
 
@@ -102,24 +102,26 @@ update_score(int ds)
 static void
 draw_cell(int row, int col, int active)
 {
-    rect_st cell = gui_grid_cell_rect(&grid, col, row);
-    gui_surface_draw_rect(window.origin, cell, active ? COLOR_FG : COLOR_BG);
-    gui_wm_render_window_region(&window, cell);
+    rect_st cell;
+    gui_grid_cell_rect(&grid, col, row, &cell);
+    gui_surface_draw_rect(&window.origin, &cell, active ? COLOR_FG : COLOR_BG);
+    gui_wm_render_window_region(&window, &cell);
 }
 
 static int
 is_piece_valid(int piece_idx, int row, int col, int rot)
 {
     uint16_t piece = pieces[piece_idx][rot];
+    int dx, dy, x, y;
 
-    for (int dy = 0; dy < 4; ++dy) {
-        for (int dx = 0; dx < 4; ++dx) {
+    for (dy = 0; dy < 4; ++dy) {
+        for (dx = 0; dx < 4; ++dx) {
             if (!(piece & (0x8000 >> (dy * 4 + dx)))) {
                 continue;
             }
 
-            int x = col + dx;
-            int y = row + dy;
+            x = col + dx;
+            y = row + dy;
 
             if (x < 0 || x >= GRID_COLS || y < 0 || y >= GRID_ROWS) {
                 return 0;
@@ -138,15 +140,16 @@ static void
 draw_current_piece(int visible)
 {
     uint16_t piece = pieces[cur_piece][cur_rot];
+    int dx, dy, col, row;
 
-    for (int dy = 0; dy < 4; ++dy) {
-        for (int dx = 0; dx < 4; ++dx) {
+    for (dy = 0; dy < 4; ++dy) {
+        for (dx = 0; dx < 4; ++dx) {
             if (!(piece & (0x8000 >> (dy * 4 + dx)))) {
                 continue;
             }
 
-            int col = cur_col + dx;
-            int row = cur_row + dy;
+            col = cur_col + dx;
+            row = cur_row + dy;
 
             if (col >= 0 && col < GRID_COLS && row >= 0 && row < GRID_ROWS) {
                 draw_cell(row, col, visible);
@@ -159,15 +162,16 @@ static void
 lock_current_piece(void)
 {
     uint16_t piece = pieces[cur_piece][cur_rot];
+    int dx, dy, col, row;
 
-    for (int dy = 0; dy < 4; ++dy) {
-        for (int dx = 0; dx < 4; ++dx) {
+    for (dy = 0; dy < 4; ++dy) {
+        for (dx = 0; dx < 4; ++dx) {
             if (!(piece & (0x8000 >> (dy * 4 + dx)))) {
                 continue;
             }
 
-            int col = cur_col + dx;
-            int row = cur_row + dy;
+            col = cur_col + dx;
+            row = cur_row + dy;
 
             if (col >= 0 && col < GRID_COLS && row >= 0 && row < GRID_ROWS) {
                 board[row][col] = 1;
@@ -201,7 +205,9 @@ move_current_piece(int dy, int dx, int dr)
 static int
 is_row_full(int row)
 {
-    for (int col = 0; col < GRID_COLS; ++col) {
+    int col;
+
+    for (col = 0; col < GRID_COLS; ++col) {
         if (!board[row][col]) {
             return 0;
         }
@@ -213,23 +219,25 @@ is_row_full(int row)
 static void
 clear_rows(void)
 {
-    for (int row = GRID_ROWS - 1; row >= 0; --row) {
+    int row, row_to_shift, row_to_draw, col;
+
+    for (row = GRID_ROWS - 1; row >= 0; --row) {
         if (!is_row_full(row)) {
             continue;
         }
 
-        for (int row_to_shift = row; row_to_shift > 0; --row_to_shift) {
-            for (int col = 0; col < GRID_COLS; ++col) {
+        for (row_to_shift = row; row_to_shift > 0; --row_to_shift) {
+            for (col = 0; col < GRID_COLS; ++col) {
                 board[row_to_shift][col] = board[row_to_shift - 1][col];
             }
         }
 
-        for (int col = 0; col < GRID_COLS; ++col) {
+        for (col = 0; col < GRID_COLS; ++col) {
             board[0][col] = 0;
         }
 
-        for (int row_to_draw = 0; row_to_draw <= row; ++row_to_draw) {
-            for (int col = 0; col < GRID_COLS; ++col) {
+        for (row_to_draw = 0; row_to_draw <= row; ++row_to_draw) {
+            for (col = 0; col < GRID_COLS; ++col) {
                 draw_cell(row_to_draw, col, board[row_to_draw][col]);
             }
         }
@@ -264,11 +272,13 @@ spawn_piece(void)
 static void
 restart_game(void)
 {
+    int row, col;
+
     game_over = 0;
     score = 0;
 
-    for (int row = 0; row < GRID_ROWS; ++row) {
-        for (int col = 0; col < GRID_COLS; ++col) {
+    for (row = 0; row < GRID_ROWS; ++row) {
+        for (col = 0; col < GRID_COLS; ++col) {
             board[row][col] = 0;
             draw_cell(row, col, 0);
         }
@@ -300,10 +310,10 @@ on_timeout(void *unused _unsd)
 }
 
 static void
-on_keyboard(window_st *w _unsd, event_st event)
+on_keyboard(window_st *w _unsd, const event_st *event)
 {
-    int key_char = event.payload.key.key_char;
-    int key_code = event.payload.key.key_code;
+    int key_char = event->payload.key.key_char;
+    int key_code = event->payload.key.key_code;
 
     if (game_over) {
         restart_game();
@@ -347,14 +357,12 @@ on_close(window_st *win _unsd)
 static void
 init_window(void)
 {
-    window.size.width = WINDOW_WIDTH;
-    window.size.height = WINDOW_HEIGHT;
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
     window.title = "Tetris";
     window.bg_color = COLOR_BG;
     window.on_key_down = on_keyboard;
     window.on_close = on_close;
-
-    gui_window_init_frame(&window);
 }
 
 static void

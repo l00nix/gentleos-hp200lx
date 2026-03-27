@@ -9,12 +9,12 @@
 
 enum {
     GRID_COLS = 5,
-    GRID_ROWS = 3,
+    GRID_ROWS = 2,
 
     APP_BUTTON_MARGIN = 8,
     APP_BUTTON_SIZE = 48,
     APP_BUTTON_STRIDE = APP_BUTTON_SIZE + APP_BUTTON_MARGIN,
-    APPS_COUNT = 11,
+    APPS_COUNT = 5,
 
     GRID_X = 1 + APP_BUTTON_MARGIN,
     GRID_Y = TITLE_BAR_HEIGHT + APP_BUTTON_MARGIN,
@@ -28,15 +28,9 @@ enum {
 static app_st *apps[APPS_COUNT] = {
     &app_about,
     &app_clock,
-    &app_calendar,
-    &app_calc,
     &app_fonts,
     &app_sounds,
     &app_snake,
-    &app_mines,
-    &app_tetris,
-    &app_pairs,
-    &app_blackjack,
 };
 
 static window_st window;
@@ -45,7 +39,7 @@ static widget_st app_buttons[APPS_COUNT];
 static widget_st *widgets[APPS_COUNT];
 
 static void
-on_button_pointer_up(widget_st *widget, event_st event _unsd, point_st pos _unsd)
+on_button_pointer_up(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
 {
     gui_widget_draw(widget);
 
@@ -57,6 +51,8 @@ on_button_pointer_up(widget_st *widget, event_st event _unsd, point_st pos _unsd
 static void
 init_window(void)
 {
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
     window.size.width = WINDOW_WIDTH;
     window.size.height = WINDOW_HEIGHT;
     window.title = "Launcher";
@@ -64,16 +60,19 @@ init_window(void)
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
     window.focused_widget = &app_buttons[0];
-
-    gui_window_init_frame(&window);
 }
 
 static void
 init_app_buttons(void)
 {
-    for (size_t i = 0; i < APPS_COUNT; i++) {
-        int col = i % GRID_COLS;
-        int row = i / GRID_COLS;
+    uint16_t i;
+    int col, row;
+
+    memset(&app_buttons, 0, sizeof(app_buttons));
+
+    for (i = 0; i < APPS_COUNT; i++) {
+        col = i % GRID_COLS;
+        row = i / GRID_COLS;
 
         app_buttons[i].type = WIDGET_TYPE_BUTTON;
         app_buttons[i].rect.x = GRID_X + col * APP_BUTTON_STRIDE;

@@ -9,8 +9,8 @@
 
 enum {
     GRID_CELL_WIDTH = 7,
-    GRID_CELL_HEIGHT = 15,
-    GRID_ROWS = 13,
+    GRID_CELL_HEIGHT = 9,
+    GRID_ROWS = 8,
     GRID_COLS = 33,
     GRID_CELLS_COUNT = (GRID_ROWS * GRID_COLS),
     GRID_WIDTH = GRID_WIDTH_SPACED(GRID_CELL_WIDTH, GRID_COLS),
@@ -33,112 +33,76 @@ static grid_st grid;
 static void
 draw_text_lg(int col, int row, const char *text)
 {
+    rect_st r;
+
     if (row >= GRID_COLS) {
         return;
     }
 
-    rect_st r = gui_grid_cell_rect(&grid, col, row);
-    gui_surface_draw_str(window.origin, r.x, r.y, font_8x8,
+    gui_grid_cell_rect(&grid, col, row, &r);
+    gui_surface_draw_str(&window.origin, r.x, r.y, font_8x8,
         text, COLOR_FG, COLOR_BG);
 }
 
 static void
 draw_text_sm(int col, int row, const char *text)
 {
+    rect_st r;
+
     if (row >= GRID_COLS) {
         return;
     }
 
-    rect_st r = gui_grid_cell_rect(&grid, col, row);
-    gui_surface_draw_str(window.origin, r.x, r.y, font_8x8,
+    gui_grid_cell_rect(&grid, col, row, &r);
+    gui_surface_draw_str(&window.origin, r.x, r.y, font_8x8,
         text, COLOR_FG, COLOR_BG);
-}
-
-static void
-draw_cpu_usage(void)
-{
-    static char buf[8];
-    snprintf(buf, sizeof(buf), "%u%%   ", krn_timer_get_cpu_usage());
-
-    rect_st r = gui_grid_cell_rect(&grid, VALUE_COL, 5);
-    gui_surface_draw_str(window.origin, r.x, r.y, font_8x8,
-        buf, COLOR_FG, COLOR_BG);
-
-    r.width = (sizeof(buf) - 1) * 8;
-    gui_wm_render_window_region(&window, r);
 }
 
 static void
 draw_github_line(void)
 {
     const char *text = "   luke8086/gentleos";
+    rect_st r;
 
     int col = (GRID_COLS - strlen(text)) / 2;
     int line = GRID_ROWS - 2;
 
     draw_text_sm(col, line, text);
 
-    rect_st r = gui_grid_cell_rect(&grid, col, line);
+    gui_grid_cell_rect(&grid, col, line, &r);
     r.y -= 5;
-    r.size = bitmap_icon_github.size;
-    gui_surface_draw_bitmap_centered(window.origin, window.size, r, &bitmap_icon_github,
+    r.width = bitmap_icon_github.size.width;
+    r.height = bitmap_icon_github.size.height;
+    gui_surface_draw_bitmap_centered(&window.origin, &window.size, &r, &bitmap_icon_github,
         COLOR_FG);
 }
 
 static void
 draw_info(void)
 {
-    rect_st r = gui_grid_rect(&grid);
-    mboot_info_st *m = krn_core_mboot_info;
-    static char buf[VALUE_LEN + 1];
+    rect_st r;
     int line = 0;
     const char *title = "-=[ GENTLE OS ]=-";
 
-    gui_surface_draw_rect(window.origin, r, window.bg_color);
+    gui_grid_rect(&grid, &r);
+    gui_surface_draw_rect(&window.origin, &r, window.bg_color);
 
     line++;
     draw_text_lg((GRID_COLS - strlen(title)) / 2, line++, title);
     line++;
 
-    if (m->flags & 0x04) {
-        snprintf(buf, sizeof(buf), "%s", m->boot_loader_name);
-        draw_text_sm(LABEL_COL, line, "Boot:");
-        draw_text_sm(VALUE_COL, line++, buf);
-    }
-
-    snprintf(buf, sizeof(buf), "%dx%dx%d", m->fb_width, m->fb_height, 1 << m->fb_bpp);
-    draw_text_sm(LABEL_COL, line, "Display:");
-    draw_text_sm(VALUE_COL, line++, buf);
-
-    draw_text_sm(LABEL_COL, line++, "Busy:");
-    draw_cpu_usage();
-
-    snprintf(buf, sizeof(buf), "%u KB", krn_system_get_total_mem() >> 10);
-    draw_text_sm(LABEL_COL, line, "Mem:");
-    draw_text_sm(VALUE_COL, line++, buf);
-
-    snprintf(buf, sizeof(buf), "%u KB", krn_system_get_used_mem() >> 10);
-    draw_text_sm(LABEL_COL, line, "Used:");
-    draw_text_sm(VALUE_COL, line++, buf);
-
-    snprintf(buf, sizeof(buf), "%u KB", krn_system_get_avail_mem() >> 10);
-    draw_text_sm(LABEL_COL, line, "Avail:");
-    draw_text_sm(VALUE_COL, line++, buf);
-
     draw_github_line();
 
-    gui_wm_render_window_region(&window, r);
+    gui_wm_render_window_region(&window, &r);
 }
 
 static void
 init_window(void)
 {
-    window.size.width = WINDOW_WIDTH;
-    window.size.height = WINDOW_HEIGHT;
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
     window.title = "About";
     window.bg_color = COLOR_BG;
-
-    gui_window_init_frame(&window);
 }
 
 static void
@@ -153,16 +117,6 @@ init_grid(void)
 }
 
 static void
-on_timeout(void *unused _unsd)
-{
-    if (window.visible) {
-        draw_cpu_usage();
-    }
-
-    gui_timeout_add(1000, on_timeout, NULL);
-}
-
-static void
 show_app(void)
 {
     static int initialized = 0;
@@ -170,7 +124,6 @@ show_app(void)
     if (!initialized) {
         init_window();
         init_grid();
-        on_timeout(NULL);
         initialized = 1;
     }
 

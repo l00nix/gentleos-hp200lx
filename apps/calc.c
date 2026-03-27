@@ -124,6 +124,9 @@ static void
 update_display(void)
 {
     static char buf[32];
+    rect_st rect;
+    font_st *font;
+    int text_width, text_x, text_y;
 
     if (error) {
         snprintf(buf, sizeof(buf), "ERR");
@@ -131,38 +134,41 @@ update_display(void)
         snprintf(buf, sizeof(buf), "%d", current_val);
     }
 
-    rect_st rect = gui_rect_make(DISPLAY_X, DISPLAY_Y, DISPLAY_WIDTH, DISPLAY_HEIGHT);
+    gui_rect_init(&rect, DISPLAY_X, DISPLAY_Y, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
-    gui_surface_draw_rect(window.origin, rect, COLOR_BG);
+    gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
 
-    font_st *font = font_8x8;
-    int text_width = strlen(buf) * font->size.width;
-    int text_x = rect.x + rect.width - text_width - 10;
-    int text_y = rect.y + (rect.height - font_8x8->size.height) / 2;
-    gui_surface_draw_str(window.origin, text_x, text_y, font,
+    font = font_8x8;
+    text_width = strlen(buf) * font->size.width;
+    text_x = rect.x + rect.width - text_width - 10;
+    text_y = rect.y + (rect.height - font_8x8->size.height) / 2;
+    gui_surface_draw_str(&window.origin, text_x, text_y, font,
         buf, COLOR_FG, COLOR_BG);
 
-    gui_wm_render_window_region(&window, rect);
+    gui_wm_render_window_region(&window, &rect);
 }
 
 static void
-on_button_press(widget_st *widget, event_st event _unsd, point_st pos _unsd)
+on_button_press(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
 {
+    uint8_t op;
+    int val;
+    val_t new_val;
+
     gui_widget_draw(widget);
 
-    uint8_t op = widget->label[0];
+    op = widget->label[0];
 
     if (error && op != 'C') {
         return;
     }
 
     if (op >= '0' && op <= '9') {
-        int val = op - '0';
+        val = op - '0';
         if (new_number) {
             current_val = val;
             new_number = 0;
         } else {
-            val_t new_val;
             if (__builtin_mul_overflow(current_val, 10, &new_val) ||
                 __builtin_add_overflow(new_val, val, &new_val)) {
                 return;
@@ -204,19 +210,20 @@ on_button_press(widget_st *widget, event_st event _unsd, point_st pos _unsd)
 static void
 init_window(void)
 {
-    window.size.width = WINDOW_WIDTH;
-    window.size.height = WINDOW_HEIGHT;
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
     window.title = "Calculator";
     window.bg_color = COLOR_FG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
-
-    gui_window_init_frame(&window);
 }
 
 static void
 init_buttons(void)
 {
+    int row, col, idx;
+    widget_st *button;
+
     grid.cell_width = BUTTON_WIDTH;
     grid.cell_height = BUTTON_HEIGHT;
     grid.cols = BUTTON_COLS;
@@ -224,13 +231,13 @@ init_buttons(void)
     grid.x = GRID_X;
     grid.y = GRID_Y;
 
-    for (int row = 0; row < BUTTON_ROWS; ++row) {
-        for (int col = 0; col < BUTTON_COLS; ++col) {
-            int idx = row * BUTTON_COLS + col;
-            widget_st *button = &button_widgets[idx];
+    for (row = 0; row < BUTTON_ROWS; ++row) {
+        for (col = 0; col < BUTTON_COLS; ++col) {
+            idx = row * BUTTON_COLS + col;
+            button = &button_widgets[idx];
 
             button->type = WIDGET_TYPE_BUTTON;
-            button->rect = gui_grid_cell_rect(&grid, col, row);
+            gui_grid_cell_rect(&grid, col, row, &button->rect);
             button->hide_border = 1;
             button->window = &window;
             button->label = button_labels[idx];
@@ -262,4 +269,3 @@ app_st app_calc = {
     &bitmap_icon_calc,
     show_app,
 };
-

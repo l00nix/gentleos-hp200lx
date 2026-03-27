@@ -10,6 +10,7 @@
 enum {
     PIT_CR0 = 0x40,
     PIT_CWR = 0x43,
+    TIMER_HZ = 20,
 };
 
 volatile uint8_t krn_timer_is_cpu_idle = 0;
@@ -18,12 +19,12 @@ volatile static uint32_t timer_msecs = 0;
 static uint32_t idle_ticks = 0;
 static uint32_t total_ticks = 0;
 
-static void
-krn_timer_handle_intr(isr_stack_st *isr_stack _unsd)
+static void interrupt
+krn_timer_handle_intr()
 {
     event_st event;
 
-    timer_msecs += 10;
+    timer_msecs += (1000 / TIMER_HZ);
 
     total_ticks++;
     if (krn_timer_is_cpu_idle) {
@@ -33,7 +34,7 @@ krn_timer_handle_intr(isr_stack_st *isr_stack _unsd)
     event.type = EVENT_TIMER_TICK;
     event.payload.timer.timer_msecs = timer_msecs;
 
-    (void)krn_event_ipush(event);
+    (void)krn_event_ipush(&event);
 }
 
 uint32_t
@@ -45,8 +46,11 @@ krn_timer_get_msecs(void)
 uint8_t
 krn_timer_get_cpu_usage(void)
 {
+    return 0;
+
+    /*
     uint32_t idle, total;
-    uint32_t eflags = cpu_get_eflags();
+    uint16_t flags = cpu_get_flags();
 
     cpu_cli();
 
@@ -55,20 +59,21 @@ krn_timer_get_cpu_usage(void)
     idle_ticks = 0;
     total_ticks = 0;
 
-    cpu_set_eflags(eflags);
+    cpu_set_flags(flags);
 
     if (total == 0) {
         return 0;
     }
 
     return (uint8_t)(100 - (idle * 100 / total));
+    */
 }
 
 void
 krn_timer_init(void)
 {
-    uint8_t hz = 100;
-    uint32_t div = 1193180 / hz;
+    isr_handler_fn far *ivt = MK_FP(0, 0);
+    uint16_t div = 1193180 / TIMER_HZ;
 
     /* Set Counter 0, write both LSB and MSB, use mode 3, binary counter */
     outb(0x36, PIT_CWR);
@@ -77,5 +82,5 @@ krn_timer_init(void)
     outb((uint8_t)((div >> 0) & 0xFF), PIT_CR0);
     outb((uint8_t)((div >> 8) & 0xFF), PIT_CR0);
 
-    krn_interrupt_set_handler(0x20, krn_timer_handle_intr);
+    ivt[0x1c] = krn_timer_handle_intr;
 }

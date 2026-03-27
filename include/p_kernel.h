@@ -1,19 +1,12 @@
-/* kernel/core_c.c */
-extern uint32_t krn_core_mboot_header[];
-extern mboot_info_st *krn_core_mboot_info;
-extern void krn_core_c_main(void);
-extern void krn_core_c_isr_handle(isr_stack_st *isr_stack);
 /* kernel/debug.c */
 extern void krn_debug_printf(const char *fmt, ...);
-extern void krn_debug_beep(unsigned hz, unsigned msecs, unsigned count);
+extern void krn_debug_beep_adv(unsigned hz, unsigned msecs, unsigned count);
+extern void krn_debug_beep(void);
 /* kernel/event.c */
-extern int krn_event_ipush(event_st event);
-extern int krn_event_push(event_st event);
+extern int krn_event_ipush(event_st *event);
+extern int krn_event_push(event_st *event);
 extern int krn_event_pop(event_st *event);
 extern uint16_t krn_event_count(void);
-/* kernel/intr.c */
-extern void krn_interrupt_handle(isr_stack_st *isr_stack);
-extern void krn_interrupt_set_handler(uint8_t int_no, isr_handler_fn handler);
 /* kernel/keyboard.c */
 extern void krn_keyboard_init(void);
 /* kernel/main.c */

@@ -12,6 +12,7 @@ krn_debug_printf(const char *fmt, ...)
 {
     int i, count;
     static char buf[4096];
+    regs_st regs;
 
     va_list args;
 
@@ -25,7 +26,7 @@ krn_debug_printf(const char *fmt, ...)
 }
 
 void
-krn_debug_beep(unsigned hz, unsigned msecs, unsigned count)
+krn_debug_beep_adv(unsigned hz, unsigned msecs, unsigned count)
 {
     unsigned i;
 
@@ -35,4 +36,10 @@ krn_debug_beep(unsigned hz, unsigned msecs, unsigned count)
         krn_speaker_stop();
         sleep(msecs);
     }
+}
+
+void
+krn_debug_beep(void)
+{
+    krn_debug_beep_adv(300, 200, 1);
 }

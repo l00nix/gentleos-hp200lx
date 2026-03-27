@@ -10,6 +10,12 @@
 
 #include <stdarg.h>
 
+/* Silence IDE warnings */
+#ifdef __clang__
+#define far
+#define interrupt
+#endif
+
 #ifdef __TURBOC__
 
 typedef char int8_t;
@@ -31,6 +37,10 @@ typedef unsigned long uintptr_t;
 
 #pragma warn -rch
 #pragma warn -par
+
+#define MK_FP(seg, ofs) ((void far *) (((uint32_t)(seg) << 16) | (uint16_t)(ofs)))
+
+typedef void interrupt far (*isr_handler_fn)(void);
 
 #else
 
@@ -60,12 +70,30 @@ typedef int32_t ssize_t;
     _already_called = 1;
 
 /* lib/cpu.s */
-uint32_t cpu_get_eflags(void);
-void cpu_set_eflags(uint32_t eflags);
+typedef union {
+    struct {
+        uint16_t ax, bx, cx, dx;
+        uint16_t bp, di, si, flags;
+    } x;
+
+    struct {
+        uint8_t al, ah;
+        uint8_t bl, bh;
+        uint8_t cl, ch;
+        uint8_t dl, dh;
+    } h;
+} regs_st;
+
+uint16_t cpu_get_flags(void);
+void cpu_set_flags(uint16_t flags);
 void cpu_cli(void);
 void cpu_hlt(void);
 uint8_t inb(uint16_t port);
 void outb(uint8_t value, uint16_t port);
+void intr(int, regs_st *);
+
+/* lib/string.c */
+extern void far *memcpy_far(void far *dest, const void *src, size_t n);
 
 #include "p_lib.h"
 

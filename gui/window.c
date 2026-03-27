@@ -7,58 +7,67 @@
 
 #include <gui.h>
 
-rect_st
-gui_window_rect(window_st *window)
+void
+gui_window_rect(window_st *window, rect_st *out)
 {
-    return (rect_st) {
-        .pos = window->origin,
-        .size = window->size,
-    };
-}
-
-rect_st
-gui_window_area(window_st *window)
-{
-    return (rect_st) {
-        .x = 0,
-        .y = 0,
-        .width = window->size.width,
-        .height = window->size.height,
-    };
+    gui_rect_init(out,
+        window->origin.x,
+        window->origin.y,
+        window->size.width,
+        window->size.height
+    );
 }
 
 void
-gui_window_init_frame(window_st *window)
+gui_window_area(window_st *window, rect_st *out)
 {
-    window->origin = gui_rect_center(gui_window_area(window), gui_wm_container).pos;
+    gui_rect_init(out, 0, 0, window->size.width, window->size.height);
+}
+
+void
+gui_window_init(window_st *window, int width, int height)
+{
+    rect_st rect;
+
+    memset(window, 0, sizeof(*window));
+
+    window->size.width = width;
+    window->size.height = height;
+
+    gui_window_area(window, &rect);
+    gui_rect_center(&rect, &gui_wm_container);
+
+    window->origin.x = rect.x;
+    window->origin.y = rect.y;
 }
 
 void
 gui_window_draw(window_st *window)
 {
-    gui_surface_draw_border(window->origin, gui_window_area(window), COLOR_FG);
+    rect_st area, title_rect, shrunken, content_rect;
+    size_t i;
 
-    rect_st title_rect = {
-        .x = 0,
-        .y = 0,
-        .width = window->size.width,
-        .height = TITLE_BAR_HEIGHT,
-    };
+    gui_window_area(window, &area);
+    gui_surface_draw_border(&window->origin, &area, COLOR_FG);
 
-    gui_surface_draw_border(window->origin, title_rect, COLOR_FG);
-    gui_surface_draw_rect(window->origin, gui_rect_shrink(title_rect, 1), COLOR_BG);
-    gui_surface_draw_str_centered(window->origin, title_rect,
+    gui_rect_init(&title_rect, 0, 0, window->size.width, TITLE_BAR_HEIGHT);
+    gui_surface_draw_border(&window->origin, &title_rect, COLOR_FG);
+    gui_rect_copy(&shrunken, &title_rect);
+    gui_rect_shrink(&shrunken, 1);
+    gui_surface_draw_rect(&window->origin, &shrunken, COLOR_BG);
+    gui_surface_draw_str_centered(&window->origin, &title_rect,
         font_8x8, window->title, COLOR_FG, COLOR_BG);
 
-    rect_st content_rect = {
-        .x = 1,
-        .y = TITLE_BAR_HEIGHT + 1,
-        .width = window->size.width - 2,
-        .height = window->size.height - TITLE_BAR_HEIGHT - 2,
-    };
-    gui_surface_draw_rect(window->origin, content_rect, window->bg_color);
+    gui_rect_init(&content_rect,
+        1,
+        TITLE_BAR_HEIGHT + 1,
+        window->size.width - 2,
+        window->size.height - TITLE_BAR_HEIGHT - 2
+    );
 
-    for (size_t i = 0; i < window->widgets_count; ++i) {
+    gui_surface_draw_rect(&window->origin, &content_rect, window->bg_color);
+
+    for (i = 0; i < window->widgets_count; ++i) {
         gui_widget_draw(window->widgets[i]);
     }
 }
@@ -88,30 +97,34 @@ static void
 gui_window_update_focus(window_st *window, int dir_x, int dir_y)
 {
     widget_st *current_widget = window->focused_widget;
+    widget_st *best_widget = NULL;
+    widget_st *w;
+    int cur_x, cur_y;
+    int min_fwd_dist = 0xfff;
+    int min_lat_dist = 0xfff;
+    int diff_x, diff_y;
+    int fwd_dist, lat_dist;
+    size_t i;
 
     if (!current_widget) {
         return;
     }
 
-    int cur_x = current_widget->focus_x;
-    int cur_y = current_widget->focus_y;
+    cur_x = current_widget->focus_x;
+    cur_y = current_widget->focus_y;
 
-    widget_st *best_widget = NULL;
-    int min_fwd_dist = 0xffffff;
-    int min_lat_dist = 0xffffff;
-
-    for (size_t i = 0; i < window->widgets_count; ++i) {
-        widget_st *w = window->widgets[i];
+    for (i = 0; i < window->widgets_count; ++i) {
+        w = window->widgets[i];
 
         if (!w->focusable || w == current_widget) {
             continue;
         }
 
-        int diff_x = w->focus_x - cur_x;
-        int diff_y = w->focus_y - cur_y;
+        diff_x = w->focus_x - cur_x;
+        diff_y = w->focus_y - cur_y;
 
-        int fwd_dist = dir_x ? (diff_x * dir_x) : (diff_y * dir_y);
-        int lat_dist = dir_x ? ABS(diff_y) : ABS(diff_x);
+        fwd_dist = dir_x ? (diff_x * dir_x) : (diff_y * dir_y);
+        lat_dist = dir_x ? ABS(diff_y) : ABS(diff_x);
 
         if (fwd_dist <= 0) {
             continue;
@@ -133,25 +146,26 @@ gui_window_update_focus(window_st *window, int dir_x, int dir_y)
 }
 
 void
-gui_window_on_key_down(window_st *window, event_st event)
+gui_window_on_key_down(window_st *window, const event_st *event)
 {
     widget_st *focused = window->focused_widget;
+    point_st p_zero = { 0, 0 };
 
     if (focused) {
-        switch (event.payload.key.key_code) {
+        switch (event->payload.key.key_code) {
             case KEY_LEFT:  gui_window_update_focus(window, -1, 0); return;
             case KEY_RIGHT: gui_window_update_focus(window, 1, 0); return;
             case KEY_UP:    gui_window_update_focus(window, 0, -1); return;
             case KEY_DOWN:  gui_window_update_focus(window, 0, 1); return;
         }
 
-        if (event.payload.key.key_code == KEY_ENTER && focused->on_pointer_up) {
-            focused->on_pointer_up(focused, event, (point_st){0, 0});
+        if (event->payload.key.key_code == KEY_ENTER && focused->on_pointer_up) {
+            focused->on_pointer_up(focused, event, &p_zero);
             return;
         }
     }
 
-    if (event.payload.key.key_code == KEY_ESC) {
+    if (event->payload.key.key_code == KEY_ESC) {
         app_launcher.show();
     }
 

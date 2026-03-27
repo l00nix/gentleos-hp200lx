@@ -8,165 +8,171 @@
 #include <gui.h>
 
 const rect_st GUI_RECT_ZERO = {
-    .x = 0,
-    .y = 0,
-    .width = 0,
-    .height = 0,
+    0, 0, 0, 0
 };
 
-const point_st GUI_POINT_ZERO = {
-    .x = 0,
-    .y = 0,
-};
+const point_st GUI_POINT_ZERO = { 0, 0 };
 
-int
-gui_rect_is_empty(rect_st r)
+void
+gui_rect_copy(rect_st *dst, const rect_st *src)
 {
-    return r.width <= 0 || r.height <= 0;
+    dst->x = src->x;
+    dst->y = src->y;
+    dst->width = src->width;
+    dst->height = src->height;
 }
 
-rect_st
-gui_rect_make(int x, int y, int width, int height)
+void
+gui_point_copy(point_st *dst, const point_st *src)
 {
-    return (rect_st) {
-        .x = x,
-        .y = y,
-        .width = width,
-        .height = height,
-    };
+    dst->x = src->x;
+    dst->y = src->y;
 }
 
-rect_st
-gui_rect_translate(rect_st r, point_st v)
+void
+gui_size_copy(size_st *dst, const size_st *src)
 {
-    r.x += v.x;
-    r.y += v.y;
-    return r;
-}
-
-rect_st
-gui_rect_translate_back(rect_st r, point_st v)
-{
-    r.x -= v.x;
-    r.y -= v.y;
-    return r;
+    dst->width = src->width;
+    dst->height = src->height;
 }
 
 int
-gui_rect_contains_point(rect_st r, point_st p)
+gui_rect_is_empty(const rect_st *r)
 {
-    return p.x >= r.x && p.x < r.x + r.width && p.y >= r.y && p.y < r.y + r.height;
+    return r->width <= 0 || r->height <= 0;
 }
 
-rect_st
-gui_rect_center(rect_st r, rect_st container)
+void
+gui_rect_init(rect_st *out, int x, int y, int width, int height)
 {
-    r.x = container.x + (container.width - r.width) / 2;
-    r.x = r.x < container.x ? container.x : r.x;
-
-    r.y = container.y + (container.height - r.height) / 2;
-    r.y = r.y < container.y ? container.y : r.y;
-
-    return r;
+    out->x = x;
+    out->y = y;
+    out->width = width;
+    out->height = height;
 }
 
-rect_st
-gui_rect_limit(rect_st r, rect_st container)
+void
+gui_rect_translate(rect_st *r, const point_st *v)
 {
-    if (r.x < container.x) {
-        r.x = container.x;
-    }
-
-    if (r.y < container.y) {
-        r.y = container.y;
-    }
-
-    if (r.x + r.width > container.x + container.width) {
-        r.x = container.x + container.width - r.width;
-    }
-
-    if (r.y + r.height > container.y + container.height) {
-        r.y = container.y + container.height - r.height;
-    }
-
-    return r;
+    r->x += v->x;
+    r->y += v->y;
 }
 
-rect_st
-gui_rect_shrink(rect_st r, int amount)
+void
+gui_rect_translate_back(rect_st *r, const point_st *v)
 {
-    r.x += amount;
-    r.y += amount;
-
-    r.width -= amount * 2;
-    r.width = MAX(r.width, 0);
-
-    r.height -= amount * 2;
-    r.height = MAX(r.height, 0);
-
-    return r;
+    r->x -= v->x;
+    r->y -= v->y;
 }
 
-rect_st
-gui_rect_enclose(rect_st a, rect_st b)
+int
+gui_rect_contains_point(const rect_st *r, const point_st *p)
 {
+    return p->x >= r->x && p->x < r->x + r->width && p->y >= r->y && p->y < r->y + r->height;
+}
+
+void
+gui_rect_center(rect_st *r, const rect_st *container)
+{
+    r->x = container->x + (container->width - r->width) / 2;
+    r->x = r->x < container->x ? container->x : r->x;
+
+    r->y = container->y + (container->height - r->height) / 2;
+    r->y = r->y < container->y ? container->y : r->y;
+}
+
+void
+gui_rect_limit(rect_st *r, const rect_st *container)
+{
+    if (r->x < container->x) {
+        r->x = container->x;
+    }
+
+    if (r->y < container->y) {
+        r->y = container->y;
+    }
+
+    if (r->x + r->width > container->x + container->width) {
+        r->x = container->x + container->width - r->width;
+    }
+
+    if (r->y + r->height > container->y + container->height) {
+        r->y = container->y + container->height - r->height;
+    }
+}
+
+void
+gui_rect_shrink(rect_st *r, int amount)
+{
+    r->x += amount;
+    r->y += amount;
+
+    r->width -= amount * 2;
+    r->width = MAX(r->width, 0);
+
+    r->height -= amount * 2;
+    r->height = MAX(r->height, 0);
+}
+
+void
+gui_rect_enclose(rect_st *a, const rect_st *b)
+{
+    int x2, y2;
+
     if (gui_rect_is_empty(a)) {
-        return b;
+        gui_rect_copy(a, b);
+        return;
     }
 
     if (gui_rect_is_empty(b)) {
-        return a;
+        return;
     }
 
-    int x2 = MAX(a.x + a.width, b.x + b.width);
-    int y2 = MAX(a.y + a.height, b.y + b.height);
+    x2 = MAX((a->x + a->width), (b->x + b->width));
+    y2 = MAX((a->y + a->height), (b->y + b->height));
 
-    return (rect_st) {
-        .x = MIN(a.x, b.x),
-        .y = MIN(a.y, b.y),
-        .width = x2 - MIN(a.x, b.x),
-        .height = y2 - MIN(a.y, b.y),
-    };
+    a->x = MIN(a->x, b->x);
+    a->y = MIN(a->y, b->y);
+    a->width = x2 - a->x;
+    a->height = y2 - a->y;
 }
 
-rect_st
-gui_rect_clip(rect_st r, rect_st clipper)
+void
+gui_rect_clip(rect_st *r, const rect_st *clipper)
 {
-    if (r.x < clipper.x) {
-        r.width -= clipper.x - r.x;
-        r.width = r.width > 0 ? r.width : 0;
-        r.x = clipper.x;
+    if (r->x < clipper->x) {
+        r->width -= clipper->x - r->x;
+        r->width = r->width > 0 ? r->width : 0;
+        r->x = clipper->x;
     }
 
-    if (r.y < clipper.y) {
-        r.height -= clipper.y - r.y;
-        r.height = r.height > 0 ? r.height : 0;
-        r.y = clipper.y;
+    if (r->y < clipper->y) {
+        r->height -= clipper->y - r->y;
+        r->height = r->height > 0 ? r->height : 0;
+        r->y = clipper->y;
     }
 
-    if (r.x + r.width > clipper.x + clipper.width) {
-        r.width = clipper.x + clipper.width - r.x;
+    if (r->x + r->width > clipper->x + clipper->width) {
+        r->width = clipper->x + clipper->width - r->x;
     }
 
-    if (r.y + r.height > clipper.y + clipper.height) {
-        r.height = clipper.y + clipper.height - r.y;
+    if (r->y + r->height > clipper->y + clipper->height) {
+        r->height = clipper->y + clipper->height - r->y;
     }
 
-    if (r.width < 0 || r.height < 0) {
-        r.width = 0;
-        r.height = 0;
+    if (r->width < 0 || r->height < 0) {
+        r->width = 0;
+        r->height = 0;
     }
-
-    return r;
 }
 
 const char *
-gui_rect_format(rect_st r)
+gui_rect_format(const rect_st *r)
 {
     static char buf[100];
 
     snprintf(buf, sizeof(buf), "<x: %d, y: %d, w: %d, h: %d>",
-        r.pos.x, r.pos.y, r.size.width, r.size.height);
+        r->x, r->y, r->width, r->height);
 
     return buf;
 }

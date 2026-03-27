@@ -7,6 +7,8 @@
 
 #include <gui.h>
 
+/*
+
 static const uint8_t gui_vga_dac_indexes[16] = {
     0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x14, 0x07,
     0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F
@@ -25,8 +27,15 @@ gui_vga_set_color(int index, uint32_t rgb)
     outb((rgb >>  2) & 0x3F, 0x3C9);
 }
 
+gui_vga_set_color(0x0f, 0x00ff00);
+
+*/
+
 void
 gui_vga_init(void)
 {
-    gui_vga_set_color(0x0f, 0x00ff00);
+    regs_st regs;
+    regs.h.ah = 0x00;
+    regs.h.al = GUI_VIDEO_MODE;
+    intr(0x10, &regs);
 }
