@@ -12,21 +12,21 @@ memcpy(void *dest, const void *src, size_t n)
 {
     uint8_t *srcb = (uint8_t *)src;
     uint8_t *destb = (uint8_t *)dest;
-    uint32_t *srcq, *destq;
+    uint16_t *srcw, *destw;
 
-    for (; n > 0 && ((uintptr_t)destb % 4) != 0; --n) {
+    for (; n > 0 && ((uintptr_t)destb % 2) != 0; --n) {
         *(destb++) = *(srcb++);
     }
 
-    srcq = (uint32_t *)srcb;
-    destq = (uint32_t *)destb;
+    srcw = (uint16_t *)srcb;
+    destw = (uint16_t *)destb;
 
-    for (; n >= sizeof(*destq); n -= sizeof(*destq)) {
-        *(destq++) = *(srcq++);
+    for (; n >= sizeof(*destw); n -= sizeof(*destw)) {
+        *(destw++) = *(srcw++);
     }
 
-    srcb = (uint8_t *)srcq;
-    destb = (uint8_t *)destq;
+    srcb = (uint8_t *)srcw;
+    destb = (uint8_t *)destw;
     for (; n > 0; --n) {
         *(destb++) = *(srcb++);
     }
@@ -39,20 +39,20 @@ memset(void *dest, int c, size_t n)
 {
     uint8_t *dest8 = (uint8_t *)dest;
     uint8_t c8 = (unsigned char)c;
-    uint32_t *dest32, c32;
+    uint16_t *dest16, c16;
 
-    for (; n > 0 && ((uintptr_t)dest8 % 4) != 0; --n) {
+    for (; n > 0 && ((uintptr_t)dest8 % 2) != 0; --n) {
         *(dest8++) = c8;
     }
 
-    dest32 = (uint32_t *)dest8;
-    c32 = c8 | ((uint32_t)c8 << 8) | ((uint32_t)c8 << 16) | ((uint32_t)c8 << 24);
+    dest16 = (uint16_t *)dest8;
+    c16 = c8 | ((uint16_t)c8 << 8);
 
-    for (; n >= sizeof(*dest32); n -= sizeof(*dest32)) {
-        *(dest32++) = c32;
+    for (; n >= sizeof(*dest16); n -= sizeof(*dest16)) {
+        *(dest16++) = c16;
     }
 
-    dest8 = (uint8_t *)dest32;
+    dest8 = (uint8_t *)dest16;
     for (; n > 0; --n) {
         *(dest8++) = c8;
     }
