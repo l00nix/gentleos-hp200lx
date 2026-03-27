@@ -24,6 +24,8 @@ typedef unsigned long uint32_t;
 typedef long ssize_t;
 typedef unsigned long size_t;
 
+typedef unsigned long uintptr_t;
+
 #define _unsd
 #define _packed
 

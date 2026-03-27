@@ -251,8 +251,7 @@ pf_cprintf(const char *fmt, struct pf_config *c)
     c->error = 0;
     c->emitted = 0;
 
-    while ((ch = *fmt++)) {
-
+    for (ch = *(fmt++); ch != 0; ch = *(fmt++)) {
         /*
          * PF_STATE_DEFAULT
          */
@@ -456,6 +455,9 @@ pf_vasnprintf(char *buf, size_t nbyte, const char *fmt,
 int
 vsnprintf(char *buf, size_t nbyte, const char *fmt, va_list va)
 {
+#ifdef __TURBOC__
+    return vasnprintf(buf, nbyte, fmt, &va, 0, 0);
+#else
     va_list va_copy;
     int ret;
 
@@ -464,6 +466,7 @@ vsnprintf(char *buf, size_t nbyte, const char *fmt, va_list va)
     va_end(va_copy);
 
     return ret;
+#endif
 }
 
 int
