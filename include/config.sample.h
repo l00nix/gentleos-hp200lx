@@ -1,3 +1,5 @@
 #define GUI_WIDTH 640
 #define GUI_HEIGHT 200
-#define GUI_VIDEO_MODE 0x0e
+#define GUI_VIDEO_MODE 0x06
+#define GUI_VIDEO_SEG 0xb800
+#define GUI_VIDEO_INTERLEAVED 1

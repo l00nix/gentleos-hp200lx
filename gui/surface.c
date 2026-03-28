@@ -7,17 +7,12 @@
 
 #include <gui.h>
 
-static uint8_t far *gui_surface_fb_pixels = 0;
-static int gui_surface_fb_pitch = 0;
-
 static uint8_t gui_surface_pixels[GUI_FB_PLANE_SIZE];
 static rect_st gui_surface_dirty_rect = { 0 };
 
 void
 gui_surface_init(void)
 {
-    gui_surface_fb_pixels = MK_FP(0xA000, 0);
-    gui_surface_fb_pitch = GUI_FB_PITCH;
     gui_rect_init(&gui_surface_dirty_rect, 0, 0, 0, 0);
     memset(gui_surface_pixels, 0, sizeof(gui_surface_pixels));
 }
@@ -40,6 +35,7 @@ gui_surface_flush(void)
 {
     rect_st rect;
     int x0, x1, byte_x0, byte_count, y;
+    uint8_t far *vram = MK_FP(GUI_VIDEO_SEG, 0);
 
     gui_rect_copy(&rect, &gui_surface_dirty_rect);
 
@@ -47,22 +43,25 @@ gui_surface_flush(void)
         return;
     }
 
-    rect.x = 0;
-    rect.y = 0;
-    rect.width = GUI_WIDTH;
-    rect.height = GUI_HEIGHT;
-
     x0 = (rect.x / 8) * 8;
     x1 = ((rect.x + rect.width + 7) / 8) * 8;
     byte_x0 = x0 / 8;
     byte_count = (x1 - x0) / 8;
 
-    for (y = rect.y; y < rect.y + rect.height; ++y) {
+    for (y = rect.y; y < rect.y + rect.height; y += 1) {
+#if GUI_VIDEO_INTERLEAVED
         memcpy_far(
-            gui_surface_fb_pixels + y * gui_surface_fb_pitch + byte_x0,
+            vram + (y % 2) * 0x2000 + (y / 2) * GUI_FB_PITCH + byte_x0,
             gui_surface_pixels + y * GUI_FB_PITCH + byte_x0,
             byte_count
         );
+#else
+        memcpy_far(
+            vram + y * GUI_FB_PITCH + byte_x0,
+            gui_surface_pixels + y * GUI_FB_PITCH + byte_x0,
+            byte_count
+        );
+#endif
     }
 
     gui_rect_copy(&gui_surface_dirty_rect, &GUI_RECT_ZERO);
