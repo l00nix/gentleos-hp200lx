@@ -26,13 +26,16 @@ OBJS = \\
 INCLUDES = \\
 <INCLUDES>
 
-all: build\\kernel.com
+all: build\\kernel.com build\\boot.bin
 
 run: all
     build\\kernel.com
 
 build\\kernel.com: $(OBJS)
 	tlink @misc\\tlink.rsp
+
+build\\boot.bin: boot\\boot.s
+    $(AS) -o build\\boot.bin boot\\boot.s
 
 <OBJECT_RULES>
 """

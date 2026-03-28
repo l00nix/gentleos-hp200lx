@@ -50,13 +50,16 @@ INCLUDES = \
 	include\p_kernel.h \
 	include\p_lib.h \
 
-all: build\kernel.com
+all: build\kernel.com build\boot.bin
 
 run: all
     build\kernel.com
 
 build\kernel.com: $(OBJS)
 	tlink @misc\tlink.rsp
+
+build\boot.bin: boot\boot.s
+    $(AS) -o build\boot.bin boot\boot.s
 
 build\kernel\start.obj: kernel\start.s $(INCLUDES)
 	$(AS) $(ASFLAGS) -o build\kernel\start.obj kernel\start.s
