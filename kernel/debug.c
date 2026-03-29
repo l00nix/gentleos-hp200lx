@@ -7,11 +7,12 @@
 
 #include <kernel.h>
 
+static char buf[256];
+
 void
 krn_debug_printf(const char *fmt, ...)
 {
     int i, count;
-    static char buf[4096];
 
     va_list args;
 
@@ -28,7 +29,6 @@ void
 krn_debug_printf_bios(const char *fmt, ...)
 {
     int i;
-    static char buf[4096];
 
     va_list args;
 
