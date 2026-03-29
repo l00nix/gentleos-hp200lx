@@ -3,58 +3,58 @@ AS      = nasm
 CFLAGS  = -mt -u- -g1 -c -Iinclude
 ASFLAGS = -f obj
 
-OBJS = \
-	build\kernel\start.obj \
-	build\apps\about.obj \
-	build\apps\clock.obj \
-	build\apps\fonts.obj \
-	build\apps\launcher.obj \
-	build\apps\snake.obj \
-	build\apps\sounds.obj \
-	build\data\data_bmp.obj \
-	build\data\data_fnt.obj \
-	build\gui\button.obj \
-	build\gui\grid.obj \
-	build\gui\main.obj \
-	build\gui\rect.obj \
-	build\gui\status.obj \
-	build\gui\surface.obj \
-	build\gui\timeout.obj \
-	build\gui\vga.obj \
-	build\gui\widget.obj \
-	build\gui\window.obj \
-	build\gui\wm.obj \
-	build\kernel\debug.obj \
-	build\kernel\event.obj \
-	build\kernel\keyboard.obj \
-	build\kernel\main.obj \
-	build\kernel\rtc.obj \
-	build\kernel\speaker.obj \
-	build\kernel\system.obj \
-	build\kernel\timer.obj \
-	build\lib\bios.obj \
-	build\lib\cpu.obj \
-	build\lib\math.obj \
-	build\lib\printf.obj \
-	build\lib\rand.obj \
-	build\lib\sleep.obj \
-	build\lib\string.obj \
+OBJS = &
+	build\kernel\start.obj &
+	build\apps\about.obj &
+	build\apps\clock.obj &
+	build\apps\fonts.obj &
+	build\apps\launcher.obj &
+	build\apps\snake.obj &
+	build\apps\sounds.obj &
+	build\data\data_bmp.obj &
+	build\data\data_fnt.obj &
+	build\gui\button.obj &
+	build\gui\grid.obj &
+	build\gui\main.obj &
+	build\gui\rect.obj &
+	build\gui\status.obj &
+	build\gui\surface.obj &
+	build\gui\timeout.obj &
+	build\gui\vga.obj &
+	build\gui\widget.obj &
+	build\gui\window.obj &
+	build\gui\wm.obj &
+	build\kernel\debug.obj &
+	build\kernel\event.obj &
+	build\kernel\keyboard.obj &
+	build\kernel\main.obj &
+	build\kernel\rtc.obj &
+	build\kernel\speaker.obj &
+	build\kernel\system.obj &
+	build\kernel\timer.obj &
+	build\lib\bios.obj &
+	build\lib\cpu.obj &
+	build\lib\math.obj &
+	build\lib\printf.obj &
+	build\lib\rand.obj &
+	build\lib\sleep.obj &
+	build\lib\string.obj &
 
-INCLUDES = \
-	include\config.h \
-	include\gui.h \
-	include\kernel.h \
-	include\lib.h \
-	include\p_apps.h \
-	include\p_data.h \
-	include\p_gui.h \
-	include\p_kernel.h \
-	include\p_lib.h \
+INCLUDES = &
+	include\config.h &
+	include\gui.h &
+	include\kernel.h &
+	include\lib.h &
+	include\p_apps.h &
+	include\p_data.h &
+	include\p_gui.h &
+	include\p_kernel.h &
+	include\p_lib.h &
 
-all: build\fd720.img
+all: build\fd720.img .SYMBOLIC
     @echo All done!
 
-boot: all
+boot: all .SYMBOLIC
     boot build\fd720.img
 
 build\kernel.com: $(OBJS)
@@ -68,6 +68,13 @@ build\mkdisk.exe: misc\mkdisk.c
 
 build\fd720.img: build\kernel.com build\boot.bin build\mkdisk.exe
     build\mkdisk
+
+clean: .SYMBOLIC
+	-del build\data\*.obj
+	-del build\gui\*.obj
+	-del build\lib\*.obj
+	-del build\kernel\*.obj
+	-del build\*.*
 
 build\kernel\start.obj: kernel\start.s $(INCLUDES)
 	$(AS) $(ASFLAGS) -o build\kernel\start.obj kernel\start.s

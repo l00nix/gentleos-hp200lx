@@ -20,16 +20,16 @@ AS      = nasm
 CFLAGS  = -mt -u- -g1 -c -Iinclude
 ASFLAGS = -f obj
 
-OBJS = \\
+OBJS = &
 <OBJS>
 
-INCLUDES = \\
+INCLUDES = &
 <INCLUDES>
 
-all: build\\fd720.img
+all: build\\fd720.img .SYMBOLIC
     @echo All done!
 
-boot: all
+boot: all .SYMBOLIC
     boot build\\fd720.img
 
 build\\kernel.com: $(OBJS)
@@ -43,6 +43,13 @@ build\\mkdisk.exe: misc\\mkdisk.c
 
 build\\fd720.img: build\\kernel.com build\\boot.bin build\\mkdisk.exe
     build\\mkdisk
+
+clean: .SYMBOLIC
+	-del build\\data\\*.obj
+	-del build\\gui\\*.obj
+	-del build\\lib\\*.obj
+	-del build\\kernel\\*.obj
+	-del build\\*.*
 
 <OBJECT_RULES>
 """
@@ -96,11 +103,11 @@ def make_object_rule(src):
 
 def generate_makefile(sources, includes):
     objs = "\n".join(
-        f"\tbuild\\{path_to_dos(os.path.splitext(src)[0])}.obj \\" for src in sources
+        f"\tbuild\\{path_to_dos(os.path.splitext(src)[0])}.obj &" for src in sources
     )
 
     incs = "\n".join(
-        f"\t{path_to_dos(h)} \\" for h in includes
+        f"\t{path_to_dos(h)} &" for h in includes
     )
 
     rules = "\n\n".join(make_object_rule(src) for src in sources)
