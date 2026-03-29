@@ -11,18 +11,21 @@ enum {
     GRID_COLS = 5,
     GRID_ROWS = 2,
 
-    APP_BUTTON_MARGIN = 8,
-    APP_BUTTON_SIZE = 48,
-    APP_BUTTON_STRIDE = APP_BUTTON_SIZE + APP_BUTTON_MARGIN,
+    APP_BUTTON_H_MARGIN = 16,
+    APP_BUTTON_V_MARGIN = 8,
+    APP_BUTTON_WIDTH = 96,
+    APP_BUTTON_HEIGHT = 48,
+    APP_BUTTON_H_STRIDE = APP_BUTTON_WIDTH + APP_BUTTON_H_MARGIN,
+    APP_BUTTON_V_STRIDE = APP_BUTTON_HEIGHT + APP_BUTTON_V_MARGIN,
     APPS_COUNT = 9,
 
-    GRID_X = 1 + APP_BUTTON_MARGIN,
-    GRID_Y = TITLE_BAR_HEIGHT + APP_BUTTON_MARGIN,
-    GRID_WIDTH = GRID_COLS * APP_BUTTON_STRIDE - APP_BUTTON_MARGIN,
-    GRID_HEIGHT = GRID_ROWS * APP_BUTTON_STRIDE - APP_BUTTON_MARGIN,
+    GRID_X = 1 + APP_BUTTON_H_MARGIN,
+    GRID_Y = TITLE_BAR_HEIGHT + APP_BUTTON_V_MARGIN,
+    GRID_WIDTH = GRID_COLS * APP_BUTTON_H_STRIDE - APP_BUTTON_H_MARGIN,
+    GRID_HEIGHT = GRID_ROWS * APP_BUTTON_V_STRIDE - APP_BUTTON_V_MARGIN,
 
-    WINDOW_WIDTH = GRID_X + GRID_WIDTH + APP_BUTTON_MARGIN + 1,
-    WINDOW_HEIGHT = GRID_Y + GRID_HEIGHT + APP_BUTTON_MARGIN + 1,
+    WINDOW_WIDTH = GRID_X + GRID_WIDTH + APP_BUTTON_H_MARGIN + 1,
+    WINDOW_HEIGHT = GRID_Y + GRID_HEIGHT + APP_BUTTON_V_MARGIN + 1,
 };
 
 static app_st *apps[APPS_COUNT] = {
@@ -79,10 +82,10 @@ init_app_buttons(void)
         row = i / GRID_COLS;
 
         app_buttons[i].type = WIDGET_TYPE_BUTTON;
-        app_buttons[i].rect.x = GRID_X + col * APP_BUTTON_STRIDE;
-        app_buttons[i].rect.y = GRID_Y + row * APP_BUTTON_STRIDE;
-        app_buttons[i].rect.width = APP_BUTTON_SIZE;
-        app_buttons[i].rect.height = APP_BUTTON_SIZE;
+        app_buttons[i].rect.x = GRID_X + col * APP_BUTTON_H_STRIDE;
+        app_buttons[i].rect.y = GRID_Y + row * APP_BUTTON_V_STRIDE;
+        app_buttons[i].rect.width = APP_BUTTON_WIDTH;
+        app_buttons[i].rect.height = APP_BUTTON_HEIGHT;
         app_buttons[i].bitmap = apps[i]->icon;
         app_buttons[i].tag1 = i;
         app_buttons[i].on_pointer_up = on_button_pointer_up;

@@ -229,10 +229,17 @@ gui_surface_draw_bitmap(const point_st *origin, const size_st *bounds, int dst_x
 
     gui_rect_init(&src_rect, 0, 0, bitmap->size.width, bitmap->size.height);
 
+#if GUI_VIDEO_MODE == 0x06
+    if (dst_x + src_rect.width * 2 > bounds->width) {
+        src_rect.width = (bounds->width - dst_x) / 2;
+        src_rect.width = src_rect.width < 0 ? 0 : src_rect.width;
+    }
+#else
     if (dst_x + src_rect.width > bounds->width) {
         src_rect.width = bounds->width - dst_x;
         src_rect.width = src_rect.width < 0 ? 0 : src_rect.width;
     }
+#endif
 
     if (dst_y + src_rect.height > bounds->height) {
         src_rect.height = bounds->height - dst_y;
@@ -253,7 +260,12 @@ gui_surface_draw_bitmap(const point_st *origin, const size_st *bounds, int dst_x
                 continue;
             }
 
+#if GUI_VIDEO_MODE == 0x06
+            gui_surface_draw_pixel(target_x + j * 2, target_y + i, fill_bit);
+            gui_surface_draw_pixel(target_x + j * 2 + 1, target_y + i, fill_bit);
+#else
             gui_surface_draw_pixel(target_x + j, target_y + i, fill_bit);
+#endif
         }
     }
 }
@@ -262,7 +274,11 @@ void
 gui_surface_draw_bitmap_centered(const point_st *origin, const size_st *bounds, const rect_st *rect,
     bitmap_st *bitmap, uint8_t fill)
 {
+#if GUI_VIDEO_MODE == 0x06
+    int x = rect->x + (rect->width - bitmap->size.width * 2) / 2;
+#else
     int x = rect->x + (rect->width - bitmap->size.width) / 2;
+#endif
     int y = rect->y + (rect->height - bitmap->size.height) / 2;
 
     gui_surface_draw_bitmap(origin, bounds, x, y, bitmap, fill);
