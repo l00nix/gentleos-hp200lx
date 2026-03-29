@@ -50,16 +50,23 @@ INCLUDES = \
 	include\p_kernel.h \
 	include\p_lib.h \
 
-all: build\kernel.com build\boot.bin
+all: build\fd720.img
+    @echo All done!
 
-run: all
-    build\kernel.com
+boot: all
+    boot build\fd720.img
 
 build\kernel.com: $(OBJS)
 	tlink @misc\tlink.rsp
 
 build\boot.bin: boot\boot.s
     $(AS) -o build\boot.bin boot\boot.s
+
+build\mkdisk.exe: misc\mkdisk.c
+    $(CC) -nbuild misc\mkdisk.c
+
+build\fd720.img: build\kernel.com build\boot.bin build\mkdisk.exe
+    build\mkdisk
 
 build\kernel\start.obj: kernel\start.s $(INCLUDES)
 	$(AS) $(ASFLAGS) -o build\kernel\start.obj kernel\start.s
