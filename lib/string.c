@@ -8,25 +8,25 @@
 #include <lib.h>
 
 void far *
-memcpy_far(void far *dest, const void *src, size_t n)
+memcpy_far(void far *dest, const void far *src, size_t n)
 {
-    uint8_t *srcb = (uint8_t *)src;
+    uint8_t far *srcb = (uint8_t far *)src;
     uint8_t far *destb = (uint8_t far *)dest;
-    uint16_t *srcw;
+    uint16_t far *srcw;
     uint16_t far *destw;
 
     for (; n > 0 && ((uintptr_t)destb % 2) != 0; --n) {
         *(destb++) = *(srcb++);
     }
 
-    srcw = (uint16_t *)srcb;
+    srcw = (uint16_t far *)srcb;
     destw = (uint16_t far *)destb;
 
     for (; n >= sizeof(*destw); n -= sizeof(*destw)) {
         *(destw++) = *(srcw++);
     }
 
-    srcb = (uint8_t *)srcw;
+    srcb = (uint8_t far *)srcw;
     destb = (uint8_t far *)destw;
     for (; n > 0; --n) {
         *(destb++) = *(srcb++);

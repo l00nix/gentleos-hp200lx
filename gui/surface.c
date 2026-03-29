@@ -7,14 +7,14 @@
 
 #include <gui.h>
 
-static uint8_t gui_surface_pixels[GUI_FB_PLANE_SIZE];
+static uint8_t far *gui_surface_pixels;
 static rect_st gui_surface_dirty_rect = { 0 };
 
 void
 gui_surface_init(void)
 {
+    gui_surface_pixels = krn_heap_alloc(GUI_FB_PLANE_SIZE);
     gui_rect_init(&gui_surface_dirty_rect, 0, 0, 0, 0);
-    memset(gui_surface_pixels, 0, sizeof(gui_surface_pixels));
 }
 
 void
@@ -111,7 +111,8 @@ gui_surface_draw_rect(const point_st *origin, const rect_st *rect, uint8_t color
 {
     rect_st translated;
     int l_x, r_x, l_byte, r_byte;
-    uint8_t l_mask, r_mask, fill, *dst_plane;
+    uint8_t mask, l_mask, r_mask, fill;
+    uint8_t far *dst_plane, far *dst_row;
     int y;
 
     gui_rect_copy(&translated, rect);
@@ -134,10 +135,10 @@ gui_surface_draw_rect(const point_st *origin, const rect_st *rect, uint8_t color
     dst_plane = gui_surface_pixels;
 
     for (y = translated.y; y < translated.y + translated.height; ++y) {
-        uint8_t *dst_row = dst_plane + y * GUI_FB_PITCH;
+        dst_row = dst_plane + y * GUI_FB_PITCH;
 
         if (l_byte == r_byte) {
-            uint8_t mask = l_mask & r_mask;
+            mask = l_mask & r_mask;
             dst_row[l_byte] = (dst_row[l_byte] & ~mask) | (fill & mask);
             continue;
         }
@@ -145,7 +146,7 @@ gui_surface_draw_rect(const point_st *origin, const rect_st *rect, uint8_t color
         dst_row[l_byte] = (dst_row[l_byte] & ~l_mask) | (fill & l_mask);
 
         if (r_byte > l_byte + 1) {
-            memset(dst_row + l_byte + 1, fill, r_byte - l_byte - 1);
+            memset_far(dst_row + l_byte + 1, fill, r_byte - l_byte - 1);
         }
 
         dst_row[r_byte] = (dst_row[r_byte] & ~r_mask) | (fill & r_mask);
