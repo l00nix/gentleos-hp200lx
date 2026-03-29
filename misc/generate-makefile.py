@@ -21,11 +21,11 @@ OBJS = &
 INCLUDES = &
 <INCLUDES>
 
-all: build\\fd720.img .SYMBOLIC
+all: build\\fd1440.img .SYMBOLIC
     @echo All done!
 
 boot: all .SYMBOLIC
-    boot build\\fd720.img
+    boot build\\fd1440.img
 
 build\\kernel.com: $(OBJS)
 	tlink @misc\\tlink.rsp
@@ -36,7 +36,7 @@ build\\boot.bin: boot\\boot.s
 build\\mkdisk.exe: misc\\mkdisk.c
     $(CC) -nbuild misc\\mkdisk.c
 
-build\\fd720.img: build\\kernel.com build\\boot.bin build\\mkdisk.exe
+build\\fd1440.img: build\\kernel.com build\\boot.bin build\\mkdisk.exe
     build\\mkdisk
 
 clean: .SYMBOLIC
