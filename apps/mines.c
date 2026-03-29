@@ -10,10 +10,10 @@
 static void reveal_cell(int col, int row);
 
 enum {
-    GRID_CELL_WIDTH = 17,
-    GRID_CELL_HEIGHT = 11,
-    GRID_ROWS = 11,
-    GRID_COLS = 11,
+    GRID_CELL_WIDTH = 23,
+    GRID_CELL_HEIGHT = 13,
+    GRID_ROWS = 10,
+    GRID_COLS = 10,
     GRID_CELL_COUNT = GRID_ROWS * GRID_COLS,
     GRID_WIDTH = GRID_WIDTH_SPACED(GRID_CELL_WIDTH, GRID_COLS),
     GRID_HEIGHT = GRID_HEIGHT_SPACED(GRID_CELL_HEIGHT, GRID_ROWS),
@@ -104,43 +104,36 @@ draw_cell(widget_st *widget)
     int row = idx / GRID_COLS;
     uint8_t state = cell_state[col][row];
     uint8_t type = cell_type[col][row];
-    rect_st rect;
-    int pressed = 0;
+    rect_st rect, num_rect, dot_rect;
     char num_str[2];
 
     num_str[0] = 0;
     num_str[1] = 0;
 
     gui_rect_copy(&rect, &widget->rect);
+    gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
 
-    if (state == CELL_STATE_HIDDEN && !pressed) {
-        gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
-        gui_surface_draw_h_seg(&window.origin, rect.x, rect.y, rect.width, COLOR_BG);
-        gui_surface_draw_v_seg(&window.origin, rect.x, rect.y, rect.height, COLOR_BG);
-    } else if (state == CELL_STATE_HIDDEN && pressed) {
-        gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
-    } else if (state == CELL_STATE_FLAGGED) {
-        gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
-        gui_surface_draw_h_seg(&window.origin, rect.x, rect.y, rect.width, COLOR_BG);
-        gui_surface_draw_v_seg(&window.origin, rect.x, rect.y, rect.height, COLOR_BG);
+    if (state == CELL_STATE_FLAGGED) {
         gui_surface_draw_bitmap_centered(&window.origin, &window.size, &rect, &bitmap_sprite_flag,
             COLOR_FG);
     } else if (state == CELL_STATE_REVEALED && type == CELL_TYPE_MINE) {
-        gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
         gui_surface_draw_bitmap_centered(&window.origin, &window.size, &rect, &bitmap_sprite_mine,
             COLOR_FG);
     } else if (state == CELL_STATE_REVEALED && type == CELL_TYPE_EMPTY) {
-        gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
+        gui_rect_init(&dot_rect, rect.x + rect.width / 2 - 1, rect.y + rect.height / 2, 2, 1);
+        gui_surface_draw_rect(&window.origin, &dot_rect, COLOR_FG);
     } else if (state == CELL_STATE_REVEALED) {
-        rect_st num_rect;
         num_str[0] = '0' + type;
 
         gui_rect_init(&num_rect, rect.x + 1, rect.y + 1,
             rect.width - 1, rect.height - 1);
 
-        gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
         gui_surface_draw_str_centered(&window.origin, &num_rect, font_8x8,
             num_str, COLOR_FG, COLOR_BG);
+    }
+
+    if (widget == widget->window->focused_widget) {
+        gui_surface_draw_border(&window.origin, &widget->rect, COLOR_FG);
     }
 
     gui_wm_render_window_region(&window, &rect);
@@ -149,9 +142,10 @@ draw_cell(widget_st *widget)
 static void
 update_cell(int col, int row, uint8_t type, uint8_t state)
 {
+    int idx = row * GRID_COLS + col;
     cell_type[col][row] = type;
     cell_state[col][row] = state;
-    draw_cell(&cell_widgets[row * GRID_COLS + col]);
+    draw_cell(&cell_widgets[idx]);
 }
 
 static void
@@ -228,9 +222,9 @@ update_status(void)
     int state = get_game_state();
 
     if (state == GAME_STATE_LOST) {
-        gui_status_set("Game Over! Press any cell to start a new game");
+        gui_status_set("Game Over! Press r to restart");
     } else if (state == GAME_STATE_WON) {
-        gui_status_set("You Win! Press any cell to start a new game");
+        gui_status_set("You Win! Press r to restart");
     } else {
         size_t flagged_count = count_cells_by_state(CELL_STATE_FLAGGED);
         size_t remaining = MINE_COUNT > flagged_count ? MINE_COUNT - flagged_count : 0;
@@ -267,6 +261,10 @@ reveal_cell(int col, int row)
 {
     int adjacent_mine_count;
 
+    if (get_game_state() != GAME_STATE_PLAYING) {
+        return;
+    }
+
     if (col < 0 || col >= GRID_COLS || row < 0 || row >= GRID_ROWS) {
         return;
     }
@@ -300,37 +298,8 @@ reveal_cell(int col, int row)
 }
 
 static void
-on_cell_pointer_down(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
+flag_cell(int col, int row)
 {
-    draw_cell(widget);
-}
-
-static void
-on_cell_pointer_up(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
-{
-    int idx = widget->tag1;
-    int col = idx % GRID_COLS;
-    int row = idx / GRID_COLS;
-
-    if (get_game_state() != GAME_STATE_PLAYING) {
-        restart_game();
-        return;
-    }
-
-    if (cell_state[col][row] != CELL_STATE_HIDDEN) {
-        return;
-    }
-
-    reveal_cell(col, row);
-}
-
-static void
-on_cell_pointer_alt(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
-{
-    int idx = widget->tag1;
-    int col = idx % GRID_COLS;
-    int row = idx / GRID_COLS;
-
     if (get_game_state() != GAME_STATE_PLAYING) {
         return;
     }
@@ -345,6 +314,29 @@ on_cell_pointer_alt(widget_st *widget, const event_st *event _unsd, const point_
 }
 
 static void
+on_cell_pointer_up(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
+{
+    reveal_cell(widget->tag1 % GRID_COLS, widget->tag1 / GRID_COLS);
+}
+
+static void
+on_key_up(window_st *win _unsd, const event_st *event)
+{
+    int ch = event->payload.key.key_char;
+    widget_st *cell = win->focused_widget;
+
+    if (ch == 'r' && get_game_state() != GAME_STATE_PLAYING) {
+        restart_game();
+        return;
+    }
+
+    if (ch == 'f' && cell) {
+        flag_cell(cell->tag1 % GRID_COLS, cell->tag1 / GRID_COLS);
+        return;
+    }
+}
+
+static void
 init_window(void)
 {
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -353,6 +345,8 @@ init_window(void)
     window.bg_color = COLOR_FG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
+    window.focused_widget = &cell_widgets[0];
+    window.on_key_down = on_key_up;
 }
 
 static void
@@ -377,9 +371,10 @@ init_grid(void)
         gui_grid_cell_rect(&grid, col, row, &cell_widgets[i].rect);
         cell_widgets[i].draw = draw_cell;
         cell_widgets[i].tag1 = i;
-        cell_widgets[i].on_pointer_down = on_cell_pointer_down;
         cell_widgets[i].on_pointer_up = on_cell_pointer_up;
-        cell_widgets[i].on_pointer_alt = on_cell_pointer_alt;
+        cell_widgets[i].focusable = 1;
+        cell_widgets[i].focus_x = col;
+        cell_widgets[i].focus_y = row;
 
         gui_window_add_widget(&window, &cell_widgets[i]);
     }
