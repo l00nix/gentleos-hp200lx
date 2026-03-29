@@ -8,8 +8,8 @@
 #include <gui.h>
 
 enum {
-    GRID_CELL_WIDTH = 40,
-    GRID_CELL_HEIGHT = 20,
+    GRID_CELL_WIDTH = 72,
+    GRID_CELL_HEIGHT = 36,
     GRID_ROWS = 4,
     GRID_COLS = 5,
     GRID_CELL_COUNT = GRID_ROWS * GRID_COLS,
@@ -90,20 +90,17 @@ draw_button(widget_st *widget)
     int idx = widget->tag1;
     uint8_t state = button_states[idx];
     rect_st rect;
-    int pressed = 0;
 
     gui_rect_copy(&rect, &widget->rect);
+    gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
 
-    if (state == BUTTON_STATE_HIDDEN && !pressed) {
-        gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
-        gui_surface_draw_h_seg(&window.origin, rect.x, rect.y, rect.width, COLOR_BG);
-        gui_surface_draw_v_seg(&window.origin, rect.x, rect.y, rect.height, COLOR_BG);
-    } else if (state == BUTTON_STATE_HIDDEN && pressed) {
-        gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
-    } else {
-        gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
-        gui_surface_draw_bitmap_centered(&window.origin, &window.size, &rect, icons[button_icons[idx]],
-            COLOR_FG);
+    if (state == BUTTON_STATE_REVEALED || state == BUTTON_STATE_MATCHED) {
+        gui_surface_draw_bitmap_centered(&window.origin, &window.size, &rect,
+            icons[button_icons[idx]], COLOR_FG);
+    }
+
+    if (widget == widget->window->focused_widget) {
+        gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
     }
 
     gui_wm_render_window_region(&window, &rect);
@@ -127,7 +124,7 @@ static void
 update_status(void)
 {
     if (matched_count == PAIR_COUNT) {
-        gui_status_set("You won after %d tries! Click to play again", tries);
+        gui_status_set("You won after %d tries! Press r play again", tries);
     } else {
         gui_status_set("Tries: %d", tries);
     }
@@ -173,11 +170,6 @@ on_cell_pointer_up(widget_st *widget, const event_st *event _unsd, const point_s
 {
     int idx = widget->tag1;
 
-    if (matched_count == PAIR_COUNT) {
-        restart_game();
-        return;
-    }
-
     if (waiting) {
         return;
     }
@@ -211,6 +203,17 @@ on_cell_pointer_up(widget_st *widget, const event_st *event _unsd, const point_s
 }
 
 static void
+on_key_up(window_st *window _unsd, const event_st *event)
+{
+    int ch = event->payload.key.key_char;
+
+    if (ch == 'r' && matched_count == PAIR_COUNT) {
+        restart_game();
+        return;
+    }
+}
+
+static void
 init_window(void)
 {
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -219,6 +222,8 @@ init_window(void)
     window.bg_color = COLOR_FG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
+    window.focused_widget = &buttons[0];
+    window.on_key_up = on_key_up;
 }
 
 static void
@@ -233,6 +238,8 @@ init_grid(void)
     grid.x = GRID_X;
     grid.y = GRID_Y;
 
+    memset(buttons, 0, sizeof(buttons));
+
     for (i = 0; i < GRID_CELL_COUNT; i++) {
         col = i % GRID_COLS;
         row = i / GRID_COLS;
@@ -243,6 +250,9 @@ init_grid(void)
         buttons[i].draw = draw_button;
         buttons[i].on_pointer_up = on_cell_pointer_up;
         buttons[i].hide_border = 1;
+        buttons[i].focusable = 1;
+        buttons[i].focus_x = col;
+        buttons[i].focus_y = row;
 
         gui_window_add_widget(&window, &buttons[i]);
     }
