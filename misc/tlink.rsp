@@ -21,6 +21,7 @@
 	build\gui\wm.obj+
 	build\kernel\debug.obj+
 	build\kernel\event.obj+
+	build\kernel\heap.obj+
 	build\kernel\keyboard.obj+
 	build\kernel\main.obj+
 	build\kernel\rtc.obj+

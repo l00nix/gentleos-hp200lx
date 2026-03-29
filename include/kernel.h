@@ -42,6 +42,8 @@ typedef struct {
 extern void *krn_link_start;
 extern void *krn_link_end;
 
+void far *krn_heap_alloc(uint16_t);
+
 #include "p_kernel.h"
 
 #endif /* _KERNEL_H_ */

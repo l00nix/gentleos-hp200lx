@@ -94,6 +94,7 @@ void intr(int, regs_st *);
 
 /* lib/string.c */
 extern void far *memcpy_far(void far *dest, const void *src, size_t n);
+void far *memset_far(void far *dest, int c, size_t n);
 
 #include "p_lib.h"
 

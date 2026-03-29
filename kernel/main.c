@@ -13,6 +13,7 @@ extern uint16_t krn_data_seg;
 void
 krn_main(void)
 {
+    krn_heap_init();
     krn_keyboard_init();
     krn_timer_init();
     rand_init();

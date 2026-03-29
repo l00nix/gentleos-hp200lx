@@ -26,6 +26,7 @@ OBJS = &
 	build\gui\wm.obj &
 	build\kernel\debug.obj &
 	build\kernel\event.obj &
+	build\kernel\heap.obj &
 	build\kernel\keyboard.obj &
 	build\kernel\main.obj &
 	build\kernel\rtc.obj &
@@ -141,6 +142,9 @@ build\kernel\debug.obj: kernel\debug.c $(INCLUDES)
 
 build\kernel\event.obj: kernel\event.c $(INCLUDES)
 	$(CC) $(CFLAGS) -nbuild\kernel kernel\event.c
+
+build\kernel\heap.obj: kernel\heap.c $(INCLUDES)
+	$(CC) $(CFLAGS) -nbuild\kernel kernel\heap.c
 
 build\kernel\keyboard.obj: kernel\keyboard.c $(INCLUDES)
 	$(CC) $(CFLAGS) -nbuild\kernel kernel\keyboard.c

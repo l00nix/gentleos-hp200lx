@@ -8,6 +8,8 @@ extern int krn_event_ipush(event_st *event);
 extern int krn_event_push(event_st *event);
 extern int krn_event_pop(event_st *event);
 extern uint16_t krn_event_count(void);
+/* kernel/heap.c */
+extern void krn_heap_init(void);
 /* kernel/keyboard.c */
 extern void krn_keyboard_init(void);
 /* kernel/main.c */

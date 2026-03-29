@@ -89,6 +89,33 @@ memset(void *dest, int c, size_t n)
     return dest;
 }
 
+void far *
+memset_far(void far *dest, int c, size_t n)
+{
+    uint8_t far *dest8 = (uint8_t far *)dest;
+    uint8_t c8 = (unsigned char)c;
+    uint16_t far *dest16;
+    uint16_t c16;
+
+    for (; n > 0 && ((uintptr_t)dest8 % 2) != 0; --n) {
+        *(dest8++) = c8;
+    }
+
+    dest16 = (uint16_t far *)dest8;
+    c16 = c8 | ((uint16_t)c8 << 8);
+
+    for (; n >= sizeof(*dest16); n -= sizeof(*dest16)) {
+        *(dest16++) = c16;
+    }
+
+    dest8 = (uint8_t far *)dest16;
+    for (; n > 0; --n) {
+        *(dest8++) = c8;
+    }
+
+    return dest;
+}
+
 int32_t
 strcmp(const char *s1, const char *s2)
 {
