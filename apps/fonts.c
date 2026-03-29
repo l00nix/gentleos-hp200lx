@@ -11,8 +11,8 @@ enum {
     TOOL_BAR_Y = TITLE_BAR_HEIGHT - 1,
     TOOL_BAR_HEIGHT = 24,
 
-    GRID_CELL_WIDTH = 10,
-    GRID_CELL_HEIGHT = 10,
+    GRID_CELL_WIDTH = 16,
+    GRID_CELL_HEIGHT = 12,
     GRID_ROWS = 8,
     GRID_COLS = 32,
     GRID_CELLS_COUNT = (GRID_ROWS * GRID_COLS),
@@ -27,12 +27,9 @@ enum {
 
 static window_st window;
 
-static widget_st prev_button;
-static widget_st next_button;
 static widget_st char_buttons[GRID_CELLS_COUNT];
-static widget_st *widgets[GRID_CELLS_COUNT + 2];
+static widget_st *widgets[GRID_CELLS_COUNT];
 
-static widget_st *active_char_button = NULL;
 static size_t current_font = 0;
 
 static grid_st grid;
@@ -40,20 +37,21 @@ static grid_st grid;
 static void
 update_status(void)
 {
-    if (!active_char_button) {
+    widget_st *btn = window.focused_widget;
+
+    if (!btn) {
         gui_status_set("");
         return;
     }
 
-    gui_status_set("hex:%02x dec:%03d", active_char_button->tag2,
-        active_char_button->tag2);
+    gui_status_set("hex:%02x dec:%03d", btn->tag2, btn->tag2);
 }
 
 static void
 draw_char_button(widget_st *widget)
 {
     char str[2];
-    int is_active = widget == active_char_button;
+    int is_active = widget == widget->window->focused_widget;
 
     str[0] = widget->tag2 ? widget->tag2 : ' ';
     str[1] = 0;
@@ -89,7 +87,7 @@ draw_font_label(void)
     rect_st r;
     rect_st shrunken;
 
-    gui_rect_init(&r, TOOL_BAR_HEIGHT - 1, TOOL_BAR_Y, WINDOW_WIDTH - 2 * TOOL_BAR_HEIGHT + 2, TOOL_BAR_HEIGHT);
+    gui_rect_init(&r, 1, TOOL_BAR_Y, WINDOW_WIDTH - 2, TOOL_BAR_HEIGHT);
 
     gui_surface_draw_border(&window.origin, &r, COLOR_FG);
     gui_rect_copy(&shrunken, &r);
@@ -102,10 +100,8 @@ draw_font_label(void)
 }
 
 static void
-on_prev_button(widget_st *widget _unsd, const event_st *event _unsd, const point_st *pos _unsd)
+set_prev_font(void)
 {
-    gui_widget_draw(widget);
-
     current_font = (current_font - 1) % FONT_COUNT;
 
     draw_font_label();
@@ -113,10 +109,8 @@ on_prev_button(widget_st *widget _unsd, const event_st *event _unsd, const point
 }
 
 static void
-on_next_button(widget_st *widget _unsd, const event_st *event _unsd, const point_st *pos _unsd)
+set_next_font(void)
 {
-    gui_widget_draw(widget);
-
     current_font = (current_font + 1) % FONT_COUNT;
 
     draw_font_label();
@@ -124,22 +118,8 @@ on_next_button(widget_st *widget _unsd, const event_st *event _unsd, const point
 }
 
 static void
-on_char_button_press(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
+on_focus_changed(window_st *window)
 {
-    widget_st *prev_active_char_button = active_char_button;
-
-    active_char_button = widget;
-
-    if (active_char_button == prev_active_char_button) {
-        return;
-    }
-
-    if (prev_active_char_button) {
-        gui_widget_draw(prev_active_char_button);
-    }
-
-    gui_widget_draw(active_char_button);
-
     update_status();
 }
 
@@ -152,31 +132,8 @@ init_window(void)
     window.bg_color = COLOR_FG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
-}
-
-static void
-init_buttons(void)
-{
-    memset(&prev_button, 0, sizeof(prev_button));
-    prev_button.type = WIDGET_TYPE_BUTTON;
-    prev_button.rect.x = 0;
-    prev_button.rect.y = TOOL_BAR_Y;
-    prev_button.rect.width = TOOL_BAR_HEIGHT;
-    prev_button.rect.height = TOOL_BAR_HEIGHT;
-    prev_button.label = "<";
-    prev_button.on_pointer_up = on_prev_button;
-
-    memset(&next_button, 0, sizeof(next_button));
-    next_button.type = WIDGET_TYPE_BUTTON;
-    next_button.rect.x = WINDOW_WIDTH - TOOL_BAR_HEIGHT;
-    next_button.rect.y = TOOL_BAR_Y;
-    next_button.rect.width = TOOL_BAR_HEIGHT;
-    next_button.rect.height = TOOL_BAR_HEIGHT;
-    next_button.label = ">";
-    next_button.on_pointer_up = on_next_button;
-
-    gui_window_add_widget(&window, &prev_button);
-    gui_window_add_widget(&window, &next_button);
+    window.focused_widget = &char_buttons[0];
+    window.on_focus_changed = on_focus_changed;
 }
 
 static void
@@ -203,8 +160,9 @@ init_char_buttons(void)
         char_buttons[i].tag2 = i;
         char_buttons[i].window = &window;
         char_buttons[i].draw = draw_char_button;
-        char_buttons[i].on_pointer_down = on_char_button_press;
-        char_buttons[i].press_on_move_in = 1;
+        char_buttons[i].focusable = 1;
+        char_buttons[i].focus_x = col;
+        char_buttons[i].focus_y = row;
 
         gui_window_add_widget(&window, &char_buttons[i]);
     }
@@ -217,7 +175,6 @@ show_app(void)
 
     if (!initialized) {
         init_window();
-        init_buttons();
         init_char_buttons();
         initialized = 1;
     }
