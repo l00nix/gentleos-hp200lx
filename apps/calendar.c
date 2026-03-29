@@ -29,10 +29,8 @@ enum {
     WINDOW_HEIGHT = GRID_Y + GRID_HEIGHT + 1,
 };
 
-static widget_st prev_button;
-static widget_st next_button;
 static widget_st day_buttons[GRID_CELLS_COUNT];
-static widget_st *widgets[GRID_CELLS_COUNT + 2];
+static widget_st *widgets[GRID_CELLS_COUNT];
 
 static window_st window;
 
@@ -82,9 +80,9 @@ draw_month_label(void)
     char buf[16];
     rect_st rect;
 
-    rect.x = TOOL_BAR_HEIGHT - 1;
+    rect.x = 1;
     rect.y = TOOL_BAR_Y;
-    rect.width = WINDOW_WIDTH - (2 * TOOL_BAR_HEIGHT) + 2;
+    rect.width = WINDOW_WIDTH - 2;
     rect.height = TOOL_BAR_HEIGHT;
 
     snprintf(buf, sizeof(buf), "%s %d", month_names[selected_month - 1], selected_year);
@@ -164,10 +162,8 @@ draw_week_bar(void)
 }
 
 static void
-on_prev_button(widget_st *widget _unsd, const event_st *event _unsd, const point_st *pos _unsd)
+set_prev_month(void)
 {
-    gui_widget_draw(widget);
-
     if (selected_month > 1) {
         selected_month -= 1;
     } else if (selected_year > MIN_YEAR) {
@@ -181,10 +177,8 @@ on_prev_button(widget_st *widget _unsd, const event_st *event _unsd, const point
 }
 
 static void
-on_next_button(widget_st *widget _unsd, const event_st *event _unsd, const point_st *pos _unsd)
+set_next_month(void)
 {
-    gui_widget_draw(widget);
-
     if (selected_month < 12) {
         selected_month += 1;
     } else if (selected_year < MAX_YEAR) {
@@ -198,6 +192,17 @@ on_next_button(widget_st *widget _unsd, const event_st *event _unsd, const point
 }
 
 static void
+on_key_up(window_st *window _unsd, const event_st *event _unsd)
+{
+    int ch = event->payload.key.key_char;
+
+    switch (ch) {
+    case 'n': set_next_month(); break;
+    case 'p': set_prev_month(); break;
+    }
+}
+
+static void
 init_window(void)
 {
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
@@ -206,31 +211,7 @@ init_window(void)
     window.bg_color = COLOR_BG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
-}
-
-static void
-init_buttons(void)
-{
-    memset(&prev_button, 0, sizeof(prev_button));
-    prev_button.type = WIDGET_TYPE_BUTTON;
-    prev_button.rect.x = 0;
-    prev_button.rect.y = TOOL_BAR_Y;
-    prev_button.rect.width = TOOL_BAR_HEIGHT;
-    prev_button.rect.height = TOOL_BAR_HEIGHT;
-    prev_button.label = "<";
-    prev_button.on_pointer_up = on_prev_button;
-
-    memset(&next_button, 0, sizeof(prev_button));
-    next_button.type = WIDGET_TYPE_BUTTON;
-    next_button.rect.x = WINDOW_WIDTH - TOOL_BAR_HEIGHT;
-    next_button.rect.y = TOOL_BAR_Y;
-    next_button.rect.width = TOOL_BAR_HEIGHT;
-    next_button.rect.height = TOOL_BAR_HEIGHT;
-    next_button.label = ">";
-    next_button.on_pointer_up = on_next_button;
-
-    gui_window_add_widget(&window, &prev_button);
-    gui_window_add_widget(&window, &next_button);
+    window.on_key_up = on_key_up;
 }
 
 static void
@@ -281,7 +262,6 @@ show_app(void)
 
     if (!initialized) {
         init_window();
-        init_buttons();
         init_day_buttons();
         init_current_date();
 
@@ -292,6 +272,7 @@ show_app(void)
     gui_window_draw(&window);
     draw_week_bar();
     draw_selected_month();
+    gui_status_set("p:prev month  n:next month");
 }
 
 
