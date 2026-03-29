@@ -259,6 +259,6 @@ show_app(void)
 }
 
 app_st app_pairs = {
-    .icon = &bitmap_icon_pairs,
-    .show = show_app,
+    &bitmap_icon_pairs,
+    show_app,
 };

@@ -380,7 +380,7 @@ show_app(void)
 }
 
 app_st app_mines = {
-    .icon = &bitmap_icon_mines,
-    .show = show_app,
+    &bitmap_icon_mines,
+    show_app,
 };
 

@@ -107,5 +107,6 @@ show_app(void)
 }
 
 app_st app_launcher = {
-    .show = show_app,
+	0,
+    show_app,
 };

@@ -180,6 +180,6 @@ show_app(void)
 }
 
 app_st app_about = {
-    .icon = &bitmap_icon_about,
-    .show = show_app,
+    &bitmap_icon_about,
+    show_app,
 };
