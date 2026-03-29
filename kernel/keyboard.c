@@ -5,7 +5,6 @@
  * File: keyboard.c - Driver for PS/2 keyboard
  */
 
-#include "gui.h"
 #include <kernel.h>
 
 enum {
