@@ -49,9 +49,9 @@ def load_image_1bpp(path):
 
     lines = [
         f"bitmap_st bitmap_{name} = {{",
-        f"    .size = {{ .width = {width}, .height = {height} }},",
-        f"    .pitch = {pitch},",
-        f"    .pixels = (uint8_t *)",
+        f"    {{ {width}, {height} }},",
+        f"    {pitch},",
+        f"    (uint8_t *)",
         *pixel_lines,
         f"}};",
         "",
