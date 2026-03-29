@@ -21,6 +21,8 @@ resb 0x100
 
 section _DATA class=DATA
 
+global krn_data_seg
+krn_data_seg:
 global DGROUP@
 DGROUP@:
     dw 0

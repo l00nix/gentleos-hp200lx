@@ -1,3 +1,6 @@
+/* lib/bios.c */
+extern void bios_putc(char c);
+extern void bios_puts(const char *s);
 /* lib/math.c */
 extern uint32_t udiv32(uint32_t dividend, uint32_t divisor);
 extern uint32_t umod32(uint32_t dividend, uint32_t divisor);

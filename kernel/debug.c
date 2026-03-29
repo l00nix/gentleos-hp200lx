@@ -12,7 +12,6 @@ krn_debug_printf(const char *fmt, ...)
 {
     int i, count;
     static char buf[4096];
-    regs_st regs;
 
     va_list args;
 
@@ -23,6 +22,21 @@ krn_debug_printf(const char *fmt, ...)
     for (i = 0; i < count; i++) {
         outb(buf[i], 0xe9);
     }
+}
+
+void
+krn_debug_printf_bios(const char *fmt, ...)
+{
+    int i;
+    static char buf[4096];
+
+    va_list args;
+
+    va_start(args, fmt);
+    (void)vsnprintf(buf, sizeof(buf), fmt, args);
+    va_end(args);
+
+    bios_puts(buf);
 }
 
 void

@@ -27,6 +27,7 @@
 	build\kernel\speaker.obj+
 	build\kernel\system.obj+
 	build\kernel\timer.obj+
+	build\lib\bios.obj+
 	build\lib\cpu.obj+
 	build\lib\math.obj+
 	build\lib\printf.obj+

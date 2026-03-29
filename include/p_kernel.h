@@ -1,5 +1,6 @@
 /* kernel/debug.c */
 extern void krn_debug_printf(const char *fmt, ...);
+extern void krn_debug_printf_bios(const char *fmt, ...);
 extern void krn_debug_beep_adv(unsigned hz, unsigned msecs, unsigned count);
 extern void krn_debug_beep(void);
 /* kernel/event.c */

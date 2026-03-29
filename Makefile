@@ -32,6 +32,7 @@ OBJS = \
 	build\kernel\speaker.obj \
 	build\kernel\system.obj \
 	build\kernel\timer.obj \
+	build\lib\bios.obj \
 	build\lib\cpu.obj \
 	build\lib\math.obj \
 	build\lib\printf.obj \
@@ -151,6 +152,9 @@ build\kernel\system.obj: kernel\system.c $(INCLUDES)
 
 build\kernel\timer.obj: kernel\timer.c $(INCLUDES)
 	$(CC) $(CFLAGS) -nbuild\kernel kernel\timer.c
+
+build\lib\bios.obj: lib\bios.c $(INCLUDES)
+	$(CC) $(CFLAGS) -nbuild\lib lib\bios.c
 
 build\lib\cpu.obj: lib\cpu.s $(INCLUDES)
 	$(AS) $(ASFLAGS) -o build\lib\cpu.obj lib\cpu.s

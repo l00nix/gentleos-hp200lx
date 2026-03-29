@@ -8,6 +8,8 @@
 #include <kernel.h>
 #include <gui.h>
 
+extern uint16_t krn_data_seg;
+
 void
 krn_main(void)
 {
