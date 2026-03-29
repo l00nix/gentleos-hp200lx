@@ -132,7 +132,7 @@ def generate_tlink_rsp(sources):
         if i < len(sources) - 1:
             lines.append(f"\t{obj_path}+")
         else:
-            lines.append(f"\t{obj_path},build\\kernel.com")
+            lines.append(f"\t{obj_path},build\\kernel.com,build\\kernel.map")
 
     lines.append("")
 
