@@ -177,3 +177,11 @@ gui_window_on_key_down(window_st *window, const event_st *event)
         window->on_key_down(window, event);
     }
 }
+
+void
+gui_window_on_key_up(window_st *window, const event_st *event)
+{
+    if (window->on_key_up) {
+        window->on_key_up(window, event);
+    }
+}
