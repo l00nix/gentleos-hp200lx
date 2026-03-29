@@ -25,7 +25,6 @@ extern void gui_rect_clip(rect_st *r, const rect_st *clipper);
 extern const char *gui_rect_format(const rect_st *r);
 /* gui/status.c */
 extern void gui_status_set(const char *fmt, ...);
-extern void gui_status_set_alert(const char *fmt, ...);
 extern void gui_status_init(void);
 /* gui/surface.c */
 extern void gui_surface_init(void);
@@ -64,5 +63,4 @@ extern int gui_wm_add_window(struct window *w);
 extern void gui_wm_render_window_region(window_st *window, const rect_st *window_reg);
 extern window_st *gui_wm_find_window(uint16_t x, uint16_t y);
 extern window_st *gui_wm_top_window(void);
-extern void gui_wm_set_status_window(window_st *w);
 extern void gui_wm_init(void);

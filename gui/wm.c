@@ -13,7 +13,6 @@ enum {
 
 rect_st gui_wm_container = { 0 };
 
-static window_st *gui_wm_status_window = NULL;
 static window_st *gui_wm_current_window = NULL;
 
 bitmap_st *gui_wm_bg_pattern = NULL;
@@ -77,15 +76,6 @@ window_st *
 gui_wm_top_window(void)
 {
     return gui_wm_current_window;
-}
-
-void
-gui_wm_set_status_window(window_st *w)
-{
-    rect_st area;
-    gui_wm_status_window = w;
-    gui_window_area(w, &area);
-    gui_wm_render_window_region(w, &area);
 }
 
 void
