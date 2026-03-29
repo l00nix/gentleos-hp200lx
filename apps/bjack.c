@@ -21,17 +21,7 @@ enum {
     CARDS_PLAYER_Y = DIVIDER_Y + 1 + SPACING,
 
     WINDOW_WIDTH = CARDS_X + CARDS_WIDTH + SPACING,
-
-    BUTTON_WIDTH = 60,
-    BUTTON_HEIGHT = 28,
-    BUTTON_SPACING = SPACING * 2,
-    BUTTONS_Y = CARDS_PLAYER_Y + CARD_HEIGHT + SPACING,
-    BUTTONS_TOTAL_W = 2 * BUTTON_WIDTH + BUTTON_SPACING,
-    BUTTON_HIT_X = (WINDOW_WIDTH - BUTTONS_TOTAL_W) / 2,
-    BUTTON_STAND_X = BUTTON_HIT_X + BUTTON_WIDTH + BUTTON_SPACING,
-    BUTTON_DEAL_X = (WINDOW_WIDTH - BUTTON_WIDTH) / 2,
-
-    WINDOW_HEIGHT = BUTTONS_Y + BUTTON_HEIGHT + SPACING,
+    WINDOW_HEIGHT = CARDS_PLAYER_Y + CARD_HEIGHT + SPACING,
 
     HAND_SIZE_MAX = 11, /* 4*A + 4*2 + 3*3 */
     DECK_SIZE = 52,
@@ -49,11 +39,6 @@ static const char *rank_str[] = {
 static const char *suit_str[] = { "\x03", "\x04", "\x05", "\x06" };
 
 static window_st window;
-
-static widget_st hit_button;
-static widget_st stand_button;
-static widget_st deal_button;
-static widget_st *widgets[3];
 
 static uint8_t deck[DECK_SIZE];
 static int deck_pos;
@@ -201,35 +186,16 @@ draw_hand(uint8_t *hand)
 }
 
 static void
-update_buttons(void)
-{
-    rect_st r;
-
-    hit_button.hidden = game_state == STATE_OVER;
-    stand_button.hidden = game_state == STATE_OVER;
-    deal_button.hidden = game_state == STATE_PLAYING;
-
-    gui_rect_init(&r, 1, BUTTONS_Y, WINDOW_WIDTH - 2, BUTTON_HEIGHT);
-    gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
-
-    gui_widget_draw(&hit_button);
-    gui_widget_draw(&stand_button);
-    gui_widget_draw(&deal_button);
-
-    gui_wm_render_window_region(&window, &r);
-}
-
-static void
 update_status(void)
 {
     int player_score = hand_score(player_hand, player_hand_count);
     int dealer_score = hand_score(dealer_hand, dealer_hand_count);
 
     if (game_state == STATE_PLAYING) {
-        gui_status_set("Dealer: ?  You:%2d  \xb3  W:%d  L:%d",
+        gui_status_set("D: ?  U:%2d  \xb3  W:%d  L:%d",
         player_score, wins, losses);
     } else {
-        gui_status_set("Dealer:%2d  You:%2d  \xb3  %s  \xb3  W:%d  L:%d",
+        gui_status_set("D:%2d  U:%2d  \xb3  %s  \xb3  W:%d  L:%d",
             dealer_score, player_score, status_msg, wins, losses);
     }
 }
@@ -241,7 +207,6 @@ end_game(const char *msg)
     status_msg = msg;
 
     draw_hand(dealer_hand);
-    update_buttons();
     update_status();
 }
 
@@ -262,7 +227,6 @@ restart_game(void)
     dealer_hand[dealer_hand_count++] = deal_card();
 
     game_state = STATE_PLAYING;
-    update_buttons();
     draw_hand(player_hand);
     draw_hand(dealer_hand);
 
@@ -332,32 +296,16 @@ player_hit(void)
 }
 
 static void
-on_hit_button(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
+on_key_up(window_st *window, const event_st *event)
 {
-    gui_widget_draw(widget);
+    int ch = event->payload.key.key_char;
 
-    if (game_state == STATE_PLAYING) {
-        player_hit();
-    }
-}
-
-static void
-on_stand_button(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
-{
-    gui_widget_draw(widget);
-
-    if (game_state == STATE_PLAYING) {
-        player_stand();
-    }
-}
-
-static void
-on_deal_button(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
-{
-    gui_widget_draw(widget);
-
-    if (game_state == STATE_OVER) {
+    if (ch == 'd' && game_state == STATE_OVER) {
         restart_game();
+    } else if (ch == 'h' && game_state == STATE_PLAYING) {
+        player_hit();
+    } else if (ch == 's' && game_state == STATE_PLAYING) {
+        player_stand();
     }
 }
 
@@ -368,33 +316,7 @@ init_window(void)
 
     window.title = "Blackjack";
     window.bg_color = COLOR_BG;
-    window.widgets = widgets;
-    window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
-}
-
-static void
-init_buttons(void)
-{
-    hit_button.type = WIDGET_TYPE_BUTTON;
-    gui_rect_init(&hit_button.rect, BUTTON_HIT_X, BUTTONS_Y, BUTTON_WIDTH, BUTTON_HEIGHT);
-    hit_button.label = "Hit";
-    hit_button.on_pointer_up = on_hit_button;
-    gui_window_add_widget(&window, &hit_button);
-
-    stand_button.type = WIDGET_TYPE_BUTTON;
-    gui_rect_init(&stand_button.rect, BUTTON_STAND_X, BUTTONS_Y, BUTTON_WIDTH,
-        BUTTON_HEIGHT);
-    stand_button.label = "Stand";
-    stand_button.on_pointer_up = on_stand_button;
-    gui_window_add_widget(&window, &stand_button);
-
-    deal_button.type = WIDGET_TYPE_BUTTON;
-    gui_rect_init(&deal_button.rect, BUTTON_DEAL_X, BUTTONS_Y, BUTTON_WIDTH,
-        BUTTON_HEIGHT);
-    deal_button.label = "Deal";
-    deal_button.hidden = 1;
-    deal_button.on_pointer_up = on_deal_button;
-    gui_window_add_widget(&window, &deal_button);
+    window.on_key_up = on_key_up;
 }
 
 static void
@@ -404,7 +326,6 @@ show_app(void)
 
     if (!initialized) {
         init_window();
-        init_buttons();
         initialized = 1;
     }
 

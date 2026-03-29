@@ -17,7 +17,7 @@ enum {
     APP_BUTTON_HEIGHT = 48,
     APP_BUTTON_H_STRIDE = APP_BUTTON_WIDTH + APP_BUTTON_H_MARGIN,
     APP_BUTTON_V_STRIDE = APP_BUTTON_HEIGHT + APP_BUTTON_V_MARGIN,
-    APPS_COUNT = 9,
+    APPS_COUNT = 10,
 
     GRID_X = 1 + APP_BUTTON_H_MARGIN,
     GRID_Y = TITLE_BAR_HEIGHT + APP_BUTTON_V_MARGIN,
@@ -38,6 +38,7 @@ static app_st *apps[APPS_COUNT] = {
     &app_pairs,
     &app_snake,
     &app_tetris,
+    &app_blackjack,
 };
 
 static window_st window;
