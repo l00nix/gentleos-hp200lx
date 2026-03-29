@@ -26,6 +26,7 @@ static window_st window;
 
 static uint16_t status_text_len = 0;
 static uint8_t status_bg_color = 0;
+static char status_text_buf[TEXT_MAX_LEN + 1];
 
 static void
 gui_status_set_bg_color(uint8_t color)
@@ -81,37 +82,35 @@ gui_status_set_text(const char *text, uint8_t color)
 void
 gui_status_set(const char *fmt, ...)
 {
-    static char buf[TEXT_MAX_LEN + 1];
-
     va_list args;
 
     va_start(args, fmt);
-    (void) vsnprintf(buf, sizeof(buf), fmt, args);
+    (void) vsnprintf(status_text_buf, sizeof(status_text_buf), fmt, args);
     va_end(args);
 
     gui_status_set_bg_color(COLOR_BG);
-    gui_status_set_text(buf, COLOR_FG);
+    gui_status_set_text(status_text_buf, COLOR_FG);
 }
 
 
 void
 gui_status_set_alert(const char *fmt, ...)
 {
-    static char buf[TEXT_MAX_LEN + 1];
-
     va_list args;
 
     va_start(args, fmt);
-    (void) vsnprintf(buf, sizeof(buf), fmt, args);
+    (void) vsnprintf(status_text_buf, sizeof(status_text_buf), fmt, args);
     va_end(args);
 
     gui_status_set_bg_color(COLOR_FG);
-    gui_status_set_text(buf, COLOR_BG);
+    gui_status_set_text(status_text_buf, COLOR_BG);
 }
 
 void
 gui_status_init(void)
 {
+    memset(status_text_buf, 0, sizeof(status_text_buf));
+
     window.size.width = STATUS_WIDTH;
     window.size.height = STATUS_HEIGHT;
     window.origin.x = 0;
