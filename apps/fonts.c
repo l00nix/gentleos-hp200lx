@@ -90,7 +90,7 @@ draw_font_label(void)
 
     gui_surface_draw_border(window.origin, r, COLOR_FG);
     gui_surface_draw_rect(window.origin, gui_rect_shrink(r, 1), COLOR_BG);
-    gui_surface_draw_str_centered(window.origin, r, font_8x16,
+    gui_surface_draw_str_centered(window.origin, r, font_8x8,
         fonts[current_font].name, COLOR_FG, COLOR_BG);
 
     gui_wm_render_window_region(&window, r);

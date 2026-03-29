@@ -26,7 +26,5 @@ extern bitmap_st bitmap_sprite_flag;
 extern bitmap_st bitmap_sprite_mine;
 /* data/data_fnt.c */
 extern uint8_t gui_font_pixels_8[256 * 8];
-extern uint8_t gui_font_pixels_16[256 * 16];
 extern font_st fonts[FONT_COUNT];
-extern font_st *font_8x16;
 extern font_st *font_8x8;

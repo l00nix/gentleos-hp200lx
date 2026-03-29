@@ -39,7 +39,7 @@ typedef struct {
 } rect_st;
 
 enum {
-    FONT_COUNT = 2,
+    FONT_COUNT = 1,
 };
 
 typedef struct {

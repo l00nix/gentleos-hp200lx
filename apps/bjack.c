@@ -145,7 +145,7 @@ draw_card(int x, int y, uint8_t card, int face_up)
     if (!face_up) {
         gui_surface_draw_rect(window.origin, r, COLOR_BG);
         gui_surface_draw_border(window.origin, r, COLOR_FG);
-        gui_surface_draw_str_centered(window.origin, r, font_8x16,
+        gui_surface_draw_str_centered(window.origin, r, font_8x8,
             "?", COLOR_FG, COLOR_BG);
         return;
     }
@@ -158,7 +158,7 @@ draw_card(int x, int y, uint8_t card, int face_up)
     gui_surface_draw_rect(window.origin, r, bg);
     gui_surface_draw_border(window.origin, r, COLOR_FG);
     gui_surface_draw_str(window.origin, x + 3, y + 2, font_8x8, rank_str[rank], fg, bg);
-    gui_surface_draw_str_centered(window.origin, r, font_8x16, suit_str[suit], fg, bg);
+    gui_surface_draw_str_centered(window.origin, r, font_8x8, suit_str[suit], fg, bg);
     gui_surface_draw_str(window.origin,
         x + CARD_WIDTH - strlen(rank_str[rank]) * 8 - 3,
         y + CARD_HEIGHT - 10,

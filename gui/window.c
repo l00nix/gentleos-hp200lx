@@ -48,7 +48,7 @@ gui_window_draw(window_st *window)
     gui_surface_draw_border(window->origin, title_rect, COLOR_FG);
     gui_surface_draw_rect(window->origin, gui_rect_shrink(title_rect, 1), COLOR_BG);
     gui_surface_draw_str_centered(window->origin, title_rect,
-        font_8x16, window->title, COLOR_FG, COLOR_BG);
+        font_8x8, window->title, COLOR_FG, COLOR_BG);
 
     rect_st content_rect = {
         .x = 1,

@@ -38,7 +38,7 @@ draw_text_lg(int col, int row, const char *text)
     }
 
     rect_st r = gui_grid_cell_rect(&grid, col, row);
-    gui_surface_draw_str(window.origin, r.x, r.y, font_8x16,
+    gui_surface_draw_str(window.origin, r.x, r.y, font_8x8,
         text, COLOR_FG, COLOR_BG);
 }
 

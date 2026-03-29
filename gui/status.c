@@ -51,7 +51,7 @@ static void
 gui_status_set_text(const char *text, uint8_t color)
 {
     size_t len = strlen(text);
-    font_st *font = font_8x16;
+    font_st *font = font_8x8;
 
     gui_surface_draw_str(window.origin, TEXT_X, TEXT_Y, font, text, color,
         status_bg_color);

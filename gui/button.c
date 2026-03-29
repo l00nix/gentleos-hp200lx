@@ -42,7 +42,7 @@ gui_button_draw(widget_st *widget)
         gui_surface_draw_str_centered(
             origin,
             rect,
-            widget->font ? widget->font : font_8x16,
+            widget->font ? widget->font : font_8x8,
             widget->label,
             is_pressed ? COLOR_BG : COLOR_FG,
             is_pressed ? COLOR_FG : COLOR_BG
