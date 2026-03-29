@@ -35,7 +35,7 @@ gui_surface_flush(void)
 {
     rect_st rect;
     int x0, x1, byte_x0, byte_count, y;
-    uint8_t far *vram = MK_FP(GUI_VIDEO_SEG, 0);
+    uint8_t far *vram = MK_FP(0xb800, 0);
 
     gui_rect_copy(&rect, &gui_surface_dirty_rect);
 
@@ -43,25 +43,17 @@ gui_surface_flush(void)
         return;
     }
 
-    x0 = (rect.x / 8) * 8;
-    x1 = ((rect.x + rect.width + 7) / 8) * 8;
-    byte_x0 = x0 / 8;
-    byte_count = (x1 - x0) / 8;
+    x0 = (rect.x / 4) * 4;
+    x1 = ((rect.x + rect.width + 3) / 4) * 4;
+    byte_x0 = x0 / 4;
+    byte_count = (x1 - x0) / 4;
 
     for (y = rect.y; y < rect.y + rect.height; y += 1) {
-#if GUI_VIDEO_INTERLEAVED
         memcpy_far(
             vram + (y % 2) * 0x2000 + (y / 2) * GUI_FB_PITCH + byte_x0,
             gui_surface_pixels + y * GUI_FB_PITCH + byte_x0,
             byte_count
         );
-#else
-        memcpy_far(
-            vram + y * GUI_FB_PITCH + byte_x0,
-            gui_surface_pixels + y * GUI_FB_PITCH + byte_x0,
-            byte_count
-        );
-#endif
     }
 
     gui_rect_copy(&gui_surface_dirty_rect, &GUI_RECT_ZERO);
@@ -70,11 +62,12 @@ gui_surface_flush(void)
 static void
 gui_surface_draw_pixel(int x, int y, uint8_t color)
 {
-    int byte_idx = y * GUI_FB_PITCH + x / 8;
-    int bit = 7 - (x & 7);
+    int byte_idx = y * GUI_FB_PITCH + x / 4;
+    int shift = (3 - (x & 3)) * 2;
+    uint8_t mask = 0x03 << shift;
+    uint8_t val = (color & 1) ? mask : 0;
 
-    gui_surface_pixels[byte_idx] &= ~(1 << bit);
-    gui_surface_pixels[byte_idx] |= ((color & 1) << bit);
+    gui_surface_pixels[byte_idx] = (gui_surface_pixels[byte_idx] & ~mask) | val;
 }
 
 void
@@ -125,11 +118,11 @@ gui_surface_draw_rect(const point_st *origin, const rect_st *rect, uint8_t color
         return;
     }
 
-    l_byte = l_x / 8;
-    r_byte = r_x / 8;
+    l_byte = l_x / 4;
+    r_byte = r_x / 4;
 
-    l_mask = 0xFF >> (l_x & 7);
-    r_mask = 0xFF << (7 - (r_x & 7));
+    l_mask = 0xFF >> ((l_x & 3) * 2);
+    r_mask = 0xFF << ((3 - (r_x & 3)) * 2);
 
     fill = (color & 1) ? 0xFF : 0x00;
     dst_plane = gui_surface_pixels;
@@ -229,17 +222,10 @@ gui_surface_draw_bitmap(const point_st *origin, const size_st *bounds, int dst_x
 
     gui_rect_init(&src_rect, 0, 0, bitmap->size.width, bitmap->size.height);
 
-#if GUI_VIDEO_MODE == 0x06
-    if (dst_x + src_rect.width * 2 > bounds->width) {
-        src_rect.width = (bounds->width - dst_x) / 2;
-        src_rect.width = src_rect.width < 0 ? 0 : src_rect.width;
-    }
-#else
     if (dst_x + src_rect.width > bounds->width) {
         src_rect.width = bounds->width - dst_x;
         src_rect.width = src_rect.width < 0 ? 0 : src_rect.width;
     }
-#endif
 
     if (dst_y + src_rect.height > bounds->height) {
         src_rect.height = bounds->height - dst_y;
@@ -260,12 +246,7 @@ gui_surface_draw_bitmap(const point_st *origin, const size_st *bounds, int dst_x
                 continue;
             }
 
-#if GUI_VIDEO_MODE == 0x06
-            gui_surface_draw_pixel(target_x + j * 2, target_y + i, fill_bit);
-            gui_surface_draw_pixel(target_x + j * 2 + 1, target_y + i, fill_bit);
-#else
             gui_surface_draw_pixel(target_x + j, target_y + i, fill_bit);
-#endif
         }
     }
 }
@@ -274,11 +255,7 @@ void
 gui_surface_draw_bitmap_centered(const point_st *origin, const size_st *bounds, const rect_st *rect,
     bitmap_st *bitmap, uint8_t fill)
 {
-#if GUI_VIDEO_MODE == 0x06
-    int x = rect->x + (rect->width - bitmap->size.width * 2) / 2;
-#else
     int x = rect->x + (rect->width - bitmap->size.width) / 2;
-#endif
     int y = rect->y + (rect->height - bitmap->size.height) / 2;
 
     gui_surface_draw_bitmap(origin, bounds, x, y, bitmap, fill);

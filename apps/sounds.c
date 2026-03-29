@@ -8,12 +8,12 @@
 #include <gui.h>
 
 enum {
-    KEY_W_WIDTH = 30,
-    KEY_W_HEIGHT = 100,
+    KEY_W_WIDTH = 15,
+    KEY_W_HEIGHT = 80,
     KEY_W_COUNT = 15,
 
-    KEY_B_WIDTH = 17,
-    KEY_B_HEIGHT = 60,
+    KEY_B_WIDTH = 8,
+    KEY_B_HEIGHT = 50,
     KEY_B_COUNT = 10,
 
     KEYBOARD_Y = (TITLE_BAR_HEIGHT - 1),

@@ -143,9 +143,10 @@ enum {
     STATUS_HEIGHT = 16,
 };
 
-
 enum {
-    GUI_FB_PITCH = GUI_WIDTH / 8,
+    GUI_WIDTH = 320,
+    GUI_HEIGHT = 200,
+    GUI_FB_PITCH = GUI_WIDTH / 4,
     GUI_FB_PLANE_SIZE = GUI_HEIGHT * GUI_FB_PITCH,
 };
 

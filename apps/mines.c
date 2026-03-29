@@ -10,7 +10,7 @@
 static void reveal_cell(int col, int row);
 
 enum {
-    GRID_CELL_WIDTH = 23,
+    GRID_CELL_WIDTH = 13,
     GRID_CELL_HEIGHT = 13,
     GRID_ROWS = 10,
     GRID_COLS = 10,

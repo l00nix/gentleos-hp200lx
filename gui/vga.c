@@ -36,6 +36,6 @@ gui_vga_init(void)
 {
     regs_st regs;
     regs.h.ah = 0x00;
-    regs.h.al = GUI_VIDEO_MODE;
+    regs.h.al = 0x04;
     intr(0x10, &regs);
 }
