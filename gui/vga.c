@@ -7,35 +7,29 @@
 
 #include <gui.h>
 
-/*
-
-static const uint8_t gui_vga_dac_indexes[16] = {
-    0x00, 0x01, 0x02, 0x03, 0x04, 0x05, 0x14, 0x07,
-    0x38, 0x39, 0x3A, 0x3B, 0x3C, 0x3D, 0x3E, 0x3F
-};
-
-static void
-gui_vga_set_color(int index, uint32_t rgb)
-{
-    uint8_t dac_index = index;
-
-    dac_index = gui_vga_dac_indexes[index & 0x0F];
-
-    outb(dac_index, 0x3C8);
-    outb((rgb >> 18) & 0x3F, 0x3C9);
-    outb((rgb >> 10) & 0x3F, 0x3C9);
-    outb((rgb >>  2) & 0x3F, 0x3C9);
-}
-
-gui_vga_set_color(0x0f, 0x00ff00);
-
-*/
-
 void
 gui_vga_init(void)
 {
+    uint8_t dac_index;
     regs_st regs;
+
     regs.h.ah = 0x00;
     regs.h.al = 0x04;
     intr(0x10, &regs);
+
+#if GUI_COLOR_OVERRIDE
+    regs.h.ah = 0x10;
+    regs.h.al = 0x07;
+    regs.h.bl = 0x03;
+    intr(0x10, &regs);
+    dac_index = regs.h.bh;
+
+    regs.h.ah = 0x10;
+    regs.h.al = 0x10;
+    regs.x.bx = dac_index;
+    regs.h.dh = (GUI_COLOR_OVERRIDE >> 18) & 0x3F;
+    regs.h.ch = (GUI_COLOR_OVERRIDE >> 10) & 0x3F;
+    regs.h.cl = (GUI_COLOR_OVERRIDE >> 2) & 0x3F;
+    intr(0x10, &regs);
+#endif
 }
