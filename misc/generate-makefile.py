@@ -6,12 +6,7 @@ import os
 SOURCE_DIRS = ["apps", "data", "kernel", "lib", "gui"]
 
 EXCLUDED_SOURCES = [
-    "apps/bjack.c",
     "apps/calc.c",
-    "apps/calendar.c",
-    "apps/mines.c",
-    "apps/pairs.c",
-    "apps/tetris.c",
 ]
 
 MAKEFILE_TPL = """

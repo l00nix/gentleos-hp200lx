@@ -1,11 +1,16 @@
 /s /t /l +
 	build\kernel\start.obj+
 	build\apps\about.obj+
+	build\apps\bjack.obj+
+	build\apps\calendar.obj+
 	build\apps\clock.obj+
 	build\apps\fonts.obj+
 	build\apps\launcher.obj+
+	build\apps\mines.obj+
+	build\apps\pairs.obj+
 	build\apps\snake.obj+
 	build\apps\sounds.obj+
+	build\apps\tetris.obj+
 	build\data\data_bmp.obj+
 	build\data\data_fnt.obj+
 	build\gui\button.obj+

@@ -14,7 +14,7 @@ enum {
     APP_BUTTON_MARGIN = 8,
     APP_BUTTON_SIZE = 48,
     APP_BUTTON_STRIDE = APP_BUTTON_SIZE + APP_BUTTON_MARGIN,
-    APPS_COUNT = 5,
+    APPS_COUNT = 9,
 
     GRID_X = 1 + APP_BUTTON_MARGIN,
     GRID_Y = TITLE_BAR_HEIGHT + APP_BUTTON_MARGIN,
@@ -28,9 +28,13 @@ enum {
 static app_st *apps[APPS_COUNT] = {
     &app_about,
     &app_clock,
+    &app_calendar,
     &app_fonts,
     &app_sounds,
+    &app_mines,
+    &app_pairs,
     &app_snake,
+    &app_tetris,
 };
 
 static window_st window;

@@ -8,8 +8,8 @@
 #include <gui.h>
 
 enum {
-    GRID_CELL_WIDTH = 14,
-    GRID_CELL_HEIGHT = 14,
+    GRID_CELL_WIDTH = 12,
+    GRID_CELL_HEIGHT = 6,
     GRID_ROWS = 20,
     GRID_COLS = 10,
     GRID_WIDTH = GRID_WIDTH_SPACED(GRID_CELL_WIDTH, GRID_COLS),
@@ -43,8 +43,8 @@ static int cur_rot;
 static int cur_col;
 static int cur_row;
 static int game_over;
-static size_t score;
-static size_t best_score;
+static uint16_t score;
+static uint16_t best_score;
 static uint32_t timeout_id;
 
 static void on_timeout(void *);

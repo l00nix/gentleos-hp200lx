@@ -8,14 +8,14 @@
 #include <gui.h>
 
 enum {
-    GRID_CELL_WIDTH = 36,
-    GRID_CELL_HEIGHT = 36,
+    GRID_CELL_WIDTH = 32,
+    GRID_CELL_HEIGHT = 16,
 
     TOOL_BAR_Y = TITLE_BAR_HEIGHT - 1,
     TOOL_BAR_HEIGHT = GRID_CELL_HEIGHT + 2,
 
     WEEK_BAR_Y = (TOOL_BAR_Y + TOOL_BAR_HEIGHT - 1),
-    WEEK_BAR_HEIGHT = 24,
+    WEEK_BAR_HEIGHT = 16,
 
     GRID_ROWS = 6,
     GRID_COLS = 7,
@@ -80,10 +80,12 @@ draw_month_label(void)
     };
 
     char buf[16];
-    rect_st rect = {
-        TOOL_BAR_HEIGHT - 1, TOOL_BAR_Y,
-        WINDOW_WIDTH - (2 * TOOL_BAR_HEIGHT) + 2, TOOL_BAR_HEIGHT
-    };
+    rect_st rect;
+
+    rect.x = TOOL_BAR_HEIGHT - 1;
+    rect.y = TOOL_BAR_Y;
+    rect.width = WINDOW_WIDTH - (2 * TOOL_BAR_HEIGHT) + 2;
+    rect.height = TOOL_BAR_HEIGHT;
 
     snprintf(buf, sizeof(buf), "%s %d", month_names[selected_month - 1], selected_year);
 
@@ -234,7 +236,7 @@ init_buttons(void)
 static void
 init_day_buttons(void)
 {
-    size_t i;
+    uint16_t i;
     int col, row;
 
     grid.cell_width = GRID_CELL_WIDTH;

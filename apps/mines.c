@@ -11,7 +11,7 @@ static void reveal_cell(int col, int row);
 
 enum {
     GRID_CELL_WIDTH = 17,
-    GRID_CELL_HEIGHT = 17,
+    GRID_CELL_HEIGHT = 11,
     GRID_ROWS = 11,
     GRID_COLS = 11,
     GRID_CELL_COUNT = GRID_ROWS * GRID_COLS,
@@ -106,7 +106,10 @@ draw_cell(widget_st *widget)
     uint8_t type = cell_type[col][row];
     rect_st rect;
     int pressed = 0;
-    char num_str[2] = { 0, 0 };
+    char num_str[2];
+
+    num_str[0] = 0;
+    num_str[1] = 0;
 
     gui_rect_copy(&rect, &widget->rect);
 
@@ -356,6 +359,8 @@ static void
 init_grid(void)
 {
     int i, col, row;
+
+    memset(cell_widgets, 0, sizeof(cell_widgets));
 
     grid.cell_width = GRID_CELL_WIDTH;
     grid.cell_height = GRID_CELL_HEIGHT;

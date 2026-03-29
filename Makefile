@@ -6,11 +6,16 @@ ASFLAGS = -f obj
 OBJS = &
 	build\kernel\start.obj &
 	build\apps\about.obj &
+	build\apps\bjack.obj &
+	build\apps\calendar.obj &
 	build\apps\clock.obj &
 	build\apps\fonts.obj &
 	build\apps\launcher.obj &
+	build\apps\mines.obj &
+	build\apps\pairs.obj &
 	build\apps\snake.obj &
 	build\apps\sounds.obj &
+	build\apps\tetris.obj &
 	build\data\data_bmp.obj &
 	build\data\data_fnt.obj &
 	build\gui\button.obj &
@@ -83,6 +88,12 @@ build\kernel\start.obj: kernel\start.s $(INCLUDES)
 build\apps\about.obj: apps\about.c $(INCLUDES)
 	$(CC) $(CFLAGS) -nbuild\apps apps\about.c
 
+build\apps\bjack.obj: apps\bjack.c $(INCLUDES)
+	$(CC) $(CFLAGS) -nbuild\apps apps\bjack.c
+
+build\apps\calendar.obj: apps\calendar.c $(INCLUDES)
+	$(CC) $(CFLAGS) -nbuild\apps apps\calendar.c
+
 build\apps\clock.obj: apps\clock.c $(INCLUDES)
 	$(CC) $(CFLAGS) -nbuild\apps apps\clock.c
 
@@ -92,11 +103,20 @@ build\apps\fonts.obj: apps\fonts.c $(INCLUDES)
 build\apps\launcher.obj: apps\launcher.c $(INCLUDES)
 	$(CC) $(CFLAGS) -nbuild\apps apps\launcher.c
 
+build\apps\mines.obj: apps\mines.c $(INCLUDES)
+	$(CC) $(CFLAGS) -nbuild\apps apps\mines.c
+
+build\apps\pairs.obj: apps\pairs.c $(INCLUDES)
+	$(CC) $(CFLAGS) -nbuild\apps apps\pairs.c
+
 build\apps\snake.obj: apps\snake.c $(INCLUDES)
 	$(CC) $(CFLAGS) -nbuild\apps apps\snake.c
 
 build\apps\sounds.obj: apps\sounds.c $(INCLUDES)
 	$(CC) $(CFLAGS) -nbuild\apps apps\sounds.c
+
+build\apps\tetris.obj: apps\tetris.c $(INCLUDES)
+	$(CC) $(CFLAGS) -nbuild\apps apps\tetris.c
 
 build\data\data_bmp.obj: data\data_bmp.c $(INCLUDES)
 	$(CC) $(CFLAGS) -nbuild\data data\data_bmp.c
