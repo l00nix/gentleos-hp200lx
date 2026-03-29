@@ -60,9 +60,9 @@ gui_window_draw(window_st *window)
 
     gui_rect_init(&content_rect,
         1,
-        TITLE_BAR_HEIGHT + 1,
+        TITLE_BAR_HEIGHT,
         window->size.width - 2,
-        window->size.height - TITLE_BAR_HEIGHT - 2
+        window->size.height - TITLE_BAR_HEIGHT - 1
     );
 
     gui_surface_draw_rect(&window->origin, &content_rect, window->bg_color);
