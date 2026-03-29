@@ -11,6 +11,7 @@ void
 gui_main(void)
 {
     event_st event;
+    window_st *w;
 
     gui_vga_init();
     gui_timeout_init();
@@ -30,20 +31,14 @@ gui_main(void)
             continue;
         }
 
+        w = gui_wm_current_window;
+
         if (event.type == EVENT_TIMER_TICK) {
             gui_timeout_on_tick(&event);
-        } else if (event.type == EVENT_KEY_DOWN) {
-            window_st *w = gui_wm_top_window();
-
-            if (w) {
-                gui_window_on_key_down(w, &event);
-            }
-        } else if (event.type == EVENT_KEY_UP) {
-            window_st *w = gui_wm_top_window();
-
-            if (w && w->on_key_up) {
-                w->on_key_up(w, &event);
-            }
+        } else if (event.type == EVENT_KEY_DOWN && w) {
+            gui_window_on_key_down(w, &event);
+        } else if (event.type == EVENT_KEY_UP && w && w->on_key_up) {
+            w->on_key_up(w, &event);
         }
 
         if (krn_event_count() == 0) {

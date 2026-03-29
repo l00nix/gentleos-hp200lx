@@ -7,15 +7,8 @@
 
 #include <gui.h>
 
-enum {
-    WINDOWS_COUNT_MAX = 6,
-};
-
-rect_st gui_wm_container = { 0 };
-
-static window_st *gui_wm_current_window = NULL;
-
-bitmap_st *gui_wm_bg_pattern = NULL;
+rect_st gui_wm_container;
+window_st *gui_wm_current_window = NULL;
 
 static void
 gui_wm_render_wallpaper(const rect_st *rect)
@@ -51,31 +44,6 @@ gui_wm_render_window_region(window_st *window, const rect_st *window_reg)
     gui_rect_copy(&translated, window_reg);
     gui_rect_translate(&translated, &window->origin);
     gui_surface_mark_dirty(&translated);
-}
-
-window_st *
-gui_wm_find_window(uint16_t x, uint16_t y)
-{
-    point_st p;
-    rect_st wr;
-
-    p.x = x;
-    p.y = y;
-
-    if (gui_wm_current_window) {
-        gui_window_rect(gui_wm_current_window, &wr);
-        if (gui_rect_contains_point(&wr, &p)) {
-            return gui_wm_current_window;
-        }
-    }
-
-    return NULL;
-}
-
-window_st *
-gui_wm_top_window(void)
-{
-    return gui_wm_current_window;
 }
 
 void
