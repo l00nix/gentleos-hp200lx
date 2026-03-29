@@ -142,6 +142,10 @@ gui_window_update_focus(window_st *window, int dir_x, int dir_y)
         window->focused_widget = best_widget;
         gui_widget_draw(current_widget);
         gui_widget_draw(best_widget);
+
+        if (window->on_focus_changed) {
+            window->on_focus_changed(window);
+        }
     }
 }
 
