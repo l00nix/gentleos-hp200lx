@@ -138,8 +138,8 @@ enum {
 };
 
 enum {
-    TITLE_BAR_HEIGHT = 24,
-    STATUS_HEIGHT = 24,
+    TITLE_BAR_HEIGHT = 16,
+    STATUS_HEIGHT = 16,
 };
 
 
