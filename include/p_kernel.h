@@ -23,7 +23,7 @@ extern int krn_rtc_are_times_equal(time_st *t1, time_st *t2);
 extern void krn_rtc_get_time(time_st *t);
 /* kernel/speaker.c */
 extern void krn_speaker_stop(void);
-extern void krn_speaker_play(unsigned hz);
+extern void krn_speaker_play(uint16_t hz);
 /* kernel/system.c */
 extern uint32_t krn_system_get_total_mem(void);
 extern uint32_t krn_system_get_used_mem(void);

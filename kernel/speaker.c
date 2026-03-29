@@ -5,6 +5,7 @@
  * File: speaker.c - Driver for PC speaker
  */
 
+#include <lib.h>
 #include <kernel.h>
 
 enum {
@@ -21,9 +22,9 @@ krn_speaker_stop(void)
  }
 
 void
-krn_speaker_play(unsigned hz)
+krn_speaker_play(uint16_t hz)
 {
-    uint32_t divisor;
+    uint16_t divisor;
     uint8_t val;
 
     /* If hz is 0, turn off the speaker */
@@ -36,7 +37,7 @@ krn_speaker_play(unsigned hz)
     outb(0xB6, PIT_CWR);
 
     /* Set counter 2 to the desired frequency */
-    divisor = 1193180 / hz;
+    divisor = udiv32(1193180, hz);
     outb(divisor & 0xFF, PIT_CR2);
     outb((divisor >> 8) & 0xFF, PIT_CR2);
 

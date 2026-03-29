@@ -194,8 +194,8 @@ pf_emit_uint(struct pf_config *c, unsigned long n, int neg)
     /* Save digits to the temporary buffer in a reverse order */
     i = 0;
     do {
-        d = n % base;
-        n = n / base;
+        d = umod32(n, base);
+        n = udiv32(n, base);
         buf[i++] = digits[d];
     } while (n != 0 && (size_t)i < sizeof(buf));
 
@@ -235,7 +235,7 @@ pf_emit_int(struct pf_config *c, long n)
 
     if (n < 0) {
         neg = 1;
-        n *= -1;
+        n = -n;
     }
 
     pf_emit_uint(c, (unsigned long)n, neg);
@@ -456,7 +456,7 @@ int
 vsnprintf(char *buf, size_t nbyte, const char *fmt, va_list va)
 {
 #ifdef __TURBOC__
-    return vasnprintf(buf, nbyte, fmt, &va, 0, 0);
+    return pf_vasnprintf(buf, nbyte, fmt, &va, 0, 0);
 #else
     va_list va_copy;
     int ret;
