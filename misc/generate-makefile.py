@@ -55,7 +55,7 @@ C_RULE_TPL = """
 """
 
 S_RULE_TPL = """
-<OBJ_PATH>: <SRC> $(INCLUDES)
+<OBJ_PATH>: <SRC>
 	$(AS) $(ASFLAGS) -o <OBJ_PATH> <SRC>
 """
 

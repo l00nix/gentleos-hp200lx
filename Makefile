@@ -82,7 +82,7 @@ clean: .SYMBOLIC
 	-del build\kernel\*.obj
 	-del build\*.*
 
-build\kernel\start.obj: kernel\start.s $(INCLUDES)
+build\kernel\start.obj: kernel\start.s
 	$(AS) $(ASFLAGS) -o build\kernel\start.obj kernel\start.s
 
 build\apps\about.obj: apps\about.c $(INCLUDES)
@@ -187,7 +187,7 @@ build\kernel\timer.obj: kernel\timer.c $(INCLUDES)
 build\lib\bios.obj: lib\bios.c $(INCLUDES)
 	$(CC) $(CFLAGS) -nbuild\lib lib\bios.c
 
-build\lib\cpu.obj: lib\cpu.s $(INCLUDES)
+build\lib\cpu.obj: lib\cpu.s
 	$(AS) $(ASFLAGS) -o build\lib\cpu.obj lib\cpu.s
 
 build\lib\math.obj: lib\math.c $(INCLUDES)
