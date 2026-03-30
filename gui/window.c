@@ -173,10 +173,12 @@ gui_window_on_key_down(window_st *window, const event_st *event)
 
     if (event->payload.key.key_code == KEY_ESC) {
         app_launcher.show();
+        return;
     }
 
     if (window->on_key_down) {
         window->on_key_down(window, event);
+        return;
     }
 }
 
