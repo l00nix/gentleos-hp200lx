@@ -70,6 +70,8 @@ gui_window_draw(window_st *window)
     for (i = 0; i < window->widgets_count; ++i) {
         gui_widget_draw(window->widgets[i]);
     }
+
+    gui_wm_render_window_region(window, &area);
 }
 
 int
