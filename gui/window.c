@@ -56,7 +56,7 @@ gui_window_draw(window_st *window)
     gui_rect_shrink(&shrunken, 1);
     gui_surface_draw_rect(&window->origin, &shrunken, COLOR_BG);
     gui_surface_draw_str_centered(&window->origin, &title_rect,
-        font_8x8, window->title, COLOR_FG, COLOR_BG);
+        NULL, window->title, COLOR_FG, COLOR_BG);
 
     gui_rect_init(&content_rect,
         1,

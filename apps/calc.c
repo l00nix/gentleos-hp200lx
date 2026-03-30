@@ -138,7 +138,7 @@ update_display(void)
 
     gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
 
-    font = font_8x8;
+    font = &fonts[0];
     text_width = strlen(buf) * font->size.width;
     text_x = rect.x + rect.width - text_width - 10;
     text_y = rect.y + (rect.height - font_8x8->size.height) / 2;
@@ -241,7 +241,6 @@ init_buttons(void)
             button->hide_border = 1;
             button->window = &window;
             button->label = button_labels[idx];
-            button->font = font_8x8;
             button->on_pointer_up = on_button_press;
 
             gui_window_add_widget(&window, button);

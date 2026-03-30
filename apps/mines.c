@@ -128,7 +128,7 @@ draw_cell(widget_st *widget)
         gui_rect_init(&num_rect, rect.x + 1, rect.y + 1,
             rect.width - 1, rect.height - 1);
 
-        gui_surface_draw_str_centered(&window.origin, &num_rect, font_8x8,
+        gui_surface_draw_str_centered(&window.origin, &num_rect, NULL,
             num_str, COLOR_FG, COLOR_BG);
     }
 

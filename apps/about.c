@@ -40,7 +40,7 @@ draw_text_lg(int col, int row, const char *text)
     }
 
     gui_grid_cell_rect(&grid, col, row, &r);
-    gui_surface_draw_str(&window.origin, r.x, r.y, font_8x8,
+    gui_surface_draw_str(&window.origin, r.x, r.y, NULL,
         text, COLOR_FG, COLOR_BG);
 }
 
@@ -54,7 +54,7 @@ draw_text_sm(int col, int row, const char *text)
     }
 
     gui_grid_cell_rect(&grid, col, row, &r);
-    gui_surface_draw_str(&window.origin, r.x, r.y, font_8x8,
+    gui_surface_draw_str(&window.origin, r.x, r.y, NULL,
         text, COLOR_FG, COLOR_BG);
 }
 

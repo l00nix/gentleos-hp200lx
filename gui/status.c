@@ -31,7 +31,7 @@ static void
 gui_status_set_text(const char *text)
 {
     uint16_t len = strlen(text);
-    font_st *font = font_8x8;
+    font_st *font = &fonts[0];
     rect_st clear_rect, text_rect;
 
     gui_surface_draw_str(&window.origin, TEXT_X, TEXT_Y, font, text, COLOR_FG, COLOR_BG);

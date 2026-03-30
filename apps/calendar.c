@@ -88,7 +88,7 @@ draw_month_label(void)
     snprintf(buf, sizeof(buf), "%s %d", month_names[selected_month - 1], selected_year);
 
     gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
-    gui_surface_draw_str_centered(&window.origin, &rect, font_8x8, buf,
+    gui_surface_draw_str_centered(&window.origin, &rect, NULL, buf,
         COLOR_FG, COLOR_BG);
     gui_wm_render_window_region(&window, &rect);
 }
@@ -119,7 +119,7 @@ draw_day_button(widget_st *widget)
     gui_surface_draw_str_centered(
         &widget->window->origin,
         &widget->rect,
-        widget->font ? widget->font : font_8x8,
+        widget->font,
         buf,
         fg,
         bg
@@ -156,7 +156,7 @@ draw_week_bar(void)
         rect.height = WEEK_BAR_HEIGHT;
 
         gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
-        gui_surface_draw_str_centered(&window.origin, &rect, font_8x8,
+        gui_surface_draw_str_centered(&window.origin, &rect, NULL,
             day_names[y], COLOR_FG, COLOR_BG);
     }
 }
@@ -227,6 +227,8 @@ init_day_buttons(void)
     grid.x = GRID_X;
     grid.y = GRID_Y;
 
+    memset(day_buttons, 0, sizeof(day_buttons));
+
     for (i = 0; i < GRID_CELLS_COUNT; ++i) {
         col = i % GRID_COLS;
         row = i / GRID_COLS;
@@ -234,7 +236,6 @@ init_day_buttons(void)
         day_buttons[i].type = WIDGET_TYPE_BUTTON;
         gui_grid_cell_rect(&grid, col, row, &day_buttons[i].rect);
         day_buttons[i].draw = draw_day_button;
-        day_buttons[i].font = font_8x8;
         day_buttons[i].press_on_move_in = 1;
 
         gui_window_add_widget(&window, &day_buttons[i]);
