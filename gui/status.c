@@ -12,7 +12,7 @@ enum {
 };
 
 enum {
-    FONT_WIDTH = 8,
+    FONT_WIDTH = 5,
     FONT_HEIGHT = 8,
 };
 
