@@ -55,7 +55,7 @@ gui_status_set_text(const char *text)
         font->size.height
     );
 
-    gui_wm_render_window_region(&window, &text_rect);
+    gui_wm_render_window_region(&window.origin, &text_rect);
 
     status_text_len = len;
 }

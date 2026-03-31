@@ -68,7 +68,7 @@ draw_char_button(widget_st *widget)
         is_active ? COLOR_FG : COLOR_BG
     );
 
-    gui_wm_render_window_region(widget->window, &widget->rect);
+    gui_wm_render_window_region(&widget->window->origin, &widget->rect);
 }
 
 static void
@@ -96,7 +96,7 @@ draw_font_label(void)
     gui_surface_draw_str_centered(&window.origin, &r, NULL,
         fonts[current_font].name, COLOR_FG, COLOR_BG);
 
-    gui_wm_render_window_region(&window, &r);
+    gui_wm_render_window_region(&window.origin, &r);
 }
 
 static void

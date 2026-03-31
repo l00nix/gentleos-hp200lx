@@ -90,7 +90,7 @@ draw_month_label(void)
     gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
     gui_surface_draw_str_centered(&window.origin, &rect, NULL, buf,
         COLOR_FG, COLOR_BG);
-    gui_wm_render_window_region(&window, &rect);
+    gui_wm_render_window_region(&window.origin, &rect);
 }
 
 static void
@@ -106,7 +106,7 @@ draw_day_button(widget_st *widget)
 
     if (!is_in_month) {
         gui_surface_draw_rect(&widget->window->origin, &widget->rect, COLOR_BG);
-        gui_wm_render_window_region(widget->window, &widget->rect);
+        gui_wm_render_window_region(&widget->window->origin, &widget->rect);
         return;
     }
 
@@ -125,7 +125,7 @@ draw_day_button(widget_st *widget)
         bg
     );
 
-    gui_wm_render_window_region(widget->window, &widget->rect);
+    gui_wm_render_window_region(&widget->window->origin, &widget->rect);
 }
 
 static void

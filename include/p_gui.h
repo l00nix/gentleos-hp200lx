@@ -61,5 +61,5 @@ extern void gui_window_on_key_up(window_st *window, const event_st *event);
 extern rect_st gui_wm_container;
 extern window_st *gui_wm_current_window;
 extern int gui_wm_add_window(struct window *w);
-extern void gui_wm_render_window_region(window_st *window, const rect_st *window_reg);
+extern void gui_wm_render_window_region(const point_st *origin, const rect_st *window_reg);
 extern void gui_wm_init(void);

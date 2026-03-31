@@ -145,7 +145,7 @@ update_display(void)
     gui_surface_draw_str(&window.origin, text_x, text_y, font,
         buf, COLOR_FG, COLOR_BG);
 
-    gui_wm_render_window_region(&window, &rect);
+    gui_wm_render_window_region(&window.origin, &rect);
 }
 
 static void

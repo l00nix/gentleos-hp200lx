@@ -71,7 +71,7 @@ gui_window_draw(window_st *window)
         gui_widget_draw(window->widgets[i]);
     }
 
-    gui_wm_render_window_region(window, &area);
+    gui_wm_render_window_region(&window->origin, &area);
 }
 
 int

@@ -31,5 +31,5 @@ gui_grid_draw_background(grid_st *grid, window_st *window, uint8_t color)
     rect_st grid_rect;
     gui_grid_rect(grid, &grid_rect);
     gui_surface_draw_rect(&window->origin, &grid_rect, color);
-    gui_wm_render_window_region(window, &grid_rect);
+    gui_wm_render_window_region(&window->origin, &grid_rect);
 }

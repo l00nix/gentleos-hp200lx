@@ -38,11 +38,11 @@ gui_wm_add_window(struct window *w)
 }
 
 void
-gui_wm_render_window_region(window_st *window, const rect_st *window_reg)
+gui_wm_render_window_region(const point_st *origin, const rect_st *window_reg)
 {
     rect_st translated;
     gui_rect_copy(&translated, window_reg);
-    gui_rect_translate(&translated, &window->origin);
+    gui_rect_translate(&translated, origin);
     gui_surface_mark_dirty(&translated);
 }
 

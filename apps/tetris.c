@@ -105,7 +105,7 @@ draw_cell(int row, int col, int active)
     rect_st cell;
     gui_grid_cell_rect(&grid, col, row, &cell);
     gui_surface_draw_rect(&window.origin, &cell, active ? COLOR_FG : COLOR_BG);
-    gui_wm_render_window_region(&window, &cell);
+    gui_wm_render_window_region(&window.origin, &cell);
 }
 
 static int

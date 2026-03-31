@@ -136,7 +136,7 @@ draw_cell(widget_st *widget)
         gui_surface_draw_border(&window.origin, &widget->rect, COLOR_FG);
     }
 
-    gui_wm_render_window_region(&window, &rect);
+    gui_wm_render_window_region(&window.origin, &rect);
 }
 
 static void

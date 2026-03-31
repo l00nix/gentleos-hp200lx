@@ -34,7 +34,7 @@ draw_cell(int x, int y, int active)
     uint8_t color = active ? COLOR_FG : COLOR_BG;
     gui_grid_cell_rect(&grid, x, y, &r);
     gui_surface_draw_rect(&window.origin, &r, color);
-    gui_wm_render_window_region(&window, &r);
+    gui_wm_render_window_region(&window.origin, &r);
 }
 
 static void
