@@ -44,7 +44,7 @@ static int cur_col;
 static int cur_row;
 static int game_over;
 static uint16_t score;
-static uint16_t best_score;
+static uint16_t best_score = 0;
 static uint32_t timeout_id;
 
 static void on_timeout(void *);
