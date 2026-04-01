@@ -93,6 +93,7 @@ struct window {
 
     const char *title;
     uint8_t bg_color;
+    int hide_border;
 
     widget_st **widgets;
     size_t widgets_count;
@@ -139,7 +140,6 @@ enum {
 };
 
 enum {
-    TITLE_BAR_HEIGHT = 16,
     STATUS_HEIGHT = 16,
 };
 

@@ -48,24 +48,11 @@ gui_window_draw(window_st *window)
     size_t i;
 
     gui_window_area(window, &area);
-    gui_surface_draw_border(&window->origin, &area, COLOR_FG);
+    gui_surface_draw_rect(&window->origin, &area, window->bg_color);
 
-    gui_rect_init(&title_rect, 0, 0, window->size.width, TITLE_BAR_HEIGHT);
-    gui_surface_draw_border(&window->origin, &title_rect, COLOR_FG);
-    gui_rect_copy(&shrunken, &title_rect);
-    gui_rect_shrink(&shrunken, 1);
-    gui_surface_draw_rect(&window->origin, &shrunken, COLOR_BG);
-    gui_surface_draw_str_centered(&window->origin, &title_rect,
-        NULL, window->title, COLOR_FG, COLOR_BG);
-
-    gui_rect_init(&content_rect,
-        1,
-        TITLE_BAR_HEIGHT,
-        window->size.width - 2,
-        window->size.height - TITLE_BAR_HEIGHT - 1
-    );
-
-    gui_surface_draw_rect(&window->origin, &content_rect, window->bg_color);
+    if (!window->hide_border) {
+        gui_surface_draw_border(&window->origin, &area, COLOR_FG);
+    }
 
     for (i = 0; i < window->widgets_count; ++i) {
         gui_widget_draw(window->widgets[i]);

@@ -16,7 +16,7 @@ enum {
     KEY_B_HEIGHT = 50,
     KEY_B_COUNT = 10,
 
-    KEYBOARD_Y = (TITLE_BAR_HEIGHT - 1),
+    KEYBOARD_Y = 0,
     KEYBOARD_HEIGHT = (KEY_W_HEIGHT),
 
     WINDOW_WIDTH = ((KEY_W_COUNT * KEY_W_WIDTH) - (KEY_W_COUNT - 1)),
@@ -140,7 +140,7 @@ init_keys(void)
 
         keys_b[i].type = WIDGET_TYPE_BUTTON;
         keys_b[i].rect.x = (key_w_idx * KEY_W_WIDTH) - key_w_idx - (KEY_B_WIDTH / 2);
-        keys_b[i].rect.y = TITLE_BAR_HEIGHT;
+        keys_b[i].rect.y = 1;
         keys_b[i].rect.width = KEY_B_WIDTH;
         keys_b[i].rect.height = KEY_B_HEIGHT;
         keys_b[i].draw = draw_key_b;
@@ -156,7 +156,7 @@ init_keys(void)
     for (i = 0; i < KEY_W_COUNT; i++) {
         keys_w[i].type = WIDGET_TYPE_BUTTON;
         keys_w[i].rect.x = (i * KEY_W_WIDTH) - i;
-        keys_w[i].rect.y = TITLE_BAR_HEIGHT - 1;
+        keys_w[i].rect.y = 0;
         keys_w[i].rect.width = KEY_W_WIDTH;
         keys_w[i].rect.height = KEY_W_HEIGHT;
         keys_w[i].draw = draw_key_w;

@@ -20,7 +20,7 @@ enum {
     APPS_COUNT = 10,
 
     GRID_X = 1 + APP_BUTTON_H_MARGIN,
-    GRID_Y = TITLE_BAR_HEIGHT + APP_BUTTON_V_MARGIN,
+    GRID_Y = 1 + APP_BUTTON_V_MARGIN,
     GRID_WIDTH = GRID_COLS * APP_BUTTON_H_STRIDE - APP_BUTTON_H_MARGIN,
     GRID_HEIGHT = GRID_ROWS * APP_BUTTON_V_STRIDE - APP_BUTTON_V_MARGIN,
 
@@ -64,6 +64,7 @@ init_window(void)
     window.size.width = WINDOW_WIDTH;
     window.size.height = WINDOW_HEIGHT;
     window.title = "Launcher";
+    window.hide_border = 1;
     window.bg_color = COLOR_BG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
