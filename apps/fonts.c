@@ -87,7 +87,7 @@ draw_font_label(void)
     rect_st r;
     rect_st shrunken;
 
-    gui_rect_init(&r, 1, TOOL_BAR_Y, WINDOW_WIDTH - 2, TOOL_BAR_HEIGHT);
+    gui_rect_init(&r, 0, TOOL_BAR_Y, WINDOW_WIDTH, TOOL_BAR_HEIGHT);
 
     gui_surface_draw_border(&window.origin, &r, COLOR_FG);
     gui_rect_copy(&shrunken, &r);
