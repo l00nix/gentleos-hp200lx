@@ -8,10 +8,10 @@
 #include <gui.h>
 
 enum {
-    GRID_CELL_WIDTH = 6,
-    GRID_CELL_HEIGHT = 6,
-    GRID_COLS = 29,
-    GRID_ROWS = 7,
+    GRID_CELL_WIDTH = 8,
+    GRID_CELL_HEIGHT = 8,
+    GRID_COLS = 27,
+    GRID_ROWS = 5,
     GRID_X = 1,
     GRID_Y = 1,
     GRID_WIDTH = GRID_WIDTH_SPACED(GRID_CELL_WIDTH, GRID_COLS),
@@ -65,16 +65,16 @@ draw_time(void)
 
     memcpy(&last_time, &t, sizeof(last_time));
 
-    draw_digit(1, 1, t.hour / 10);
-    draw_digit(5, 1, t.hour % 10);
-    draw_cell(9, 2, 1);
-    draw_cell(9, 4, 1);
-    draw_digit(11, 1, t.minute / 10);
-    draw_digit(15, 1, t.minute % 10);
-    draw_cell(19, 2, 1);
-    draw_cell(19, 4, 1);
-    draw_digit(21, 1, t.second / 10);
-    draw_digit(25, 1, t.second % 10);
+    draw_digit(0, 0, t.hour / 10);
+    draw_digit(4, 0, t.hour % 10);
+    draw_cell(8, 1, 1);
+    draw_cell(8, 3, 1);
+    draw_digit(10, 0, t.minute / 10);
+    draw_digit(14, 0, t.minute % 10);
+    draw_cell(18, 1, 1);
+    draw_cell(18, 3, 1);
+    draw_digit(20, 0, t.second / 10);
+    draw_digit(24, 0, t.second % 10);
 }
 
 static void
@@ -92,6 +92,7 @@ init_window(void)
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     window.bg_color = COLOR_BG;
+    window.hide_border = 1;
 }
 
 static void
