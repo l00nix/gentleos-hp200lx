@@ -200,7 +200,7 @@ update_status(void)
     int dealer_score = hand_score(dealer_hand, dealer_hand_count);
 
     if (game_state == STATE_PLAYING) {
-        gui_status_set("D: ?  U:%2d  \xb3  W:%d  L:%d",
+        gui_status_set("D: ?  U:%2d  \xb3  [H]it or [S]tand?  \xb3  W:%d  L:%d",
         player_score, wins, losses);
     } else {
         gui_status_set("D:%2d  U:%2d  \xb3  %s  \xb3  W:%d  L:%d",
@@ -308,7 +308,7 @@ on_key_up(window_st *window, const event_st *event)
 {
     int ch = event->payload.key.key_char;
 
-    if (ch == 'd' && game_state == STATE_OVER) {
+    if (game_state == STATE_OVER) {
         restart_game();
     } else if (ch == 'h' && game_state == STATE_PLAYING) {
         player_hit();
