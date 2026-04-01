@@ -207,7 +207,6 @@ init_window(void)
 {
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    window.title = "Calendar";
     window.bg_color = COLOR_BG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);

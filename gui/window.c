@@ -44,7 +44,7 @@ gui_window_init(window_st *window, int width, int height)
 void
 gui_window_draw(window_st *window)
 {
-    rect_st area, title_rect, shrunken, content_rect;
+    rect_st area;
     size_t i;
 
     gui_window_area(window, &area);

@@ -101,7 +101,6 @@ init_window(void)
 {
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    window.title = "About";
     window.bg_color = COLOR_BG;
 }
 

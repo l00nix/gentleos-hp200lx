@@ -64,7 +64,6 @@ init_window(void)
 
     window.size.width = WINDOW_WIDTH;
     window.size.height = WINDOW_HEIGHT;
-    window.title = "Launcher";
     window.hide_border = 1;
     window.bg_color = COLOR_BG;
     window.widgets = widgets;

@@ -273,7 +273,6 @@ init_window(void)
 {
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    window.title = "Snake";
     window.bg_color = COLOR_BG;
     window.on_key_down = on_keyboard;
     window.on_close = on_close;

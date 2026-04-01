@@ -91,7 +91,6 @@ init_window(void)
 {
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-    window.title = "Clock";
     window.bg_color = COLOR_BG;
 }
 

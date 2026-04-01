@@ -91,7 +91,6 @@ struct window {
     int visible;
     int active;
 
-    const char *title;
     uint8_t bg_color;
     int hide_border;
 
