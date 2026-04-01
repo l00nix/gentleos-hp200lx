@@ -124,6 +124,7 @@ show_app(void)
 }
 
 app_st app_clock = {
+    "Clock",
     &bitmap_icon_clock,
     show_app,
 };

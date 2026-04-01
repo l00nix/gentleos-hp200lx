@@ -275,6 +275,7 @@ show_app(void)
 }
 
 app_st app_pairs = {
+    "Pairs",
     &bitmap_icon_pairs,
     show_app,
 };

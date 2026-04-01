@@ -118,6 +118,7 @@ typedef struct {
 } grid_st;
 
 typedef struct {
+    const char *name;
     bitmap_st *icon;
     void (*show)(void);
 } app_st;

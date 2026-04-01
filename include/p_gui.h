@@ -8,6 +8,7 @@ extern void gui_grid_draw_background(grid_st *grid, window_st *window, uint8_t c
 extern void gui_main(void);
 /* gui/rect.c */
 extern const rect_st GUI_RECT_ZERO;
+extern const rect_st GUI_RECT_SCREEN;
 extern const point_st GUI_POINT_ZERO;
 extern void gui_rect_copy(rect_st *dst, const rect_st *src);
 extern void gui_point_copy(point_st *dst, const point_st *src);
@@ -25,6 +26,7 @@ extern void gui_rect_clip(rect_st *r, const rect_st *clipper);
 extern const char *gui_rect_format(const rect_st *r);
 /* gui/status.c */
 extern void gui_status_set(const char *fmt, ...);
+extern void gui_status_set_tl(const char *fmt, ...);
 extern void gui_status_init(void);
 /* gui/surface.c */
 extern void gui_surface_init(void);

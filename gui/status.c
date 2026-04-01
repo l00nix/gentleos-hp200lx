@@ -22,25 +22,34 @@ enum {
     TEXT_MAX_LEN = (STATUS_WIDTH / FONT_WIDTH) - 2,
 };
 
-static point_st origin = { 0, GUI_HEIGHT - STATUS_HEIGHT };
-static uint16_t status_text_len = 0;
+enum {
+    CORNER_BL = 0,
+    CORNER_TL = 1,
+};
+
+static uint16_t status_text_len[2] = { 0, 0 };
 static char status_text_buf[TEXT_MAX_LEN + 1];
 
 static void
-gui_status_set_text(const char *text)
+gui_status_set_text(int corner, const char *text)
 {
     uint16_t len = strlen(text);
     font_st *font = &fonts[0];
     rect_st clear_rect, text_rect;
+    point_st origin = { 0, 0 };
+
+    if (corner == CORNER_BL) {
+        origin.y = GUI_HEIGHT - STATUS_HEIGHT;
+    }
 
     gui_surface_draw_str(&origin, TEXT_X, TEXT_Y, font, text, COLOR_FG, COLOR_BG);
 
     /* If the new text is shorter than previous, clear the remaining space */
-    if (len < status_text_len) {
+    if (len < status_text_len[corner]) {
         gui_rect_init(&clear_rect,
             TEXT_X + len * font->size.width,
             TEXT_Y,
-            (status_text_len - len) * font->size.width,
+            (status_text_len[corner] - len) * font->size.width,
             font->size.height
         );
 
@@ -56,7 +65,7 @@ gui_status_set_text(const char *text)
 
     gui_wm_render_window_region(&origin, &text_rect);
 
-    status_text_len = len;
+    status_text_len[corner] = len;
 }
 
 void
@@ -68,14 +77,30 @@ gui_status_set(const char *fmt, ...)
     (void) vsnprintf(status_text_buf, sizeof(status_text_buf), fmt, args);
     va_end(args);
 
-    gui_status_set_text(status_text_buf);
+    gui_status_set_text(CORNER_BL, status_text_buf);
+}
+
+void
+gui_status_set_tl(const char *fmt, ...)
+{
+    va_list args;
+
+    va_start(args, fmt);
+    (void) vsnprintf(status_text_buf, sizeof(status_text_buf), fmt, args);
+    va_end(args);
+
+    gui_status_set_text(CORNER_TL, status_text_buf);
 }
 
 void
 gui_status_init(void)
 {
+    point_st origin = { 0, 0 };
     memset(status_text_buf, 0, sizeof(status_text_buf));
 
-    gui_surface_draw_h_seg(&origin, 0, 0, STATUS_WIDTH, COLOR_FG);
+    gui_surface_draw_h_seg(&origin, 0, STATUS_HEIGHT - 1, STATUS_WIDTH, COLOR_FG);
+    gui_surface_draw_h_seg(&origin, 0, GUI_HEIGHT - STATUS_HEIGHT, STATUS_WIDTH, COLOR_FG);
+
     gui_status_set("");
+    gui_status_set_tl("");
 }

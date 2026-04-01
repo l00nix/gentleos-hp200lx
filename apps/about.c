@@ -133,6 +133,7 @@ show_app(void)
 }
 
 app_st app_about = {
+    "About",
     &bitmap_icon_about,
     show_app,
 };

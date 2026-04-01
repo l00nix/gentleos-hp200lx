@@ -265,6 +265,7 @@ show_app(void)
 }
 
 app_st app_calc = {
+    "Calculator",
     &bitmap_icon_calc,
     show_app,
 };

@@ -397,6 +397,7 @@ show_app(void)
 }
 
 app_st app_mines = {
+    "Mines",
     &bitmap_icon_mines,
     show_app,
 };

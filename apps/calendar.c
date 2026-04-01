@@ -278,6 +278,7 @@ show_app(void)
 
 
 app_st app_calendar = {
+    "Calendar",
     &bitmap_icon_calendar,
     show_app,
 };

@@ -53,6 +53,7 @@ on_button_pointer_up(widget_st *widget, const event_st *event _unsd, const point
 
     if (apps[widget->tag1]) {
         apps[widget->tag1]->show();
+        gui_status_set_tl("GentleOS > %s", apps[widget->tag1]->name);
     }
 }
 
@@ -112,9 +113,12 @@ show_app(void)
 
     gui_wm_add_window(&window);
     gui_window_draw(&window);
+
+    gui_status_set_tl("GentleOS");
 }
 
 app_st app_launcher = {
+    "Launcher",
 	0,
     show_app,
 };

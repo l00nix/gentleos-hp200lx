@@ -307,6 +307,7 @@ show_app(void)
 }
 
 app_st app_snake = {
+    "Snake",
     &bitmap_icon_snake,
     show_app,
 };

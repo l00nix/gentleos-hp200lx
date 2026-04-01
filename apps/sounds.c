@@ -186,6 +186,7 @@ show_app(void)
 }
 
 app_st app_sounds = {
+    "Sounds",
     &bitmap_icon_sounds,
     show_app,
 };

@@ -11,6 +11,10 @@ const rect_st GUI_RECT_ZERO = {
     0, 0, 0, 0
 };
 
+const rect_st GUI_RECT_SCREEN = {
+    0, 0, GUI_WIDTH, GUI_HEIGHT
+};
+
 const point_st GUI_POINT_ZERO = { 0, 0 };
 
 void

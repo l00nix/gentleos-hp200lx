@@ -345,6 +345,7 @@ show_app(void)
 }
 
 app_st app_blackjack = {
+    "Blackjack",
     &bitmap_icon_blackjack,
     show_app,
 };

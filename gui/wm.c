@@ -50,9 +50,9 @@ void
 gui_wm_init(void)
 {
     gui_wm_container.x = 0;
-    gui_wm_container.y = 0;
+    gui_wm_container.y = STATUS_HEIGHT;
     gui_wm_container.width = GUI_WIDTH;
-    gui_wm_container.height = GUI_HEIGHT - STATUS_HEIGHT;
+    gui_wm_container.height = GUI_HEIGHT - STATUS_HEIGHT * 2;
     gui_wm_render_wallpaper(&gui_wm_container);
 
     gui_status_init();
