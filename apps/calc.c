@@ -45,8 +45,8 @@ static const char *button_labels[BUTTONS_COUNT] = {
 
 typedef int32_t val_t;
 
-#define VAL_MAX INT32_MAX
-#define VAL_MIN INT32_MIN
+#define VAL_MAX 2147483647
+#define VAL_MIN 2147483648
 
 static val_t current_val = 0;
 static val_t stored_val = 0;
@@ -131,7 +131,7 @@ update_display(void)
     if (error) {
         snprintf(buf, sizeof(buf), "ERR");
     } else {
-        snprintf(buf, sizeof(buf), "%d", current_val);
+        snprintf(buf, sizeof(buf), "%ld", current_val);
     }
 
     gui_rect_init(&rect, DISPLAY_X, DISPLAY_Y, DISPLAY_WIDTH, DISPLAY_HEIGHT);
@@ -141,7 +141,7 @@ update_display(void)
     font = &fonts[0];
     text_width = strlen(buf) * font->size.width;
     text_x = rect.x + rect.width - text_width - 10;
-    text_y = rect.y + (rect.height - font_8x8->size.height) / 2;
+    text_y = rect.y + (rect.height - font->size.height) / 2;
     gui_surface_draw_str(&window.origin, text_x, text_y, font,
         buf, COLOR_FG, COLOR_BG);
 

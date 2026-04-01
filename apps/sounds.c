@@ -12,7 +12,7 @@ enum {
     KEY_W_HEIGHT = 80,
     KEY_W_COUNT = 15,
 
-    KEY_B_WIDTH = 8,
+    KEY_B_WIDTH = 9,
     KEY_B_HEIGHT = 50,
     KEY_B_COUNT = 10,
 
@@ -31,12 +31,13 @@ static window_st window;
 static widget_st keys_w[KEY_W_COUNT];
 static widget_st keys_b[KEY_B_COUNT];
 static widget_st *widgets[KEY_W_COUNT + KEY_B_COUNT];
+static widget_st *pressed_widget;
 
 static void
 draw_key_w(widget_st *widget)
 {
     rect_st rect_base;
-    uint8_t color = COLOR_BG;
+    uint8_t color = (widget == pressed_widget) ? COLOR_FG : COLOR_BG;
 
     int octave = widget->tag2 / 7;
     int ofs = widget->tag2 % 7;
@@ -68,7 +69,7 @@ draw_key_w(widget_st *widget)
 static void
 draw_key_b(widget_st *widget)
 {
-    uint8_t color = COLOR_FG;
+    uint8_t color = (widget == pressed_widget) ? COLOR_BG : COLOR_FG;
 
     gui_surface_draw_rect(&widget->window->origin, &widget->rect, color);
 
@@ -89,28 +90,87 @@ key_frequency(widget_st *widget)
     return freqs[ofs] * (1 << octave);
 }
 
-static void
-on_key_pointer_down(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
+static widget_st *
+key_for_char(int ch)
 {
+    widget_st *w = NULL;
+
+    if (ch >= 'A' && ch <= 'Z') {
+        ch += 32;
+    }
+
+    switch (ch) {
+    case 'z': w = &keys_w[0]; break;
+    case 'x': w = &keys_w[1]; break;
+    case 'c': w = &keys_w[2]; break;
+    case 'v': w = &keys_w[3]; break;
+    case 'b': w = &keys_w[4]; break;
+    case 'n': w = &keys_w[5]; break;
+    case 'm': w = &keys_w[6]; break;
+    case ',': w = &keys_w[7]; break;
+    case 'w': w = &keys_w[7]; break;
+    case 'e': w = &keys_w[8]; break;
+    case 'r': w = &keys_w[9]; break;
+    case 't': w = &keys_w[10]; break;
+    case 'y': w = &keys_w[11]; break;
+    case 'u': w = &keys_w[12]; break;
+    case 'i': w = &keys_w[13]; break;
+    case 'o': w = &keys_w[14]; break;
+    case 's': w = &keys_b[0]; break;
+    case 'd': w = &keys_b[1]; break;
+    case 'g': w = &keys_b[2]; break;
+    case 'h': w = &keys_b[3]; break;
+    case 'j': w = &keys_b[4]; break;
+    case '#':
+    case '3': w = &keys_b[5]; break;
+    case '$':
+    case '4': w = &keys_b[6]; break;
+    case '^':
+    case '6': w = &keys_b[7]; break;
+    case '&':
+    case '7': w = &keys_b[8]; break;
+    case '*':
+    case '8': w = &keys_b[9]; break;
+    }
+
+    return w;
+}
+
+static void
+on_key_down(window_st *window, const event_st *event)
+{
+    int ch = event->payload.key.key_char;
+    widget_st *widget = key_for_char(ch);
+    widget_st *prev_widget;
+
+    if (!widget) {
+        return;
+    }
+
+    if (pressed_widget) {
+        prev_widget = pressed_widget;
+        pressed_widget = NULL;
+        gui_widget_draw(prev_widget);
+    }
+
     krn_speaker_play(key_frequency(widget));
-
+    pressed_widget = widget;
     gui_widget_draw(widget);
 }
 
 static void
-on_key_pointer_up(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
+on_key_up(window_st *window, const event_st *event)
 {
-    krn_speaker_stop();
+    int ch = event->payload.key.key_char;
+    widget_st *widget = key_for_char(ch);
 
+    if (widget != pressed_widget) {
+        return;
+    }
+
+    pressed_widget = NULL;
     gui_widget_draw(widget);
-}
-
-static void
-on_key_pointer_out(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
-{
     krn_speaker_stop();
-
-    gui_widget_draw(widget);
 }
 
 static void
@@ -121,6 +181,8 @@ init_window(void)
     window.bg_color = COLOR_FG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
+    window.on_key_down = on_key_down;
+    window.on_key_up = on_key_up;
 }
 
 static void
@@ -146,9 +208,6 @@ init_keys(void)
         keys_b[i].tag1 = TAG_KEY_B;
         keys_b[i].tag2 = i;
         keys_b[i].press_on_move_in = 1;
-        keys_b[i].on_pointer_down = on_key_pointer_down;
-        keys_b[i].on_pointer_up = on_key_pointer_up;
-        keys_b[i].on_pointer_out = on_key_pointer_out;
         gui_window_add_widget(&window, &keys_b[i]);
     }
 
@@ -162,9 +221,6 @@ init_keys(void)
         keys_w[i].tag1 = TAG_KEY_W;
         keys_w[i].tag2 = i;
         keys_w[i].press_on_move_in = 1;
-        keys_w[i].on_pointer_down = on_key_pointer_down;
-        keys_w[i].on_pointer_up = on_key_pointer_up;
-        keys_w[i].on_pointer_out = on_key_pointer_out;
         gui_window_add_widget(&window, &keys_w[i]);
     }
 }
@@ -182,6 +238,8 @@ show_app(void)
 
     gui_wm_add_window(&window);
     gui_window_draw(&window);
+
+    gui_status_set("Control: letters and digits");
 }
 
 app_st app_sounds = {
