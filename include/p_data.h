@@ -25,6 +25,7 @@ extern bitmap_st bitmap_icon_tetris;
 extern bitmap_st bitmap_sprite_club;
 extern bitmap_st bitmap_sprite_diamond;
 extern bitmap_st bitmap_sprite_flag;
+extern bitmap_st bitmap_sprite_github;
 extern bitmap_st bitmap_sprite_heart;
 extern bitmap_st bitmap_sprite_mine;
 extern bitmap_st bitmap_sprite_spade;

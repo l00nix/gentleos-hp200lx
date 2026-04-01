@@ -25,8 +25,10 @@ extern void gui_rect_enclose(rect_st *a, const rect_st *b);
 extern void gui_rect_clip(rect_st *r, const rect_st *clipper);
 extern const char *gui_rect_format(const rect_st *r);
 /* gui/status.c */
-extern void gui_status_set(const char *fmt, ...);
 extern void gui_status_set_tl(const char *fmt, ...);
+extern void gui_status_set_tr(const char *fmt, ...);
+extern void gui_status_set(const char *fmt, ...);
+extern void gui_status_set_br(const char *fmt, ...);
 extern void gui_status_init(void);
 /* gui/surface.c */
 extern void gui_surface_init(void);
