@@ -80,9 +80,9 @@ draw_month_label(void)
     char buf[16];
     rect_st rect;
 
-    rect.x = 1;
+    rect.x = 0;
     rect.y = TOOL_BAR_Y;
-    rect.width = WINDOW_WIDTH - 2;
+    rect.width = WINDOW_WIDTH;
     rect.height = TOOL_BAR_HEIGHT;
 
     snprintf(buf, sizeof(buf), "%s %d", month_names[selected_month - 1], selected_year);
