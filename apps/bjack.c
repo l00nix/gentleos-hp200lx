@@ -38,6 +38,13 @@ static const char *rank_str[] = {
 
 static const char *suit_str[] = { "\x03", "\x04", "\x05", "\x06" };
 
+static bitmap_st *suit_bmp[] = {
+    &bitmap_sprite_heart,
+    &bitmap_sprite_diamond,
+    &bitmap_sprite_club,
+    &bitmap_sprite_spade,
+};
+
 static window_st window;
 
 static uint8_t deck[DECK_SIZE];
@@ -151,7 +158,8 @@ draw_card(int x, int y, uint8_t card, int face_up)
     gui_surface_draw_rect(&window.origin, &r, bg);
     gui_surface_draw_border(&window.origin, &r, COLOR_FG);
     gui_surface_draw_str(&window.origin, x + 3, y + 2, NULL, rank_str[rank], fg, bg);
-    gui_surface_draw_str_centered(&window.origin, &r, NULL, suit_str[suit], fg, bg);
+    gui_surface_draw_bitmap_centered(&window.origin, &window.size, &r,
+        suit_bmp[suit], COLOR_FG);
     gui_surface_draw_str(&window.origin,
         x + CARD_WIDTH - strlen(rank_str[rank]) * 8 - 3,
         y + CARD_HEIGHT - 10,

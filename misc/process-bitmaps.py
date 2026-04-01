@@ -64,7 +64,7 @@ def load_image(path):
     return load_image_1bpp(path)
 
 def main():
-    bitmap_files = sorted(glob.glob("bitmaps/*.bmp"))
+    bitmap_files = sorted(glob.glob("bitmaps/*"))
     bitmaps = (load_image(x) for x in bitmap_files)
 
     lines = [

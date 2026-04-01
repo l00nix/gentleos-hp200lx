@@ -22,9 +22,11 @@ extern bitmap_st bitmap_icon_pairs_turtle;
 extern bitmap_st bitmap_icon_snake;
 extern bitmap_st bitmap_icon_sounds;
 extern bitmap_st bitmap_icon_tetris;
+extern bitmap_st bitmap_sprite_club;
+extern bitmap_st bitmap_sprite_diamond;
 extern bitmap_st bitmap_sprite_flag;
+extern bitmap_st bitmap_sprite_heart;
 extern bitmap_st bitmap_sprite_mine;
+extern bitmap_st bitmap_sprite_spade;
 /* data/data_fnt.c */
-extern uint8_t gui_font_pixels_8[256 * 8];
-extern font_st fonts[FONT_COUNT];
-extern font_st *font_8x8;
+extern font_st fonts[];
