@@ -27,6 +27,9 @@ typedef unsigned short uint16_t;
 typedef long int32_t;
 typedef unsigned long uint32_t;
 
+#define INT32_MIN ((int32_t)0x80000000L)
+#define INT32_MAX ((int32_t)0x7FFFFFFFL)
+
 typedef long ssize_t;
 typedef unsigned long size_t;
 

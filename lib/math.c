@@ -74,3 +74,37 @@ umod32(uint32_t dividend, uint32_t divisor)
 
     return remd;
 }
+
+int
+add32(int32_t *out, int32_t a, int32_t b)
+{
+    int32_t res = a + b;
+
+    if (a > 0 && b > 0 && res < 0) {
+        return 1;
+    }
+
+    if (a < 0 && b < 0 && res >= 0) {
+        return 1;
+    }
+
+    *out = res;
+    return 0;
+}
+
+int
+sub32(int32_t *out, int32_t a, int32_t b)
+{
+    int32_t res = a - b;
+
+    if (a >= 0 && b < 0 && res < 0) {
+        return 1;
+    }
+
+    if (a < 0 && b > 0 && res > 0) {
+        return 1;
+    }
+
+    *out = res;
+    return 0;
+}

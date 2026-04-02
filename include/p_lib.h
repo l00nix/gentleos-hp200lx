@@ -4,6 +4,8 @@ extern void bios_puts(const char *s);
 /* lib/math.c */
 extern uint32_t udiv32(uint32_t dividend, uint32_t divisor);
 extern uint32_t umod32(uint32_t dividend, uint32_t divisor);
+extern int add32(int32_t *out, int32_t a, int32_t b);
+extern int sub32(int32_t *out, int32_t a, int32_t b);
 /* lib/printf.c */
 extern int vsnprintf(char *buf, size_t nbyte, const char *fmt, va_list va);
 extern int snprintf(char *buf, size_t nbyte, const char *fmt, ...);
