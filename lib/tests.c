@@ -69,6 +69,44 @@ test_sub32(void)
     check_math32("sub32", sub32, INT32_MIN, 1, 0, 1);
 }
 
+static void
+test_mul32(void)
+{
+    check_math32("mul32", mul32, 0, 0, 0, 0);
+    check_math32("mul32", mul32, 1, 0, 0, 0);
+    check_math32("mul32", mul32, 0, 1, 0, 0);
+    check_math32("mul32", mul32, 1, 1, 1, 0);
+    check_math32("mul32", mul32, 2, 3, 6, 0);
+    check_math32("mul32", mul32, -2, 3, -6, 0);
+    check_math32("mul32", mul32, 2, -3, -6, 0);
+    check_math32("mul32", mul32, -2, -3, 6, 0);
+    check_math32("mul32", mul32, 1000, 1000, 1000000L, 0);
+    check_math32("mul32", mul32, -1, INT32_MAX, -INT32_MAX, 0);
+    check_math32("mul32", mul32, -1, INT32_MIN, 0, 1);
+    check_math32("mul32", mul32, INT32_MAX, 1, INT32_MAX, 0);
+    check_math32("mul32", mul32, INT32_MIN, 1, INT32_MIN, 0);
+    check_math32("mul32", mul32, INT32_MAX, 2, 0, 1);
+    check_math32("mul32", mul32, INT32_MAX, INT32_MAX, 0, 1);
+    check_math32("mul32", mul32, INT32_MIN, INT32_MIN, 0, 1);
+}
+
+static void
+test_div32(void)
+{
+    check_math32("div32", div32, 0, 1, 0, 0);
+    check_math32("div32", div32, 6, 3, 2, 0);
+    check_math32("div32", div32, 7, 3, 2, 0);
+    check_math32("div32", div32, -6, 3, -2, 0);
+    check_math32("div32", div32, 6, -3, -2, 0);
+    check_math32("div32", div32, -6, -3, 2, 0);
+    check_math32("div32", div32, INT32_MAX, 1, INT32_MAX, 0);
+    check_math32("div32", div32, INT32_MIN, 1, INT32_MIN, 0);
+    check_math32("div32", div32, INT32_MAX, -1, INT32_MIN + 1, 0);
+    check_math32("div32", div32, INT32_MIN, -1, 0, 1);
+    check_math32("div32", div32, 1, 0, 0, 1);
+    check_math32("div32", div32, 0, 0, 0, 1);
+}
+
 void
 tests_run(void)
 {
@@ -78,6 +116,8 @@ tests_run(void)
 
     test_add32();
     test_sub32();
+    test_mul32();
+    test_div32();
 
     krn_debug_printf_bios("Tests done: %d ok, %d failed\n", tests_ok, tests_failed);
     krn_debug_printf_bios("Press enter to continue...");

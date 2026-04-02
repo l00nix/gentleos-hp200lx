@@ -114,3 +114,70 @@ sub32(int32_t *out, int32_t a, int32_t b)
     *out = res;
     return 0;
 }
+
+int
+mul32(int32_t *out, int32_t a, int32_t b)
+{
+    uint32_t res = 0;
+    uint32_t ua = a < 0 ? -a : a;
+    uint32_t ub = b < 0 ? -b : b;
+    int neg = (a < 0) != (b < 0);
+
+    while (ua != 0) {
+        if (ua & 1) {
+            if (res > 0xFFFFFFFFUL - ub) {
+                return 1;
+            }
+            res += ub;
+        }
+
+        ua >>= 1;
+
+        if (ua != 0 && (ub & 0x80000000UL)) {
+            return 1;
+        }
+
+        ub <<= 1;
+    }
+
+    if (neg) {
+        if (res > 0x80000000UL) {
+            return 1;
+        }
+        *out = (int32_t)(0 - res);
+    } else {
+        if (res > 0x7FFFFFFFUL) {
+            return 1;
+        }
+        *out = (int32_t)res;
+    }
+
+    return 0;
+}
+
+int
+div32(int32_t *out, int32_t a, int32_t b)
+{
+    uint32_t ua = a < 0 ? -a : a;
+    uint32_t ub = b < 0 ? -b : b;
+    int neg = (a < 0) != (b < 0);
+    uint32_t quot, remd;
+
+    if (udivmod32(ua, ub, &quot, &remd)) {
+        return 1;
+    }
+
+    if (neg) {
+        if (quot > 0x80000000UL) {
+            return 1;
+        }
+        *out = (int32_t)(0 - quot);
+    } else {
+        if (quot > 0x7FFFFFFFUL) {
+            return 1;
+        }
+        *out = (int32_t)quot;
+    }
+
+    return 0;
+}
