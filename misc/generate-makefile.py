@@ -6,7 +6,6 @@ import os
 SOURCE_DIRS = ["apps", "data", "kernel", "lib", "gui"]
 
 EXCLUDED_SOURCES = [
-    "apps/calc.c",
 ]
 
 MAKEFILE_TPL = """

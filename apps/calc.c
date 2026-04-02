@@ -8,8 +8,8 @@
 #include <gui.h>
 
 enum {
-    BUTTON_WIDTH = 36,
-    BUTTON_HEIGHT = 36,
+    BUTTON_WIDTH = 24,
+    BUTTON_HEIGHT = 24,
     BUTTON_COLS = 4,
     BUTTON_ROWS = 4,
     BUTTONS_COUNT = BUTTON_COLS * BUTTON_ROWS,
@@ -33,6 +33,7 @@ static window_st window;
 
 static widget_st button_widgets[BUTTONS_COUNT];
 static widget_st *widgets[BUTTONS_COUNT];
+static widget_st *pressed_button = NULL;
 
 static grid_st grid;
 
@@ -43,14 +44,9 @@ static const char *button_labels[BUTTONS_COUNT] = {
     "0", "C", "=", "+"
 };
 
-typedef int32_t val_t;
-
-#define VAL_MAX 2147483647
-#define VAL_MIN 2147483648
-
-static val_t current_val = 0;
-static val_t stored_val = 0;
-static val_t last_operand = 0;
+static int32_t current_val = 0;
+static int32_t stored_val = 0;
+static int32_t last_operand = 0;
 static uint8_t current_op = 0;
 static uint8_t last_op = 0;
 static int new_number = 1;
@@ -59,9 +55,9 @@ static int error = 0;
 static void
 exec_add(void)
 {
-    val_t result;
+    int32_t result;
 
-    if (__builtin_add_overflow(stored_val, current_val, &result)) {
+    if (add32(&result, stored_val, current_val)) {
         error = 1;
         return;
     }
@@ -72,9 +68,9 @@ exec_add(void)
 static void
 exec_sub(void)
 {
-    val_t result;
+    int32_t result;
 
-    if (__builtin_sub_overflow(stored_val, current_val, &result)) {
+    if (sub32(&result, stored_val, current_val)) {
         error = 1;
         return;
     }
@@ -85,9 +81,9 @@ exec_sub(void)
 static void
 exec_mul(void)
 {
-    val_t result;
+    int32_t result;
 
-    if (__builtin_mul_overflow(current_val, stored_val, &result)) {
+    if (mul32(&result, stored_val, current_val)) {
         error = 1;
         return;
     }
@@ -98,12 +94,14 @@ exec_mul(void)
 static void
 exec_div(void)
 {
-    if (current_val == 0 || (stored_val == VAL_MIN && current_val == -1)) {
+    int32_t result;
+
+    if (div32(&result, stored_val, current_val)) {
         error = 1;
         return;
     }
 
-    current_val = stored_val / current_val;
+    current_val = result;
 }
 
 static void
@@ -139,7 +137,7 @@ update_display(void)
     gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
 
     font = &fonts[0];
-    text_width = strlen(buf) * font->size.width;
+    text_width = (uint16_t)strlen(buf) * font->size.width;
     text_x = rect.x + rect.width - text_width - 10;
     text_y = rect.y + (rect.height - font->size.height) / 2;
     gui_surface_draw_str(&window.origin, text_x, text_y, font,
@@ -149,13 +147,10 @@ update_display(void)
 }
 
 static void
-on_button_press(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
+on_button_press(widget_st *widget)
 {
     uint8_t op;
     int val;
-    val_t new_val;
-
-    gui_widget_draw(widget);
 
     op = widget->label[0];
 
@@ -169,11 +164,7 @@ on_button_press(widget_st *widget, const event_st *event _unsd, const point_st *
             current_val = val;
             new_number = 0;
         } else {
-            if (__builtin_mul_overflow(current_val, 10, &new_val) ||
-                __builtin_add_overflow(new_val, val, &new_val)) {
-                return;
-            }
-            current_val = new_val;
+            (void)append32(&current_val, current_val, val);
         }
     } else if (op == 'C') {
         current_val = 0;
@@ -207,6 +198,55 @@ on_button_press(widget_st *widget, const event_st *event _unsd, const point_st *
     update_display();
 }
 
+static widget_st *
+button_for_char(int ch)
+{
+    int i;
+
+    if (ch == 'c') {
+        ch = 'C';
+    }
+
+    if (ch == '\n') {
+        ch = '=';
+    }
+
+    for (i = 0; i < BUTTONS_COUNT; ++i) {
+        if (button_widgets[i].label[0] == ch) {
+            return &button_widgets[i];
+        }
+    }
+
+    return NULL;
+}
+
+static void
+on_key_up(window_st *window, const event_st *event)
+{
+    widget_st *prev_pressed_button = pressed_button;
+
+    if (prev_pressed_button) {
+        pressed_button = NULL;
+        prev_pressed_button->active = 0;
+        gui_widget_draw(prev_pressed_button);
+        on_button_press(prev_pressed_button);
+    }
+}
+
+static void
+on_key_down(window_st *window, const event_st *event)
+{
+    widget_st *button = button_for_char(event->payload.key.key_char);
+
+    if (pressed_button) {
+        return;
+    }
+
+    pressed_button = button;
+    button->active = 1;
+    gui_button_draw(button);
+}
+
 static void
 init_window(void)
 {
@@ -215,6 +255,8 @@ init_window(void)
     window.bg_color = COLOR_FG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
+    window.on_key_down = on_key_down;
+    window.on_key_up = on_key_up;
 }
 
 static void
@@ -240,7 +282,6 @@ init_buttons(void)
             button->hide_border = 1;
             button->window = &window;
             button->label = button_labels[idx];
-            button->on_pointer_up = on_button_press;
 
             gui_window_add_widget(&window, button);
         }

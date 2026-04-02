@@ -2,6 +2,7 @@
 	build\kernel\start.obj+
 	build\apps\about.obj+
 	build\apps\bjack.obj+
+	build\apps\calc.obj+
 	build\apps\calendar.obj+
 	build\apps\clock.obj+
 	build\apps\fonts.obj+

@@ -7,6 +7,7 @@ OBJS = &
 	build\kernel\start.obj &
 	build\apps\about.obj &
 	build\apps\bjack.obj &
+	build\apps\calc.obj &
 	build\apps\calendar.obj &
 	build\apps\clock.obj &
 	build\apps\fonts.obj &
@@ -91,6 +92,9 @@ build\apps\about.obj: apps\about.c $(INCLUDES)
 
 build\apps\bjack.obj: apps\bjack.c $(INCLUDES)
 	$(CC) $(CFLAGS) -nbuild\apps apps\bjack.c
+
+build\apps\calc.obj: apps\calc.c $(INCLUDES)
+	$(CC) $(CFLAGS) -nbuild\apps apps\calc.c
 
 build\apps\calendar.obj: apps\calendar.c $(INCLUDES)
 	$(CC) $(CFLAGS) -nbuild\apps apps\calendar.c

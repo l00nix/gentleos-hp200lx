@@ -29,9 +29,9 @@ enum {
 };
 
 static app_st *apps[APPS_COUNT] = {
-    &app_about,
     &app_clock,
     &app_calendar,
+    &app_calc,
     &app_fonts,
     &app_sounds,
     &app_mines,
