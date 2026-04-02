@@ -23,15 +23,18 @@ section _DATA class=DATA
 
 global krn_data_seg
 krn_data_seg:
+
 global DGROUP@
 DGROUP@:
     dw 0
 
+section _DATAEND class=DATAEND
+
+global krn_marker_data_end
+krn_marker_data_end:
+    dq 0xf0cacc1a
+
 section _BSS class=BSS
 section _BSSEND class=BSSEND
 
-; free memory begins at the end of BSS
-global heap_start
-heap_start:
-
-group DGROUP _TEXT _DATA _BSS _BSSEND
+group DGROUP _TEXT _DATA _DATAEND _BSS _BSSEND

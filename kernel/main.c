@@ -9,6 +9,7 @@
 #include <gui.h>
 
 extern uint16_t krn_data_seg;
+extern uint32_t krn_marker_data_end;
 
 #if ENABLE_TESTS
 extern void tests_run(void);
@@ -17,7 +18,14 @@ extern void tests_run(void);
 void
 krn_main(void)
 {
-    krn_debug_printf("\nKernel loaded\n");
+    krn_debug_printf("\n");
+
+    if (krn_marker_data_end != 0xf0cacc1a) {
+        krn_debug_printf("Kernel loading failed\n");
+        while (1);
+    }
+
+    krn_debug_printf("Kernel loaded successfully\n");
 
 #if ENABLE_TESTS
     tests_run();
