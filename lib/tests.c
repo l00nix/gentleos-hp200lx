@@ -107,6 +107,24 @@ test_div32(void)
     check_math32("div32", div32, 0, 0, 0, 1);
 }
 
+static void
+test_append32(void)
+{
+    check_math32("append32", append32, 0, 0, 0, 0);
+    check_math32("append32", append32, 0, 5, 5, 0);
+    check_math32("append32", append32, 1, 2, 12, 0);
+    check_math32("append32", append32, 12, 3, 123, 0);
+    check_math32("append32", append32, 123, 4, 1234, 0);
+    check_math32("append32", append32, -1, 2, -12, 0);
+    check_math32("append32", append32, -12, 3, -123, 0);
+    check_math32("append32", append32, -123, 4, -1234, 0);
+    check_math32("append32", append32, 214748364L, 7, INT32_MAX, 0);
+    check_math32("append32", append32, 214748364L, 8, 0, 1);
+    check_math32("append32", append32, INT32_MAX, 0, 0, 1);
+    check_math32("append32", append32, 0, -1, 0, 1);
+    check_math32("append32", append32, 0, 10, 0, 1);
+}
+
 void
 tests_run(void)
 {
@@ -118,6 +136,7 @@ tests_run(void)
     test_sub32();
     test_mul32();
     test_div32();
+    test_append32();
 
     krn_debug_printf_bios("Tests done: %d ok, %d failed\n", tests_ok, tests_failed);
     krn_debug_printf_bios("Press enter to continue...");

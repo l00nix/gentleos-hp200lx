@@ -181,3 +181,28 @@ div32(int32_t *out, int32_t a, int32_t b)
 
     return 0;
 }
+
+int
+append32(int32_t *out, int32_t a, int32_t d)
+{
+    int32_t res;
+
+    if (d < 0 || d > 9) {
+        return 1;
+    }
+
+    if (a < 0) {
+        d = -d;
+    }
+
+    if (mul32(&res, a, 10)) {
+        return 1;
+    }
+
+    if (add32(&res, res, d)) {
+        return 1;
+    }
+
+    *out = res;
+    return 0;
+}
