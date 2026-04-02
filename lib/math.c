@@ -7,7 +7,7 @@
 
 #include <lib.h>
 
-static void
+static int
 udivmod32(uint32_t dividend, uint32_t divisor, uint32_t *quotient, uint32_t *remainder)
 {
     uint32_t quot;
@@ -15,21 +15,19 @@ udivmod32(uint32_t dividend, uint32_t divisor, uint32_t *quotient, uint32_t *rem
     uint16_t bit;
 
     if (divisor == 0) {
-        *quotient = 0;
-        *remainder = 0;
-        return;
+        return 1;
     }
 
     if (dividend < divisor) {
         *quotient = 0;
         *remainder = dividend;
-        return;
+        return 0;
     }
 
     if (dividend == divisor) {
         *quotient = 1;
         *remainder = 0;
-        return;
+        return 0;
     }
 
     quot = 0;
@@ -53,26 +51,34 @@ udivmod32(uint32_t dividend, uint32_t divisor, uint32_t *quotient, uint32_t *rem
 
     *quotient = quot;
     *remainder = remd;
+
+    return 0;
 }
 
-uint32_t
-udiv32(uint32_t dividend, uint32_t divisor)
+int
+udiv32(uint32_t *out, uint32_t dividend, uint32_t divisor)
 {
     uint32_t quot, remd;
 
-    udivmod32(dividend, divisor, &quot, &remd);
+    if (udivmod32(dividend, divisor, &quot, &remd)) {
+        return 1;
+    }
 
-    return quot;
+    *out = quot;
+    return 0;
 }
 
-uint32_t
-umod32(uint32_t dividend, uint32_t divisor)
+int
+umod32(uint32_t *out, uint32_t dividend, uint32_t divisor)
 {
     uint32_t quot, remd;
 
-    udivmod32(dividend, divisor, &quot, &remd);
+    if (udivmod32(dividend, divisor, &quot, &remd)) {
+        return 1;
+    }
 
-    return remd;
+    *out = remd;
+    return 0;
 }
 
 int

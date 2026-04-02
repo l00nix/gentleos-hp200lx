@@ -24,7 +24,7 @@ krn_speaker_stop(void)
 void
 krn_speaker_play(uint16_t hz)
 {
-    uint16_t divisor;
+    uint32_t divisor;
     uint8_t val;
 
     /* If hz is 0, turn off the speaker */
@@ -37,9 +37,9 @@ krn_speaker_play(uint16_t hz)
     outb(0xB6, PIT_CWR);
 
     /* Set counter 2 to the desired frequency */
-    divisor = udiv32(1193180, hz);
-    outb(divisor & 0xFF, PIT_CR2);
-    outb((divisor >> 8) & 0xFF, PIT_CR2);
+    (void)udiv32(&divisor, 1193180, hz);
+    outb((uint16_t)divisor & 0xFF, PIT_CR2);
+    outb(((uint16_t)divisor >> 8) & 0xFF, PIT_CR2);
 
     /* Enable speaker by setting bits 0 (speaker enable) and 1 (gate) on port 0x61 */
     val = inb(PPI_PB);

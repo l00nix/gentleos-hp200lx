@@ -169,7 +169,8 @@ pf_emit_uint(struct pf_config *c, unsigned long n, int neg)
 
     char buf[32];
     const char *digits;
-    int i, d, base;
+    int i, base;
+    uint32_t d;
     int pad;
     int num_width, sign_width;
 
@@ -194,8 +195,8 @@ pf_emit_uint(struct pf_config *c, unsigned long n, int neg)
     /* Save digits to the temporary buffer in a reverse order */
     i = 0;
     do {
-        d = umod32(n, base);
-        n = udiv32(n, base);
+        (void)umod32(&d, n, base);
+        (void)udiv32(&n, n, base);
         buf[i++] = digits[d];
     } while (n != 0 && (size_t)i < sizeof(buf));
 
