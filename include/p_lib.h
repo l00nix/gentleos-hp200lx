@@ -1,6 +1,7 @@
 /* lib/bios.c */
 extern void bios_putc(char c);
 extern void bios_puts(const char *s);
+extern uint16_t bios_getc(void);
 /* lib/math.c */
 extern int udiv32(uint32_t *out, uint32_t dividend, uint32_t divisor);
 extern int umod32(uint32_t *out, uint32_t dividend, uint32_t divisor);
@@ -20,3 +21,4 @@ extern void *memset(void *dest, int c, size_t n);
 extern int32_t strcmp(const char *s1, const char *s2);
 extern size_t strlen(const char *s1);
 extern char *strncpy(char *dest, const char *src, size_t n);
+/* lib/tests.c */

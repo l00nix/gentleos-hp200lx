@@ -30,3 +30,14 @@ bios_puts(const char *s)
         bios_putc(*s++);
     }
 }
+
+uint16_t
+bios_getc(void)
+{
+    regs_st regs;
+
+    regs.h.ah = 0x00;
+    intr(0x16, &regs);
+
+    return regs.x.ax;
+}

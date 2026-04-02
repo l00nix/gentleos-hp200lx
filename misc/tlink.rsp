@@ -39,4 +39,5 @@
 	build\lib\printf.obj+
 	build\lib\rand.obj+
 	build\lib\sleep.obj+
-	build\lib\string.obj,build\kernel.com,build\kernel.map
+	build\lib\string.obj+
+	build\lib\tests.obj,build\kernel.com,build\kernel.map

@@ -10,9 +10,19 @@
 
 extern uint16_t krn_data_seg;
 
+#if ENABLE_TESTS
+extern void tests_run(void);
+#endif
+
 void
 krn_main(void)
 {
+    krn_debug_printf_bios("\nKernel loaded\n");
+
+#if ENABLE_TESTS
+    tests_run();
+#endif
+
     krn_heap_init();
     krn_keyboard_init();
     krn_timer_init();

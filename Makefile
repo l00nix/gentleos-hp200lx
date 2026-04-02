@@ -45,6 +45,7 @@ OBJS = &
 	build\lib\rand.obj &
 	build\lib\sleep.obj &
 	build\lib\string.obj &
+	build\lib\tests.obj &
 
 INCLUDES = &
 	include\config.h &
@@ -204,3 +205,6 @@ build\lib\sleep.obj: lib\sleep.c $(INCLUDES)
 
 build\lib\string.obj: lib\string.c $(INCLUDES)
 	$(CC) $(CFLAGS) -nbuild\lib lib\string.c
+
+build\lib\tests.obj: lib\tests.c $(INCLUDES)
+	$(CC) $(CFLAGS) -nbuild\lib lib\tests.c
