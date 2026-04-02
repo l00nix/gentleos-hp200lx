@@ -164,6 +164,10 @@ gui_surface_draw_char(const point_st *origin, uint16_t x, uint16_t y,
         ch = ' ';
     }
 
+    if (ch > 127) {
+        ch = '\x08';
+    }
+
     glyph = font->pixels + (ch * font->size.height);
 
     fg_bit = fg & 1;

@@ -70,7 +70,7 @@ is_game_paused(void)
 static void
 update_status(void)
 {
-    const char *msg = is_game_paused() ? "  \xb3  Press 'p' to resume" : "";
+    const char *msg = is_game_paused() ? "  |  Press 'p' to resume" : "";
 
     gui_status_set("Score: %d  Best: %d%s", score, best_score, msg);
 }

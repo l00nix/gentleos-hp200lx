@@ -10,7 +10,7 @@ FONTS = [
     }
 ]
 
-MAX_CHARS = 256
+MAX_CHARS = 128
 
 
 import re

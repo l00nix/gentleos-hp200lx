@@ -200,10 +200,10 @@ update_status(void)
     int dealer_score = hand_score(dealer_hand, dealer_hand_count);
 
     if (game_state == STATE_PLAYING) {
-        gui_status_set("D: ?  U:%2d  \xb3  [H]it or [S]tand?  \xb3  W:%d  L:%d",
+        gui_status_set("D: ?  U:%2d  |  [H]it or [S]tand?  |  W:%d  L:%d",
         player_score, wins, losses);
     } else {
-        gui_status_set("D:%2d  U:%2d  \xb3  %s  \xb3  W:%d  L:%d",
+        gui_status_set("D:%2d  U:%2d  |  %s  |  W:%d  L:%d",
             dealer_score, player_score, status_msg, wins, losses);
     }
 }

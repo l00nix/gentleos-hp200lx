@@ -58,7 +58,7 @@ is_game_paused(void)
 static void
 update_status(void)
 {
-    const char *paused_msg = is_game_paused() ? "  \xb3  Press 'p' to resume" : "";
+    const char *paused_msg = is_game_paused() ? "  |  Press 'p' to resume" : "";
 
     if (game_over) {
         gui_status_set("Game Over!  Score: %u  Best: %u", score, best_score);
