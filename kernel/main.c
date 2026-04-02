@@ -17,7 +17,7 @@ extern void tests_run(void);
 void
 krn_main(void)
 {
-    krn_debug_printf_bios("\nKernel loaded\n");
+    krn_debug_printf("\nKernel loaded\n");
 
 #if ENABLE_TESTS
     tests_run();

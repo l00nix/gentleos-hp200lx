@@ -9,6 +9,8 @@
 
 static char buf[256];
 
+int krn_debug_text_mode_enabled = 1;
+
 void
 krn_debug_printf(const char *fmt, ...)
 {
@@ -23,20 +25,10 @@ krn_debug_printf(const char *fmt, ...)
     for (i = 0; i < count; i++) {
         outb(buf[i], 0xe9);
     }
-}
 
-void
-krn_debug_printf_bios(const char *fmt, ...)
-{
-    int i;
-
-    va_list args;
-
-    va_start(args, fmt);
-    (void)vsnprintf(buf, sizeof(buf), fmt, args);
-    va_end(args);
-
-    bios_puts(buf);
+    if (krn_debug_text_mode_enabled) {
+        bios_puts(buf);
+    }
 }
 
 void

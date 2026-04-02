@@ -13,6 +13,8 @@ gui_vga_init(void)
     uint8_t dac_index;
     regs_st regs;
 
+    krn_debug_text_mode_enabled = 0;
+
     regs.h.ah = 0x00;
     regs.h.al = 0x04;
     intr(0x10, &regs);

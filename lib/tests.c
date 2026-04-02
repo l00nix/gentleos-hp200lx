@@ -21,13 +21,13 @@ check_math32(const char *name, math32_fn fn, int32_t a, int32_t b,
     int err = fn(&out, a, b);
 
     if (expect_error && !err) {
-        krn_debug_printf_bios("FAIL %s(%ld, %ld): expected error\n", name, a, b);
+        krn_debug_printf("FAIL %s(%ld, %ld): expected error\n", name, a, b);
         ++tests_failed;
     } else if (!expect_error && err) {
-        krn_debug_printf_bios("FAIL %s(%ld, %ld): unexpected error\n", name, a, b);
+        krn_debug_printf("FAIL %s(%ld, %ld): unexpected error\n", name, a, b);
         ++tests_failed;
     } else if (!expect_error && out != expected) {
-        krn_debug_printf_bios("FAIL: %s(%ld, %ld): got %ld, expected %ld\n",
+        krn_debug_printf("FAIL: %s(%ld, %ld): got %ld, expected %ld\n",
             name, a, b, out, expected);
         ++tests_failed;
     } else {
@@ -130,7 +130,7 @@ tests_run(void)
 {
     tests_failed = 0;
 
-    krn_debug_printf_bios("Starting tests...\n");
+    krn_debug_printf("Starting tests...\n");
 
     test_add32();
     test_sub32();
@@ -138,8 +138,8 @@ tests_run(void)
     test_div32();
     test_append32();
 
-    krn_debug_printf_bios("Tests done: %d ok, %d failed\n", tests_ok, tests_failed);
-    krn_debug_printf_bios("Press enter to continue...");
+    krn_debug_printf("Tests done: %d ok, %d failed\n", tests_ok, tests_failed);
+    krn_debug_printf("Press enter to continue...");
     (void)bios_getc();
 }
 
