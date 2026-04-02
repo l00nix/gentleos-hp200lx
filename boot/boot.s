@@ -12,7 +12,7 @@
 
 TARGET_SEGMENT  equ 0x1000
 TARGET_OFFSET   equ 0x100
-SECTOR_COUNT    equ 64
+SECTOR_COUNT    equ 84
 
 
     ; Setup segments and stack
