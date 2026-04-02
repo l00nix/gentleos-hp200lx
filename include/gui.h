@@ -80,7 +80,6 @@ struct window {
     size_st size;
 
     int visible;
-    int active;
 
     uint8_t bg_color;
     int hide_border;
@@ -90,8 +89,6 @@ struct window {
     size_t widgets_capacity;
     widget_st *focused_widget;
 
-    void (*render_region)(window_st *, const rect_st *);
-    void (*on_pointer)(window_st *, const event_st *);
     void (*on_key_down)(window_st *, const event_st *);
     void (*on_key_up)(window_st *, const event_st *);
     void (*on_focus_changed)(window_st *);

@@ -22,14 +22,12 @@ gui_wm_add_window(struct window *w)
 {
     if (gui_wm_current_window) {
         gui_wm_current_window->visible = 0;
-        gui_wm_current_window->active = 0;
         gui_window_on_close(gui_wm_current_window);
         gui_wm_current_window = NULL;
     }
 
     gui_wm_current_window = w;
     gui_wm_current_window->visible = 1;
-    gui_wm_current_window->active = 1;
 
     gui_wm_render_wallpaper(&gui_wm_container);
     gui_status_set("");
