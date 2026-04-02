@@ -314,7 +314,7 @@ flag_cell(int col, int row)
 }
 
 static void
-on_cell_pointer_up(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
+on_cell_press(widget_st *widget)
 {
     reveal_cell(widget->tag1 % GRID_COLS, widget->tag1 / GRID_COLS);
 }
@@ -370,7 +370,7 @@ init_grid(void)
         gui_grid_cell_rect(&grid, col, row, &cell_widgets[i].rect);
         cell_widgets[i].draw = draw_cell;
         cell_widgets[i].tag1 = i;
-        cell_widgets[i].on_pointer_up = on_cell_pointer_up;
+        cell_widgets[i].on_press = on_cell_press;
         cell_widgets[i].focusable = 1;
         cell_widgets[i].focus_x = col;
         cell_widgets[i].focus_y = row;

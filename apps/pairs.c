@@ -166,7 +166,7 @@ on_mismatch_timeout(timeout_payload payload _unsd)
 }
 
 static void
-on_cell_pointer_up(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
+on_cell_press(widget_st *widget)
 {
     int idx = widget->tag1;
 
@@ -247,7 +247,7 @@ init_grid(void)
         gui_grid_cell_rect(&grid, col, row, &buttons[i].rect);
         buttons[i].tag1 = i;
         buttons[i].draw = draw_button;
-        buttons[i].on_pointer_up = on_cell_pointer_up;
+        buttons[i].on_press = on_cell_press;
         buttons[i].hide_border = 1;
         buttons[i].focusable = 1;
         buttons[i].focus_x = col;

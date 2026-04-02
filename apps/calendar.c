@@ -116,14 +116,8 @@ draw_day_button(widget_st *widget)
     gui_surface_draw_rect(&widget->window->origin, &widget->rect, bg);
 
     snprintf(buf, sizeof(buf), "%d", day + 1);
-    gui_surface_draw_str_centered(
-        &widget->window->origin,
-        &widget->rect,
-        widget->font,
-        buf,
-        fg,
-        bg
-    );
+    gui_surface_draw_str_centered(&widget->window->origin, &widget->rect, NULL,
+        buf, fg, bg);
 
     gui_wm_render_window_region(&widget->window->origin, &widget->rect);
 }
@@ -235,7 +229,6 @@ init_day_buttons(void)
         day_buttons[i].type = WIDGET_TYPE_BUTTON;
         gui_grid_cell_rect(&grid, col, row, &day_buttons[i].rect);
         day_buttons[i].draw = draw_day_button;
-        day_buttons[i].press_on_move_in = 1;
 
         gui_window_add_widget(&window, &day_buttons[i]);
     }

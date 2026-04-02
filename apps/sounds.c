@@ -207,7 +207,6 @@ init_keys(void)
         keys_b[i].draw = draw_key_b;
         keys_b[i].tag1 = TAG_KEY_B;
         keys_b[i].tag2 = i;
-        keys_b[i].press_on_move_in = 1;
         gui_window_add_widget(&window, &keys_b[i]);
     }
 
@@ -220,7 +219,6 @@ init_keys(void)
         keys_w[i].draw = draw_key_w;
         keys_w[i].tag1 = TAG_KEY_W;
         keys_w[i].tag2 = i;
-        keys_w[i].press_on_move_in = 1;
         gui_window_add_widget(&window, &keys_w[i]);
     }
 }

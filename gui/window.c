@@ -142,7 +142,6 @@ void
 gui_window_on_key_down(window_st *window, const event_st *event)
 {
     widget_st *focused = window->focused_widget;
-    point_st p_zero = { 0, 0 };
     int key_code = event->payload.key.key_code;
     int key_char = event->payload.key.key_char;
 
@@ -154,8 +153,8 @@ gui_window_on_key_down(window_st *window, const event_st *event)
             case KEY_DOWN:  gui_window_update_focus(window, 0, 1); return;
         }
 
-        if ((key_code == KEY_ENTER || key_char == ' ') && focused->on_pointer_up) {
-            focused->on_pointer_up(focused, event, &p_zero);
+        if ((key_code == KEY_ENTER || key_char == ' ') && focused->on_press) {
+            focused->on_press(focused);
             return;
         }
     }

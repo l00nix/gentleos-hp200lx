@@ -63,24 +63,15 @@ struct widget {
     int tag2;
 
     int active;
-    int press_on_move_in;
-    int press_sticky;
-    int press_fixed;
-    int hidden;
     int hide_border;
     int focusable;
     int focus_x;
     int focus_y;
 
     void (*draw)(widget_st *);
-    void (*on_pointer_down)(widget_st *, const event_st *, const point_st *);
-    void (*on_pointer_up)(widget_st *, const event_st *, const point_st *);
-    void (*on_pointer_out)(widget_st *, const event_st *, const point_st *);
-    void (*on_pointer_move)(widget_st *, const event_st *, const point_st *);
-    void (*on_pointer_alt)(widget_st *, const event_st *, const point_st *);
+    void (*on_press)(widget_st *);
 
     const char *label;
-    font_st *font;
     bitmap_st *bitmap;
 };
 

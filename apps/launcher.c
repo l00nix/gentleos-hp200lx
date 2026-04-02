@@ -47,7 +47,7 @@ static widget_st app_buttons[APPS_COUNT];
 static widget_st *widgets[APPS_COUNT];
 
 static void
-on_button_pointer_up(widget_st *widget, const event_st *event _unsd, const point_st *pos _unsd)
+on_button_press(widget_st *widget)
 {
     gui_widget_draw(widget);
 
@@ -90,7 +90,7 @@ init_app_buttons(void)
         app_buttons[i].rect.height = APP_BUTTON_HEIGHT;
         app_buttons[i].bitmap = apps[i]->icon;
         app_buttons[i].tag1 = i;
-        app_buttons[i].on_pointer_up = on_button_pointer_up;
+        app_buttons[i].on_press = on_button_press;
         app_buttons[i].focusable = 1;
         app_buttons[i].focus_x = col;
         app_buttons[i].focus_y = row;
