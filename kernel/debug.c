@@ -23,7 +23,7 @@ krn_debug_printf(const char *fmt, ...)
     va_end(args);
 
     for (i = 0; i < count; i++) {
-        outb(buf[i], 0xe9);
+        bios_uart_putc(buf[i]);
     }
 
     if (krn_debug_text_mode_enabled) {

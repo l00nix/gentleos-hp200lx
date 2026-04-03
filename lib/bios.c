@@ -41,3 +41,15 @@ bios_getc(void)
 
     return regs.x.ax;
 }
+
+void
+bios_uart_putc(char c)
+{
+    regs_st regs;
+
+    regs.h.ah = 0x01;
+    regs.h.al = c;
+    regs.x.dx = 0;
+
+    intr(0x14, &regs);
+}
