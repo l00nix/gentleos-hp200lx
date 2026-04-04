@@ -35,6 +35,7 @@ krn_main(void)
     krn_keyboard_init();
     krn_timer_init();
     rand_init();
+    krn_vga_init();
 
     gui_main();
 
@@ -54,7 +55,7 @@ krn_exit(void)
         return;
     }
 
-    gui_vga_deinit();
+    krn_vga_deinit();
     krn_timer_deinit();
     krn_keyboard_deinit();
 

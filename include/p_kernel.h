@@ -32,3 +32,6 @@ extern uint32_t krn_timer_get_msecs(void);
 extern uint8_t krn_timer_get_cpu_usage(void);
 extern void krn_timer_init(void);
 extern void krn_timer_deinit(void);
+/* kernel/vga.c */
+extern void krn_vga_init(void);
+extern void krn_vga_deinit(void);

@@ -48,9 +48,6 @@ extern void gui_timeout_remove(uint32_t id);
 extern int gui_timeout_add(uint32_t msecs, timeout_callback_fn callback, timeout_payload payload);
 extern void gui_timeout_on_tick(const event_st *event);
 extern void gui_timeout_init(void);
-/* gui/vga.c */
-extern void gui_vga_init(void);
-extern void gui_vga_deinit(void);
 /* gui/widget.c */
 extern void gui_widget_draw(widget_st *widget);
 /* gui/window.c */

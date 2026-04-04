@@ -13,7 +13,6 @@ gui_main(void)
     event_st event;
     window_st *w;
 
-    gui_vga_init();
     gui_timeout_init();
     gui_surface_init();
     gui_wm_init();

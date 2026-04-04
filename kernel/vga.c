@@ -2,13 +2,13 @@
  * Copyright (c) 2026 luke8086
  * Distributed under the terms of GPL-2 License
  *
- * File: vga.c - Routines for programming the VGA
+ * File: vga.c - Driver for CGA/VGA cards
  */
 
-#include <gui.h>
+#include <kernel.h>
 
 void
-gui_vga_init(void)
+krn_vga_init(void)
 {
     uint8_t dac_index;
     regs_st regs;
@@ -37,7 +37,7 @@ gui_vga_init(void)
 }
 
 void
-gui_vga_deinit(void)
+krn_vga_deinit(void)
 {
     regs_st regs;
 
