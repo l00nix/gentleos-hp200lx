@@ -27,10 +27,6 @@ enum {
 };
 
 static window_st window;
-
-static widget_st cell_widgets[GRID_CELL_COUNT];
-static widget_st *widgets[GRID_CELL_COUNT];
-
 static grid_st grid;
 
 enum {
@@ -52,6 +48,8 @@ enum {
 
 static uint8_t cell_state[GRID_COLS][GRID_ROWS];
 static uint8_t cell_type[GRID_COLS][GRID_ROWS];
+static unsigned current_col = 0;
+static unsigned current_row = 0;
 
 static size_t
 count_cells_by_state(uint8_t state)
@@ -97,11 +95,8 @@ count_adjacent_mines(int col, int row)
 }
 
 static void
-draw_cell(widget_st *widget)
+draw_cell(int col, int row)
 {
-    int idx = widget->tag1;
-    int col = idx % GRID_COLS;
-    int row = idx / GRID_COLS;
     uint8_t state = cell_state[col][row];
     uint8_t type = cell_type[col][row];
     rect_st rect, num_rect, dot_rect;
@@ -110,7 +105,7 @@ draw_cell(widget_st *widget)
     num_str[0] = 0;
     num_str[1] = 0;
 
-    gui_rect_copy(&rect, &widget->rect);
+    gui_grid_cell_rect(&grid, col, row, &rect);
     gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
 
     if (state == CELL_STATE_FLAGGED) {
@@ -132,20 +127,31 @@ draw_cell(widget_st *widget)
             num_str, COLOR_FG, COLOR_BG);
     }
 
-    if (widget == widget->window->focused_widget) {
-        gui_surface_draw_border(&window.origin, &widget->rect, COLOR_FG);
+    if (row == current_row && col == current_col) {
+        gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
     }
 
     gui_wm_render_window_region(&window.origin, &rect);
 }
 
 static void
+draw_all_cells(void)
+{
+    int row, col;
+
+    for (row = 0; row < grid.rows; ++row) {
+        for (col = 0; col < grid.cols; ++col) {
+            draw_cell(col, row);
+        }
+    }
+}
+
+static void
 update_cell(int col, int row, uint8_t type, uint8_t state)
 {
-    int idx = row * GRID_COLS + col;
     cell_type[col][row] = type;
     cell_state[col][row] = state;
-    draw_cell(&cell_widgets[idx]);
+    draw_cell(col, row);
 }
 
 static void
@@ -314,24 +320,40 @@ flag_cell(int col, int row)
 }
 
 static void
-on_cell_press(widget_st *widget)
+update_current_cell(int dx, int dy)
 {
-    reveal_cell(widget->tag1 % GRID_COLS, widget->tag1 / GRID_COLS);
+    int prev_col = current_col;
+    int prev_row = current_row;
+
+    current_col = (current_col + dx) % grid.cols;
+    current_row = (current_row + dy) % grid.rows;
+
+    draw_cell(prev_col, prev_row);
+    draw_cell(current_col, current_row);
 }
 
 static void
-on_key_up(window_st *win _unsd, const event_st *event)
+on_key_down(window_st *win _unsd, const event_st *event)
 {
-    int ch = event->payload.key.key_char;
-    widget_st *cell = win->focused_widget;
+    int key_code = event->payload.key.key_code;
+    int key_ch = event->payload.key.key_char;
 
-    if (ch == 'r' && get_game_state() != GAME_STATE_PLAYING) {
+    switch (key_code) {
+        case KEY_LEFT:  update_current_cell(-1, 0); return;
+        case KEY_RIGHT: update_current_cell(1, 0); return;
+        case KEY_UP:    update_current_cell(0, -1); return;
+        case KEY_DOWN:  update_current_cell(0, 1); return;
+        case KEY_SPACE:
+        case KEY_ENTER: reveal_cell(current_col, current_row); return;
+    }
+
+    if (key_ch == 'r' && get_game_state() != GAME_STATE_PLAYING) {
         restart_game();
         return;
     }
 
-    if (ch == 'f' && cell) {
-        flag_cell(cell->tag1 % GRID_COLS, cell->tag1 / GRID_COLS);
+    if (key_ch == 'f') {
+        flag_cell(current_col, current_row);
         return;
     }
 }
@@ -342,41 +364,18 @@ init_window(void)
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     window.bg_color = COLOR_FG;
-    window.widgets = widgets;
-    window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
-    window.focused_widget = &cell_widgets[0];
-    window.on_key_down = on_key_up;
+    window.on_key_down = on_key_down;
 }
 
 static void
 init_grid(void)
 {
-    int i, col, row;
-
-    memset(cell_widgets, 0, sizeof(cell_widgets));
-
     grid.cell_width = GRID_CELL_WIDTH;
     grid.cell_height = GRID_CELL_HEIGHT;
     grid.cols = GRID_COLS;
     grid.rows = GRID_ROWS;
     grid.x = GRID_X;
     grid.y = GRID_Y;
-
-    for (i = 0; i < GRID_CELL_COUNT; i++) {
-        col = i % GRID_COLS;
-        row = i / GRID_COLS;
-
-        cell_widgets[i].type = WIDGET_TYPE_BUTTON;
-        gui_grid_cell_rect(&grid, col, row, &cell_widgets[i].rect);
-        cell_widgets[i].draw = draw_cell;
-        cell_widgets[i].tag1 = i;
-        cell_widgets[i].on_press = on_cell_press;
-        cell_widgets[i].focusable = 1;
-        cell_widgets[i].focus_x = col;
-        cell_widgets[i].focus_y = row;
-
-        gui_window_add_widget(&window, &cell_widgets[i]);
-    }
 }
 
 static void
@@ -390,8 +389,12 @@ show_app(void)
         initialized = 1;
     }
 
+    current_row = 0;
+    current_col = 0;
+
     gui_wm_add_window(&window);
     gui_window_draw(&window);
+    draw_all_cells();
     restart_game();
 }
 
