@@ -35,3 +35,15 @@ gui_vga_init(void)
     intr(0x10, &regs);
 #endif
 }
+
+void
+gui_vga_deinit(void)
+{
+    regs_st regs;
+
+    regs.h.ah = 0x00;
+    regs.h.al = 0x03;
+    intr(0x10, &regs);
+
+    krn_debug_text_mode_enabled = 1;
+}

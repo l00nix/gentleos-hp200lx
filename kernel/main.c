@@ -42,3 +42,21 @@ krn_main(void)
         /* UNREACHABLE */
     };
 }
+
+void
+krn_exit(void)
+{
+    regs_st regs;
+    uint16_t *psp = 0;
+
+    /* Do nothing if not under DOS */
+    if (*psp != 0x20cd) {
+        return;
+    }
+
+    gui_vga_deinit();
+    krn_timer_deinit();
+    krn_keyboard_deinit();
+
+    intr(0x20, &regs);
+}

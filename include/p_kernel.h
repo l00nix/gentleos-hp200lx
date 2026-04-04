@@ -12,8 +12,10 @@ extern uint16_t krn_event_count(void);
 extern void krn_heap_init(void);
 /* kernel/keyboard.c */
 extern void krn_keyboard_init(void);
+extern void krn_keyboard_deinit(void);
 /* kernel/main.c */
 extern void krn_main(void);
+extern void krn_exit(void);
 /* kernel/rtc.c */
 extern int krn_rtc_are_times_equal(time_st *t1, time_st *t2);
 extern void krn_rtc_get_time(time_st *t);
@@ -29,3 +31,4 @@ extern volatile uint8_t krn_timer_is_cpu_idle;
 extern uint32_t krn_timer_get_msecs(void);
 extern uint8_t krn_timer_get_cpu_usage(void);
 extern void krn_timer_init(void);
+extern void krn_timer_deinit(void);

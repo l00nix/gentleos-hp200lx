@@ -13,6 +13,10 @@ enum {
     TIMER_HZ = 20,
 };
 
+#if !__CPROTO__
+static isr_handler_fn saved_isr_handler;
+#endif
+
 volatile uint8_t krn_timer_is_cpu_idle = 0;
 
 volatile static uint32_t timer_msecs = 0;
@@ -82,5 +86,13 @@ krn_timer_init(void)
     outb((uint8_t)((div >> 0) & 0xFF), PIT_CR0);
     outb((uint8_t)((div >> 8) & 0xFF), PIT_CR0);
 
+    saved_isr_handler = ivt[0x1c];
     ivt[0x1c] = krn_timer_handle_intr;
+}
+
+void
+krn_timer_deinit(void)
+{
+    isr_handler_fn far *ivt = MK_FP(0, 0);
+    ivt[0x1c] = saved_isr_handler;
 }

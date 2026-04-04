@@ -164,6 +164,11 @@ gui_window_on_key_down(window_st *window, const event_st *event)
         return;
     }
 
+    if (key_char == 'Q') {
+        krn_exit();
+        return;
+    }
+
     if (window->on_key_down) {
         window->on_key_down(window, event);
         return;
