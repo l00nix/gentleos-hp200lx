@@ -26,58 +26,54 @@ enum {
 };
 
 static window_st window;
-
-static widget_st char_buttons[GRID_CELLS_COUNT];
-static widget_st *widgets[GRID_CELLS_COUNT];
-
-static size_t current_font = 0;
-
 static grid_st grid;
+
+static unsigned current_font;
+static unsigned current_col;
+static unsigned current_row;
 
 static void
 update_status(void)
 {
-    widget_st *btn = window.focused_widget;
-
-    if (!btn) {
-        gui_status_set("");
-        return;
-    }
-
-    gui_status_set("hex:%02x dec:%03d", btn->tag2, btn->tag2);
+    int n = current_row * grid.rows + current_col;
+    gui_status_set("hex:%02x dec:%03d", n, n);
 }
 
 static void
-draw_char_button(widget_st *widget)
+draw_cell(int col, int row)
 {
     char str[2];
-    int is_active = widget == widget->window->focused_widget;
+    rect_st r;
+    int is_active = col == current_col && row == current_row;
 
-    str[0] = widget->tag2 ? widget->tag2 : ' ';
+    str[0] = row * grid.cols + col;
     str[1] = 0;
 
-    gui_surface_draw_rect(&window.origin, &widget->rect,
-        is_active ? COLOR_FG : COLOR_BG);
+    gui_grid_cell_rect(&grid, col, row, &r);
+
+    gui_surface_draw_rect(&window.origin, &r, is_active ? COLOR_FG : COLOR_BG);
 
     gui_surface_draw_str_centered(
         &window.origin,
-        &widget->rect,
+        &r,
         &fonts[current_font],
         (const char *)str,
         is_active ? COLOR_BG : COLOR_FG,
         is_active ? COLOR_FG : COLOR_BG
     );
 
-    gui_wm_render_window_region(&widget->window->origin, &widget->rect);
+    gui_wm_render_window_region(&window.origin, &r);
 }
 
 static void
-draw_all_char_buttons(void)
+draw_all_cells(void)
 {
-    size_t i;
+    int row, col;
 
-    for (i = 0; i < GRID_CELLS_COUNT; ++i) {
-        char_buttons[i].draw(&char_buttons[i]);
+    for (row = 0; row < grid.rows; ++row) {
+        for (col = 0; col < grid.cols; ++col) {
+            draw_cell(col, row);
+        }
     }
 }
 
@@ -105,7 +101,7 @@ set_prev_font(void)
     current_font = (current_font - 1) % FONT_COUNT;
 
     draw_font_label();
-    draw_all_char_buttons();
+    draw_all_cells();
 }
 
 static void
@@ -114,13 +110,35 @@ set_next_font(void)
     current_font = (current_font + 1) % FONT_COUNT;
 
     draw_font_label();
-    draw_all_char_buttons();
+    draw_all_cells();
 }
 
 static void
-on_focus_changed(window_st *window)
+update_current_cell(int dx, int dy)
 {
+    int prev_col = current_col;
+    int prev_row = current_row;
+
+    current_col = (current_col + dx) % grid.cols;
+    current_row = (current_row + dy) % grid.rows;
+
+    draw_cell(prev_col, prev_row);
+    draw_cell(current_col, current_row);
+
     update_status();
+}
+
+static void
+on_key_down(window_st *window, const event_st *event)
+{
+    int key_code = event->payload.key.key_code;
+
+    switch (key_code) {
+        case KEY_LEFT:  update_current_cell(-1, 0); return;
+        case KEY_RIGHT: update_current_cell(1, 0); return;
+        case KEY_UP:    update_current_cell(0, -1); return;
+        case KEY_DOWN:  update_current_cell(0, 1); return;
+    }
 }
 
 static void
@@ -129,14 +147,11 @@ init_window(void)
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     window.bg_color = COLOR_FG;
-    window.widgets = widgets;
-    window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
-    window.focused_widget = &char_buttons[0];
-    window.on_focus_changed = on_focus_changed;
+    window.on_key_down = on_key_down;
 }
 
 static void
-init_char_buttons(void)
+init_grid(void)
 {
     uint16_t i;
     int col, row;
@@ -147,24 +162,6 @@ init_char_buttons(void)
     grid.rows = GRID_ROWS;
     grid.x = GRID_X;
     grid.y = GRID_Y;
-
-    memset(char_buttons, 0, sizeof(char_buttons));
-
-    for (i = 0; i < GRID_CELLS_COUNT; ++i) {
-        col = i % grid.cols;
-        row = i / grid.cols;
-
-        char_buttons[i].type = WIDGET_TYPE_BUTTON;
-        gui_grid_cell_rect(&grid, col, row, &char_buttons[i].rect);
-        char_buttons[i].tag2 = i;
-        char_buttons[i].window = &window;
-        char_buttons[i].draw = draw_char_button;
-        char_buttons[i].focusable = 1;
-        char_buttons[i].focus_x = col;
-        char_buttons[i].focus_y = row;
-
-        gui_window_add_widget(&window, &char_buttons[i]);
-    }
 }
 
 static void
@@ -174,13 +171,21 @@ show_app(void)
 
     if (!initialized) {
         init_window();
-        init_char_buttons();
+        init_grid();
         initialized = 1;
     }
 
     gui_wm_add_window(&window);
     gui_window_draw(&window);
+
+    current_font = 0;
+    current_col = 0;
+    current_row = 0;
+
     draw_font_label();
+    draw_all_cells();
+
+    update_status();
 }
 
 app_st app_fonts = {
