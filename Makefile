@@ -1,5 +1,5 @@
 CC      = tcc
-AS      = nasm
+AS      = vendor\nasm301\nasm
 CFLAGS  = -mt -u- -g1 -c -Iinclude
 ASFLAGS = -f obj
 
