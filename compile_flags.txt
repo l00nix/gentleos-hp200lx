@@ -2,3 +2,5 @@
 include
 -D
 __TURBOC__
+-D
+__CLANGD__
