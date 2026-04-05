@@ -272,6 +272,8 @@ init_buttons(void)
     grid.x = GRID_X;
     grid.y = GRID_Y;
 
+    memset(button_widgets, 0, sizeof(button_widgets));
+
     for (row = 0; row < BUTTON_ROWS; ++row) {
         for (col = 0; col < BUTTON_COLS; ++col) {
             idx = row * BUTTON_COLS + col;
