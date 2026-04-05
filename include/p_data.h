@@ -7,6 +7,7 @@ extern bitmap_st bitmap_icon_clock;
 extern bitmap_st bitmap_icon_colors;
 extern bitmap_st bitmap_icon_fonts;
 extern bitmap_st bitmap_icon_github;
+extern bitmap_st bitmap_icon_keys;
 extern bitmap_st bitmap_icon_mines;
 extern bitmap_st bitmap_icon_pairs;
 extern bitmap_st bitmap_icon_pairs_bear;

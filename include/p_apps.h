@@ -10,6 +10,8 @@ extern app_st app_calendar;
 extern app_st app_clock;
 /* apps/fonts.c */
 extern app_st app_fonts;
+/* apps/keys.c */
+extern app_st app_keymap;
 /* apps/launcher.c */
 extern app_st app_launcher;
 /* apps/mines.c */
