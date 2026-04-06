@@ -43,11 +43,6 @@ extern void gui_surface_draw_str(const point_st *origin, uint16_t x, uint16_t y,
 extern void gui_surface_draw_str_centered(const point_st *origin, const rect_st *rect, font_st *font, const char *s, uint8_t fg, uint8_t bg);
 extern void gui_surface_draw_bitmap(const point_st *origin, const size_st *bounds, int dst_x, int dst_y, bitmap_st *bitmap, uint8_t fill);
 extern void gui_surface_draw_bitmap_centered(const point_st *origin, const size_st *bounds, const rect_st *rect, bitmap_st *bitmap, uint8_t fill);
-/* gui/timeout.c */
-extern void gui_timeout_remove(uint32_t id);
-extern int gui_timeout_add(uint32_t msecs, timeout_callback_fn callback, timeout_payload payload);
-extern void gui_timeout_on_tick(const event_st *event);
-extern void gui_timeout_init(void);
 /* gui/widget.c */
 extern void gui_widget_draw(widget_st *widget);
 /* gui/window.c */
@@ -59,6 +54,7 @@ extern int gui_window_add_widget(window_st *window, widget_st *widget);
 extern void gui_window_on_close(window_st *window);
 extern void gui_window_on_key_down(window_st *window, const event_st *event);
 extern void gui_window_on_key_up(window_st *window, const event_st *event);
+extern void gui_window_on_tick(window_st *window);
 /* gui/wm.c */
 extern rect_st gui_wm_container;
 extern window_st *gui_wm_current_window;

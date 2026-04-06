@@ -13,7 +13,6 @@ gui_main(void)
     event_st event;
     window_st *w;
 
-    gui_timeout_init();
     gui_surface_init();
     gui_wm_init();
     gui_surface_flush();
@@ -33,7 +32,7 @@ gui_main(void)
         w = gui_wm_current_window;
 
         if (event.type == EVENT_TIMER_TICK) {
-            gui_timeout_on_tick(&event);
+            gui_window_on_tick(w);
         } else if (event.type == EVENT_KEY_DOWN && w) {
             gui_window_on_key_down(w, &event);
         } else if (event.type == EVENT_KEY_UP && w) {

@@ -78,11 +78,15 @@ draw_time(void)
 }
 
 static void
-on_timeout(void *unused _unsd)
+on_tick(window_st *window)
 {
-    if (window.visible) {
+    static unsigned count = 0;
+
+    ++count;
+
+    if (count >= 10) {
+        count = 0;
         draw_time();
-        gui_timeout_add(200, on_timeout, NULL);
     }
 }
 
@@ -93,6 +97,7 @@ init_window(void)
 
     window.bg_color = COLOR_BG;
     window.hide_border = 1;
+    window.on_tick = on_tick;
 }
 
 static void
@@ -120,7 +125,6 @@ show_app(void)
     gui_wm_add_window(&window);
     gui_window_draw(&window);
     draw_time();
-    on_timeout(NULL);
 }
 
 app_st app_clock = {

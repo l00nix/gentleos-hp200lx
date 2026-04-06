@@ -19,8 +19,6 @@ enum {
 
     WINDOW_WIDTH = GRID_X + GRID_WIDTH + 1,
     WINDOW_HEIGHT = GRID_Y + GRID_HEIGHT + 1,
-
-    DROP_INTERVAL = 300,
 };
 
 static window_st window;
@@ -45,51 +43,13 @@ static int cur_row;
 static int game_over;
 static uint16_t score;
 static uint16_t best_score = 0;
-static uint32_t timeout_id;
-
-static void on_timeout(void *);
-
-static int
-is_game_paused(void)
-{
-    return timeout_id == 0;
-}
 
 static void
 update_status(void)
 {
-    const char *paused_msg = is_game_paused() ? "  |  Press 'p' to resume" : "";
+    const char *msg = game_over ? "Game Over!  " : "";
 
-    if (game_over) {
-        gui_status_set("Game Over!  Score: %u  Best: %u", score, best_score);
-    } else {
-        gui_status_set("Score: %u  Best: %u%s", score, best_score, paused_msg);
-    }
-}
-
-static void
-pause_game(void)
-{
-    if (is_game_paused()) {
-        return;
-    }
-
-    gui_timeout_remove(timeout_id);
-    timeout_id = 0;
-
-    update_status();
-}
-
-static void
-resume_game(void)
-{
-    if (!is_game_paused()) {
-        return;
-    }
-
-    timeout_id = gui_timeout_add(DROP_INTERVAL, on_timeout, NULL);
-
-    update_status();
+    gui_status_set("%sScore: %u  Best: %u", msg, score, best_score);
 }
 
 static void
@@ -285,18 +245,18 @@ restart_game(void)
     }
 
     spawn_piece();
-    resume_game();
     update_status();
 }
 
 static void
-on_timeout(void *unused _unsd)
-{
-    if (!window.visible) {
+on_tick(window_st *window) {
+    static unsigned count = 0;
+
+    if ((++count) < 8) {
         return;
     }
 
-    timeout_id = gui_timeout_add(DROP_INTERVAL, on_timeout, NULL);
+    count = 0;
 
     if (game_over) {
         return;
@@ -320,19 +280,6 @@ on_keyboard(window_st *w _unsd, const event_st *event)
         return;
     }
 
-    if (key_char == 'p') {
-        if (is_game_paused()) {
-            resume_game();
-        } else {
-            pause_game();
-        }
-        return;
-    }
-
-    if (is_game_paused()) {
-        return;
-    }
-
     if (key_code == KEY_LEFT) {
         move_current_piece(0, -1, 0);
     } else if (key_code == KEY_RIGHT) {
@@ -349,19 +296,13 @@ on_keyboard(window_st *w _unsd, const event_st *event)
 }
 
 static void
-on_close(window_st *win _unsd)
-{
-    pause_game();
-}
-
-static void
 init_window(void)
 {
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     window.bg_color = COLOR_BG;
+    window.on_tick = on_tick;
     window.on_key_down = on_keyboard;
-    window.on_close = on_close;
 }
 
 static void
@@ -384,11 +325,6 @@ show_app(void)
         init_window();
         init_grid();
         initialized = 1;
-    }
-
-    if (timeout_id) {
-        gui_timeout_remove(timeout_id);
-        timeout_id = 0;
     }
 
     gui_wm_add_window(&window);

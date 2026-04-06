@@ -21,8 +21,6 @@ enum {
 
     WINDOW_WIDTH = GRID_X + GRID_WIDTH + 1,
     WINDOW_HEIGHT = GRID_Y + GRID_HEIGHT + 1,
-
-    TIMEOUT_DURATION = 120,
 };
 
 static window_st window;
@@ -57,47 +55,11 @@ static enum {
 
 static int score = 0;
 static int best_score = 0;
-static uint32_t timeout_id = 0;
-
-static void on_timeout(void *);
-
-static int
-is_game_paused(void)
-{
-    return timeout_id == 0;
-}
 
 static void
 update_status(void)
 {
-    const char *msg = is_game_paused() ? "  |  Press 'p' to resume" : "";
-
-    gui_status_set("Score: %d  Best: %d%s", score, best_score, msg);
-}
-
-static void
-pause_game(void)
-{
-    if (is_game_paused()) {
-        return;
-    }
-
-    gui_timeout_remove(timeout_id);
-    timeout_id = 0;
-
-    update_status();
-}
-
-static void
-resume_game(void)
-{
-    if (!is_game_paused()) {
-        return;
-    }
-
-    timeout_id = gui_timeout_add(TIMEOUT_DURATION, on_timeout, NULL);
-
-    update_status();
+    gui_status_set("Score: %d  Best: %d", score, best_score);
 }
 
 static void
@@ -197,11 +159,10 @@ restart_game(void)
     draw_board();
     add_fruit();
     update_status();
-    resume_game();
 }
 
 static void
-on_timeout(void *unused _unsd)
+on_timeout(void)
 {
     coords_st next_head;
     uint8_t next_block;
@@ -209,8 +170,6 @@ on_timeout(void *unused _unsd)
     if (!window.visible) {
         return;
     }
-
-    timeout_id = gui_timeout_add(TIMEOUT_DURATION, on_timeout, NULL);
 
     next_head = move_head(*body.head);
 
@@ -243,18 +202,22 @@ on_timeout(void *unused _unsd)
 }
 
 static void
+on_tick(window_st *window)
+{
+    static unsigned count = 0;
+
+    ++count;
+
+    if (count >= 3) {
+        on_timeout();
+        count = 0;
+    }
+}
+
+static void
 on_keyboard(window_st *window _unsd, const event_st *event)
 {
     int key = event->payload.key.key_code;
-
-    if (event->payload.key.key_char == 'p') {
-        if (is_game_paused()) {
-            resume_game();
-        } else {
-            pause_game();
-        }
-        return;
-    }
 
     if (key == KEY_UP && prev_dir != DIR_DOWN) next_dir = DIR_UP;
     else if (key == KEY_DOWN && prev_dir != DIR_UP) next_dir = DIR_DOWN;
@@ -263,19 +226,13 @@ on_keyboard(window_st *window _unsd, const event_st *event)
 }
 
 static void
-on_close(window_st *window _unsd)
-{
-    pause_game();
-}
-
-static void
 init_window(void)
 {
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     window.bg_color = COLOR_BG;
+    window.on_tick = on_tick;
     window.on_key_down = on_keyboard;
-    window.on_close = on_close;
 }
 
 static void

@@ -93,6 +93,7 @@ struct window {
     void (*on_key_up)(window_st *, const event_st *);
     void (*on_focus_changed)(window_st *);
     void (*on_close)(window_st *);
+    void (*on_tick)(window_st *);
 };
 
 typedef struct {
@@ -109,9 +110,6 @@ typedef struct {
     bitmap_st *icon;
     void (*show)(void);
 } app_st;
-
-typedef void *timeout_payload;
-typedef void (*timeout_callback_fn)(timeout_payload);
 
 enum {
     COLOR_BG = 0x00,

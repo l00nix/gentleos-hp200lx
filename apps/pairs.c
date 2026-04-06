@@ -152,8 +152,16 @@ restart_game(void)
 }
 
 static void
-on_mismatch_timeout(timeout_payload payload _unsd)
+on_tick(window_st *window)
 {
+    if (!waiting) {
+        return;
+    }
+
+    if (--waiting) {
+        return;
+    }
+
     hide_icon(first_pick);
     first_pick = -1;
 
@@ -195,8 +203,7 @@ on_cell_press(widget_st *widget)
         second_pick = -1;
         matched_count++;
     } else {
-        waiting = 1;
-        gui_timeout_add(MISMATCH_DELAY, on_mismatch_timeout, NULL);
+        waiting = 20;
     }
 
     update_status();
@@ -222,6 +229,7 @@ init_window(void)
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
     window.focused_widget = &buttons[0];
+    window.on_tick = on_tick;
     window.on_key_up = on_key_up;
 }
 

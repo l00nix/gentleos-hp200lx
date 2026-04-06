@@ -182,3 +182,11 @@ gui_window_on_key_up(window_st *window, const event_st *event)
         window->on_key_up(window, event);
     }
 }
+
+void
+gui_window_on_tick(window_st *window)
+{
+    if (window->on_tick) {
+        window->on_tick(window);
+    }
+}
