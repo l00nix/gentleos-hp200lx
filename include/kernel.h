@@ -32,6 +32,7 @@ typedef struct {
         struct {
             uint8_t key_code;
             uint8_t key_char;
+            uint8_t key_escaped;
         } key;
         struct {
             uint32_t timer_msecs;
