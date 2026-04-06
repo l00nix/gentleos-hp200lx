@@ -17,7 +17,6 @@ enum {
     APP_BUTTON_HEIGHT = 48,
     APP_BUTTON_H_STRIDE = APP_BUTTON_WIDTH + APP_BUTTON_H_MARGIN,
     APP_BUTTON_V_STRIDE = APP_BUTTON_HEIGHT + APP_BUTTON_V_MARGIN,
-    APPS_COUNT = 10,
 
     GRID_X = 1 + APP_BUTTON_H_MARGIN,
     GRID_Y = 1 + APP_BUTTON_V_MARGIN,
@@ -28,7 +27,7 @@ enum {
     WINDOW_HEIGHT = GRID_Y + GRID_HEIGHT + APP_BUTTON_V_MARGIN + 1,
 };
 
-static app_st *apps[APPS_COUNT] = {
+static app_st *apps[] = {
     &app_clock,
     &app_calendar,
     &app_calc,
@@ -40,6 +39,8 @@ static app_st *apps[APPS_COUNT] = {
     &app_tetris,
     &app_blackjack,
 };
+
+#define APPS_COUNT (sizeof(apps) / sizeof(apps[0]))
 
 static window_st window;
 
