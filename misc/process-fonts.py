@@ -7,7 +7,14 @@ FONTS = [
         "width": 5,
         "height": 8,
         "pitch": 8,
-    }
+    },
+    {
+        "path": "vendor/atari-small/atari-small.png",
+        "name": "Atari Small",
+        "width": 4,
+        "height": 8,
+        "pitch": 4,
+    },
 ]
 
 MAX_CHARS = 128
