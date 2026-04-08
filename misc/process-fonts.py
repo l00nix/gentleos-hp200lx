@@ -2,14 +2,14 @@
 
 FONTS = [
     {
-        "path": "vendor/fonts/EverexME_5x8-8.png",
+        "path": "vendor/fonts/EverexME_5x8-8.pbm",
         "name": "EverexME_5x8",
         "width": 5,
         "height": 8,
         "pitch": 8,
     },
     {
-        "path": "vendor/atari-small/atari-small.png",
+        "path": "vendor/atari-small/atari-small.pbm",
         "name": "Atari Small",
         "width": 4,
         "height": 8,
