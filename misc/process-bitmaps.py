@@ -4,27 +4,35 @@ import re
 import os
 import glob
 
-from PIL import Image
+def load_pbm(path):
+    with open(path, "r") as fp:
+        header = []
+        raster_chars = []
+        for line in fp:
+            line = line.split("#", 1)[0]
+            if len(header) < 3:
+                parts = line.split()
+                while parts and len(header) < 3:
+                    header.append(parts.pop(0))
+                raster_chars.extend(parts)
+            else:
+                raster_chars.append(line)
 
-def load_pixels(path):
-    img = Image.open(path).convert("RGB")
-    width, height = img.size
-    data = img.load()
+    if len(header) < 3 or header[0] != "P1":
+        raise ValueError(f"Not a P1 PBM file: {path}")
 
-    rows = []
-    for y in range(height):
-        row = []
-        for x in range(width):
-            r, g, b = data[x, y]
-            row.append((r << 16) | (g << 8) | b)
-        rows.append(row)
+    width = int(header[1])
+    height = int(header[2])
+    flat_pixels = [int(c) for c in "".join(raster_chars) if not c.isspace()]
+    pixels = [flat_pixels[i:i + width] for i in range(0, len(flat_pixels), width)]
 
-    return rows
+    return pixels
 
-def load_image_1bpp(path):
-    print(f"Loading image (1bpp): {path}")
+def process_image(path):
+    print(f"Processing image: {path}")
+
     name = os.path.splitext(os.path.basename(path))[0]
-    pixels = load_pixels(path)
+    pixels = load_pbm(path)
     width = len(pixels[0])
     height = len(pixels)
     pitch = (width + 7) // 8
@@ -34,7 +42,7 @@ def load_image_1bpp(path):
     for row in pixels:
         bits = []
         for x in row:
-            bits.append(1 if x == 0 else 0)
+            bits.append(x)
 
         bytez = []
         for i in range(0, len(bits), 8):
@@ -59,13 +67,9 @@ def load_image_1bpp(path):
 
     return("\r\n".join(lines))
 
-def load_image(path):
-    name = os.path.splitext(os.path.basename(path))[0]
-    return load_image_1bpp(path)
-
 def main():
-    bitmap_files = sorted(glob.glob("bitmaps/*"))
-    bitmaps = (load_image(x) for x in bitmap_files)
+    image_files = sorted(glob.glob("bitmaps/*"))
+    bitmaps = (process_image(x) for x in image_files)
 
     lines = [
         '#include <gui.h>',
