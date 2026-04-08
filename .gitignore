@@ -7,3 +7,4 @@
 __pycache__
 /MK.EXE
 /MK.OBJ
+*.ERR

@@ -42,12 +42,17 @@ typedef unsigned long uintptr_t;
 
 typedef void interrupt far (*isr_handler_fn)(void);
 
-#else
+#endif
+
+#ifdef __WATCOMC__
 
 #include <stdint.h>
 
 typedef uint32_t size_t;
 typedef int32_t ssize_t;
+
+#define far __far
+#define MK_FP(__s,__o) (((unsigned short)(__s)):>((void __near *)(__o)))
 
 #endif
 

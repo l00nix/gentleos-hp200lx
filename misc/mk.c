@@ -25,7 +25,8 @@ int unlink(const char *);
 #define MAX_SRC_FILES 128
 #define NASM_PATH "vendor\\nasm301\\nasm"
 #define TCC_PATH "tcc"
-#define CFLAGS "-mt -u -g1 -c -Iinclude"
+#define TCC_CFLAGS "-mt -u -g1 -c -Iinclude"
+#define WCC_CFLAGS "-0 -ecc -i=include -ms -q -s -zl -zp=1 -zpw"
 #define TLINK_FLAGS "/s /t /l"
 
 static const char *SRC_DIRS[] = {
@@ -47,6 +48,7 @@ static const char *SRC_DIRS[] = {
 }
 
 unsigned long latest_include_ftime = 0;
+int use_turbo_c = 0;
 
 typedef struct {
     char type;
@@ -230,7 +232,11 @@ make_objs(void)
         }
 
         if (sf->type == 'c') {
-            sprintf(cmd, "%s %s -nbuild\\%s %s", TCC_PATH, CFLAGS, sf->dirname, src_path);
+            if (use_turbo_c) {
+                sprintf(cmd, "%s %s -nbuild\\%s %s", TCC_PATH, TCC_CFLAGS, sf->dirname, src_path);
+            } else {
+                sprintf(cmd, "wcc %s -fo=%s %s", WCC_CFLAGS, obj_path, src_path);
+            }
         } else {
             sprintf(cmd, "%s -f obj -o %s %s", NASM_PATH, obj_path, src_path);
         }
@@ -332,13 +338,24 @@ int
 main(int argc, char **argv)
 {
     size_t i;
-    const char *cmd;
+    const char *cmd = NULL;
 
     unlink("mk.obj");
     find_latest_include_ftime();
     find_src_files();
 
-    cmd = argc >= 2? argv[1] : "all";
+    for (i = 1; i < argc; ++i) {
+        if (!strcmp(argv[i], "-t")) {
+            use_turbo_c = 1;
+        } else {
+            cmd = argv[i];
+            break;
+        }
+    }
+
+    if (!cmd) {
+        cmd = "all";
+    }
 
     if (!strcmp(cmd, "all")) {
         make_all();
@@ -351,7 +368,7 @@ main(int argc, char **argv)
     } else if (!strcmp(cmd, "clean")) {
         make_clean();
     } else if (!strcmp(cmd, "mk")) {
-        system(TCC_PATH " misc\\mk.c");
+        system("tcc misc\\mk.c");
         unlink("mk.obj");
     } else {
         printf("Usage: mk [all boot run clean mk]\n");
