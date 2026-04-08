@@ -248,11 +248,14 @@ make_kernel(void)
 
     make_objs();
 
-    f = fopen("build\\tlink.rsp", "wb");
-    ASSERT(f, "Cannot create tlink.rsp")
+    f = fopen("build\\kernel.lnk", "wb");
+    ASSERT(f, "Cannot create kernel.lnk")
 
-    fprintf(f, "%s +\r\n", TLINK_FLAGS);
-    fprintf(f, "\tbuild\\kernel\\start.obj+\r\n");
+    fprintf(f, "system dos com\r\n");
+    fprintf(f, "name build/kernel.com\r\n");
+    fprintf(f, "option nodefaultlibs\r\n");
+    fprintf(f, "option quiet\r\n");
+    fprintf(f, "file build/kernel/start.obj\r\n");
 
     for (i = 0; i < src_files_count; ++i) {
         sf = &src_files[i];
@@ -261,13 +264,12 @@ make_kernel(void)
             continue;
         }
 
-        fprintf(f, "\tbuild\\%s\\%s.obj+\r\n", sf->dirname, sf->basename);
+        fprintf(f, "file build/%s/%s.obj\r\n", sf->dirname, sf->basename);
     }
 
-    fprintf(f, ",build\\kernel.com,build\\kernel.map\r\n");
     fclose(f);
 
-    build_and_check("build/kernel.com", "tlink @build\\tlink.rsp");
+    build_and_check("build/kernel.com", "wlink @build/kernel.lnk");
 }
 
 static void
