@@ -31,7 +31,7 @@ static window_st window;
 static widget_st keys_w[KEY_W_COUNT];
 static widget_st keys_b[KEY_B_COUNT];
 static widget_st *widgets[KEY_W_COUNT + KEY_B_COUNT];
-static widget_st *pressed_widget;
+static widget_st *pressed_widget = 0;
 
 static void
 draw_key_w(widget_st *widget)
@@ -164,7 +164,7 @@ on_key_up(window_st *window, const event_st *event)
     int ch = event->payload.key.key_char;
     widget_st *widget = key_for_char(ch);
 
-    if (widget != pressed_widget) {
+    if (!widget || widget != pressed_widget) {
         return;
     }
 
