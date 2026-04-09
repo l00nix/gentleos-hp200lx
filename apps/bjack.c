@@ -36,8 +36,6 @@ static const char *rank_str[] = {
     "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"
 };
 
-static const char *suit_str[] = { "\x03", "\x04", "\x05", "\x06" };
-
 static bitmap_st *suit_bmp[] = {
     &bitmap_sprite_heart,
     &bitmap_sprite_diamond,
