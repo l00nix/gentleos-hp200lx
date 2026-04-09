@@ -229,22 +229,34 @@ on_key_up(window_st *window, const event_st *event)
         pressed_button = NULL;
         prev_pressed_button->active = 0;
         gui_widget_draw(prev_pressed_button);
-        on_button_press(prev_pressed_button);
     }
 }
 
 static void
 on_key_down(window_st *window, const event_st *event)
 {
+    widget_st *prev_pressed_button = pressed_button;
     widget_st *button = button_for_char(event->payload.key.key_char);
 
-    if (pressed_button) {
+    if (!button) {
         return;
+    }
+
+    if (button == prev_pressed_button) {
+        return;
+    }
+
+    if (prev_pressed_button) {
+        pressed_button = 0;
+        prev_pressed_button->active = 0;
+        gui_widget_draw(prev_pressed_button);
     }
 
     pressed_button = button;
     button->active = 1;
     gui_button_draw(button);
+    on_button_press(button);
+
 }
 
 static void
