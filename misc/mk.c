@@ -74,55 +74,6 @@ file_get_ftime(const char *path)
 }
 
 
-static unsigned long
-file_write(FILE *out, const char *buf, unsigned long n)
-{
-    if (fwrite(buf, 1, n, out) != n) {
-        fprintf(stderr, "Write error\n");
-        exit(1);
-    }
-
-    return n;
-}
-
-static void
-file_fill(FILE *out, unsigned long n)
-{
-    static char buf[BUF_SIZE];
-
-    memset(buf, 0, BUF_SIZE);
-
-    while (n >= BUF_SIZE) {
-        n -= file_write(out, buf, BUF_SIZE);
-    }
-
-    if (n > 0) {
-        n -= file_write(out, buf, n);
-    }
-}
-
-static unsigned long
-file_copy(FILE *out, const char *path)
-{
-    FILE *in;
-    static char buf[BUF_SIZE];
-    unsigned long n;
-    unsigned long total = 0;
-
-    in = fopen(path, "rb");
-    ASSERT(in, "Cannot open file to read");
-
-    while ((n = fread(buf, 1, sizeof buf, in)) > 0) {
-        total += file_write(out, buf, n);
-    }
-
-    ASSERT(!ferror(in), "Read error");
-
-    fclose(in);
-
-    return total;
-}
-
 static char
 file_get_basename_and_type(const char *name, char *basename)
 {
@@ -292,32 +243,11 @@ make_boot(void)
 }
 
 static void
-make_disk(const char *path, unsigned long size)
-{
-    FILE *out;
-
-    printf("Creating %s... ", path);
-
-    unlink(path);
-    out = fopen(path, "wb");
-    ASSERT(out, "Cannot open file to write");
-
-    size -= file_copy(out, "build\\boot.bin");
-    size -= file_copy(out, "build\\kernel.com");
-    file_fill(out, size);
-
-    ASSERT(fclose(out) == 0, "Write error");
-
-    printf("Done\n");
-}
-
-static void
 make_all(void)
 {
     make_kernel();
     make_boot();
-    make_disk("build\\fd720.img", 720UL * 1024UL);
-    make_disk("build\\fd1440.img", 1440UL * 1024UL);
+    build_and_check("build\\fd720.img", "perl misc/mkdisks.pl");
 }
 
 static void
