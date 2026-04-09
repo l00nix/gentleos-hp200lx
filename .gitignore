@@ -5,6 +5,4 @@
 /tmp/*
 *.swp
 __pycache__
-/MK.EXE
-/MK.OBJ
 *.ERR
