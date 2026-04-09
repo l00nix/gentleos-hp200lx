@@ -9,14 +9,14 @@
 
 section _TEXT class=CODE
 
-global cpu_get_flags
-cpu_get_flags:
+global _cpu_get_flags
+_cpu_get_flags:
     pushf
     pop ax
     ret
 
-global cpu_set_flags
-cpu_set_flags:
+global _cpu_set_flags
+_cpu_set_flags:
     push bp
     mov bp, sp
     mov ax, [bp + 4]
@@ -25,18 +25,18 @@ cpu_set_flags:
     pop bp
     ret
 
-global cpu_cli
-cpu_cli:
+global _cpu_cli
+_cpu_cli:
     cli
     ret
 
-global cpu_hlt
-cpu_hlt:
+global _cpu_hlt
+_cpu_hlt:
     hlt
     ret
 
-global inb
-inb:
+global _inb
+_inb:
     push bp
     mov bp, sp
 
@@ -49,8 +49,8 @@ inb:
     pop bp
     ret
 
-global outb
-outb:
+global _outb
+_outb:
     push bp
     mov bp, sp
     push dx
@@ -67,8 +67,8 @@ outb:
     ret
 
 
-global intr
-intr:
+global _intr
+_intr:
     push bp
     mov bp, sp
 

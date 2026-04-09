@@ -25,7 +25,7 @@ int unlink(const char *);
 #define MAX_SRC_FILES 128
 #define NASM_PATH "vendor\\nasm301\\nasm"
 #define TCC_PATH "tcc"
-#define CFLAGS "-mt -u- -g1 -c -Iinclude"
+#define CFLAGS "-mt -u -g1 -c -Iinclude"
 #define TLINK_FLAGS "/s /t /l"
 
 static const char *SRC_DIRS[] = {

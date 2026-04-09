@@ -7,7 +7,7 @@
 
 [cpu 8086]
 
-extern krn_main
+extern _krn_main
 
 section _TEXT class=CODE
 
@@ -17,12 +17,12 @@ resb 0x100
     mov [DGROUP@], ds
 
     ; jump to the C code
-    jmp krn_main
+    jmp _krn_main
 
 section _DATA class=DATA
 
-global krn_data_seg
-krn_data_seg:
+global _krn_data_seg
+_krn_data_seg:
 
 global DGROUP@
 DGROUP@:
@@ -30,8 +30,8 @@ DGROUP@:
 
 section _DATAEND class=DATAEND
 
-global krn_marker_data_end
-krn_marker_data_end:
+global _krn_marker_data_end
+_krn_marker_data_end:
     dq 0xf0cacc1a
 
 section _BSS class=BSS
