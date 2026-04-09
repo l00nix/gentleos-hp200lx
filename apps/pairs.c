@@ -210,7 +210,7 @@ on_cell_press(widget_st *widget)
 }
 
 static void
-on_key_up(window_st *window _unsd, const event_st *event)
+on_key_up(window_st *window, const event_st *event)
 {
     int ch = event->payload.key.key_char;
 

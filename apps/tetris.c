@@ -270,7 +270,7 @@ on_tick(window_st *window) {
 }
 
 static void
-on_keyboard(window_st *w _unsd, const event_st *event)
+on_keyboard(window_st *w, const event_st *event)
 {
     int key_char = event->payload.key.key_char;
     int key_code = event->payload.key.key_code;

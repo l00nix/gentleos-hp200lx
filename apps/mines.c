@@ -333,7 +333,7 @@ update_current_cell(int dx, int dy)
 }
 
 static void
-on_key_down(window_st *win _unsd, const event_st *event)
+on_key_down(window_st *win, const event_st *event)
 {
     int key_code = event->payload.key.key_code;
     int key_ch = event->payload.key.key_char;

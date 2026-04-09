@@ -35,9 +35,6 @@ typedef unsigned long size_t;
 
 typedef unsigned long uintptr_t;
 
-#define _unsd
-#define _packed
-
 #pragma warn -rch
 #pragma warn -par
 
@@ -51,9 +48,6 @@ typedef void interrupt far (*isr_handler_fn)(void);
 
 typedef uint32_t size_t;
 typedef int32_t ssize_t;
-
-#define _unsd __attribute__((unused))
-#define _packed __attribute__((packed))
 
 #endif
 

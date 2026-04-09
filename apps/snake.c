@@ -215,7 +215,7 @@ on_tick(window_st *window)
 }
 
 static void
-on_keyboard(window_st *window _unsd, const event_st *event)
+on_keyboard(window_st *window, const event_st *event)
 {
     int key = event->payload.key.key_code;
 

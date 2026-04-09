@@ -186,7 +186,7 @@ set_next_month(void)
 }
 
 static void
-on_key_up(window_st *window _unsd, const event_st *event _unsd)
+on_key_up(window_st *window, const event_st *event)
 {
     int ch = event->payload.key.key_char;
 
