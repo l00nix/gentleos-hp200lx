@@ -1,0 +1,14 @@
+Release 2 of the DJGPP port of Perl 5.6.1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Release 2 of the DJGPP port of Perl 5.6.1 fixes a couple of bugs:
+
+* Perl 5.6.1 should now build with gcc 3.x. gcc 3.x generates dependencies
+  in a different way than 2.x. This broke the makedepend script.
+  makedepend can now cope with gcc 3.x-style dependencies.
+
+* Environment variable names were treated case-insensitively in some cases
+  and case-sensitively in other cases. This inconsistency has been fixed.
+  All environment variable names are now treated case-sensitively.
+
+Richard Dawe <rich@phekda.freeserve.co.uk> 2002-12-30

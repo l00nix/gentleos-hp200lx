@@ -1,0 +1,15 @@
+Release 3 of the DJGPP port of Perl 5.6.1
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+Release 3 of the DJGPP port of Perl 5.6.1 fixes a couple of bugs:
+
+* POSIX::W*, in particular POSIX::WEXITSTATUS, was broken, because
+  of a mismatch between the encoding of the return code by some
+  DJGPP-specific code in the DJGPP port of Perl and the DJGPP header file
+  <sys/wait.h>. This meant that, for example, POSIX::WEXITSTATUS($?)
+  would never return the exit code field from $? correctly.
+
+* The packlist file should now be named _packlist instead of .packlist.
+  djgpp/djgppsed.sh needed to perform substitutions to 'installperl' too.
+
+Richard Dawe <rich@phekda.freeserve.co.uk> 2003-02-28
