@@ -95,6 +95,7 @@ draw_font_label(void)
     gui_wm_render_window_region(&window.origin, &r);
 }
 
+/*
 static void
 set_prev_font(void)
 {
@@ -112,6 +113,7 @@ set_next_font(void)
     draw_font_label();
     draw_all_cells();
 }
+*/
 
 static void
 update_current_cell(int dx, int dy)
@@ -153,9 +155,6 @@ init_window(void)
 static void
 init_grid(void)
 {
-    uint16_t i;
-    int col, row;
-
     grid.cell_width = GRID_CELL_WIDTH;
     grid.cell_height = GRID_CELL_HEIGHT;
     grid.cols = GRID_COLS;
