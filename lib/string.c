@@ -7,6 +7,7 @@
 
 #include <lib.h>
 
+CPROTO_IGNORE
 void far *
 memcpy_far(void far *dest, const void far *src, size_t n)
 {
@@ -89,6 +90,7 @@ memset(void *dest, int c, size_t n)
     return dest;
 }
 
+CPROTO_IGNORE
 void far *
 memset_far(void far *dest, int c, size_t n)
 {

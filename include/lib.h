@@ -56,6 +56,12 @@ typedef int32_t ssize_t;
 
 #endif
 
+#ifdef __CPROTO__
+#define CPROTO_IGNORE static
+#else
+#define CPROTO_IGNORE
+#endif
+
 #include <config.h>
 
 #define NULL ((void *)0)

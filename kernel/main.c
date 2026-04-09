@@ -11,9 +11,8 @@
 
 extern uint32_t krn_marker_data_end;
 
-#ifndef __CPROTO__
+CPROTO_IGNORE
 isr_st far *krn_ivt;
-#endif
 
 
 #if ENABLE_TESTS

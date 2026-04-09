@@ -4,3 +4,5 @@ include
 __TURBOC__
 -D
 __CLANGD__
+-D
+CPROTO_IGNORE=

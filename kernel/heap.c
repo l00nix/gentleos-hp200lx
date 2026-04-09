@@ -12,6 +12,7 @@ static uint16_t krn_heap_current_ofs;
 
 extern uint16_t krn_data_seg;
 
+CPROTO_IGNORE
 void far *
 krn_heap_alloc(uint16_t size)
 {
