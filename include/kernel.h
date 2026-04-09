@@ -11,6 +11,11 @@
 #include <lib.h>
 
 typedef struct {
+    uint16_t ofs;
+    uint16_t seg;
+} isr_st;
+
+typedef struct {
     uint8_t second;
     uint8_t minute;
     uint8_t hour;
@@ -42,6 +47,11 @@ typedef struct {
 
 extern void *krn_link_start;
 extern void *krn_link_end;
+extern uint16_t krn_data_seg;
+
+#ifndef __CPROTO__
+extern isr_st far *krn_ivt;
+#endif
 
 void far *krn_heap_alloc(uint16_t);
 

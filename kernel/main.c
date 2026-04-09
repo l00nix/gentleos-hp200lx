@@ -5,11 +5,16 @@
  * File: main.c - Kernel main function
  */
 
+#include "lib.h"
 #include <kernel.h>
 #include <gui.h>
 
-extern uint16_t krn_data_seg;
 extern uint32_t krn_marker_data_end;
+
+#ifndef __CPROTO__
+isr_st far *krn_ivt;
+#endif
+
 
 #if ENABLE_TESTS
 extern void tests_run(void);
@@ -19,6 +24,7 @@ void
 krn_main(void)
 {
     krn_debug_printf("\n");
+    krn_ivt = MK_FP(0, 0);
 
     if (krn_marker_data_end != 0xf0cacc1a) {
         krn_debug_printf("Kernel loading failed\n");
@@ -60,4 +66,22 @@ krn_exit(void)
     krn_keyboard_deinit();
 
     intr(0x20, &regs);
+}
+
+void
+krn_set_isr(uint8_t no, uint16_t seg, uint16_t ofs)
+{
+    uint16_t flags = cpu_get_flags();
+
+    krn_ivt[no].seg = seg;
+    krn_ivt[no].ofs = ofs;
+
+    cpu_set_flags(flags);
+}
+
+void
+krn_get_isr(uint8_t no, isr_st *dst)
+{
+    dst->seg = krn_ivt[no].seg;
+    dst->ofs = krn_ivt[no].ofs;
 }

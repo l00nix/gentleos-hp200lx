@@ -5,6 +5,7 @@
  * File: timer.c - Driver for PIT 8254
  */
 
+#include "lib.h"
 #include <kernel.h>
 
 enum {
@@ -13,9 +14,8 @@ enum {
     TIMER_HZ = 20,
 };
 
-#if !__CPROTO__
-static isr_handler_fn saved_isr_handler;
-#endif
+static isr_st saved_isr_handler;
+extern void *krn_isr_timer;
 
 volatile uint8_t krn_timer_is_cpu_idle = 0;
 
@@ -23,8 +23,8 @@ volatile static uint32_t timer_msecs = 0;
 static uint32_t idle_ticks = 0;
 static uint32_t total_ticks = 0;
 
-static void interrupt
-krn_timer_handle_intr()
+void
+krn_timer_handle_intr(void)
 {
     event_st event;
 
@@ -76,7 +76,7 @@ krn_timer_get_cpu_usage(void)
 void
 krn_timer_init(void)
 {
-    isr_handler_fn far *ivt = MK_FP(0, 0);
+    uint16_t flags;
     uint16_t div = 1193180 / TIMER_HZ;
 
     /* Set Counter 0, write both LSB and MSB, use mode 3, binary counter */
@@ -86,13 +86,12 @@ krn_timer_init(void)
     outb((uint8_t)((div >> 0) & 0xFF), PIT_CR0);
     outb((uint8_t)((div >> 8) & 0xFF), PIT_CR0);
 
-    saved_isr_handler = ivt[0x1c];
-    ivt[0x1c] = krn_timer_handle_intr;
+    krn_get_isr(0x1c, &saved_isr_handler);
+    krn_set_isr(0x1c, krn_data_seg, (uint16_t)(uint32_t)&krn_isr_timer);
 }
 
 void
 krn_timer_deinit(void)
 {
-    isr_handler_fn far *ivt = MK_FP(0, 0);
-    ivt[0x1c] = saved_isr_handler;
+    krn_set_isr(0x1c, saved_isr_handler.seg, saved_isr_handler.ofs);
 }

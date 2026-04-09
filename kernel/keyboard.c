@@ -34,9 +34,8 @@ static const unsigned char krn_keyboard_map_shift[] = {
     '-', 252, 0, 253, '+', 0, 255, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-#if !__CPROTO__
-static isr_handler_fn saved_isr_handler;
-#endif
+static isr_st saved_isr_handler;
+extern void *krn_isr_keyboard;
 
 static void
 krn_keyboard_finish_handling()
@@ -48,8 +47,8 @@ krn_keyboard_finish_handling()
     outb(0x20, 0x20);
 }
 
-static void interrupt
-krn_keyboard_handle_intr()
+void
+krn_keyboard_handle_intr(void)
 {
     static uint8_t shift = 0;
     static uint8_t ctrl = 0;
@@ -113,14 +112,12 @@ krn_keyboard_handle_intr()
 void
 krn_keyboard_init(void)
 {
-    isr_handler_fn far *ivt = MK_FP(0, 0);
-    saved_isr_handler = ivt[0x09];
-    ivt[0x09] = krn_keyboard_handle_intr;
+    krn_get_isr(0x09, &saved_isr_handler);
+    krn_set_isr(0x09, krn_data_seg, (uint16_t)(uint32_t)&krn_isr_keyboard);
 }
 
 void
 krn_keyboard_deinit(void)
 {
-    isr_handler_fn far *ivt = MK_FP(0, 0);
-    ivt[0x09] = saved_isr_handler;
+    krn_set_isr(0x09, saved_isr_handler.seg, saved_isr_handler.ofs);
 }
