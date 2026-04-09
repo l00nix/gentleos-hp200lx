@@ -28,7 +28,9 @@ krn_main(void)
 
     if (krn_marker_data_end != 0xf0cacc1a) {
         krn_debug_printf("Kernel loading failed\n");
+        #pragma disable_message(111)
         while (1);
+        #pragma enable_message(111)
     }
 
     krn_debug_printf("Kernel loaded successfully\n");

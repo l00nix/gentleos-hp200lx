@@ -7,6 +7,8 @@
 
 #include <kernel.h>
 
+#pragma disable_message(201)
+
 enum {
     EVENT_QUEUE_SIZE = 32,
     EVENT_QUEUE_DEBUG = 0,
