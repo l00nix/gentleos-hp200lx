@@ -71,9 +71,9 @@ draw_github_line(void)
 
     gui_grid_cell_rect(&grid, col, line, &r);
     r.y -= 5;
-    r.width = bitmap_icon_github.size.width;
-    r.height = bitmap_icon_github.size.height;
-    gui_surface_draw_bitmap_centered(&window.origin, &window.size, &r, &bitmap_icon_github,
+    r.width = bitmap_i_github.size.width;
+    r.height = bitmap_i_github.size.height;
+    gui_surface_draw_bitmap_centered(&window.origin, &window.size, &r, &bitmap_i_github,
         COLOR_FG);
 }
 
@@ -133,6 +133,6 @@ show_app(void)
 
 app_st app_about = {
     "About",
-    &bitmap_icon_about,
+    &bitmap_i_about,
     show_app,
 };

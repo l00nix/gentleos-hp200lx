@@ -189,6 +189,6 @@ show_app(void)
 
 app_st app_fonts = {
     "Fonts",
-    &bitmap_icon_fonts,
+    &bitmap_i_fonts,
     show_app,
 };

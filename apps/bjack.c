@@ -37,10 +37,10 @@ static const char *rank_str[] = {
 };
 
 static bitmap_st *suit_bmp[] = {
-    &bitmap_sprite_heart,
-    &bitmap_sprite_diamond,
-    &bitmap_sprite_club,
-    &bitmap_sprite_spade,
+    &bitmap_s_heart,
+    &bitmap_s_diamnd,
+    &bitmap_s_club,
+    &bitmap_s_spade,
 };
 
 static window_st window;
@@ -343,6 +343,6 @@ show_app(void)
 
 app_st app_blackjack = {
     "Blackjack",
-    &bitmap_icon_blackjack,
+    &bitmap_i_bjack,
     show_app,
 };

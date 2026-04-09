@@ -33,16 +33,16 @@ static widget_st *widgets[GRID_CELL_COUNT];
 static grid_st grid;
 
 static bitmap_st *icons[PAIR_COUNT] = {
-    &bitmap_icon_pairs_bear,
-    &bitmap_icon_pairs_bot,
-    &bitmap_icon_pairs_butterfly,
-    &bitmap_icon_pairs_cat,
-    &bitmap_icon_pairs_elephant,
-    &bitmap_icon_pairs_fish,
-    &bitmap_icon_pairs_ghost,
-    &bitmap_icon_pairs_rabbit,
-    &bitmap_icon_pairs_snake,
-    &bitmap_icon_pairs_turtle,
+    &bitmap_p_bear,
+    &bitmap_p_bot,
+    &bitmap_p_btrfly,
+    &bitmap_p_cat,
+    &bitmap_p_elepht,
+    &bitmap_p_fish,
+    &bitmap_p_ghost,
+    &bitmap_p_rabbit,
+    &bitmap_p_snake,
+    &bitmap_p_turtle,
 };
 
 enum {
@@ -283,6 +283,6 @@ show_app(void)
 
 app_st app_pairs = {
     "Pairs",
-    &bitmap_icon_pairs,
+    &bitmap_i_pairs,
     show_app,
 };

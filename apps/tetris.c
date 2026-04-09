@@ -334,6 +334,6 @@ show_app(void)
 
 app_st app_tetris = {
     "Tetris",
-    &bitmap_icon_tetris,
+    &bitmap_i_tetris,
     show_app,
 };

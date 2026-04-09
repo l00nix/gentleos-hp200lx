@@ -109,10 +109,10 @@ draw_cell(int col, int row)
     gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
 
     if (state == CELL_STATE_FLAGGED) {
-        gui_surface_draw_bitmap_centered(&window.origin, &window.size, &rect, &bitmap_sprite_flag,
+        gui_surface_draw_bitmap_centered(&window.origin, &window.size, &rect, &bitmap_s_flag,
             COLOR_FG);
     } else if (state == CELL_STATE_REVEALED && type == CELL_TYPE_MINE) {
-        gui_surface_draw_bitmap_centered(&window.origin, &window.size, &rect, &bitmap_sprite_mine,
+        gui_surface_draw_bitmap_centered(&window.origin, &window.size, &rect, &bitmap_s_mine,
             COLOR_FG);
     } else if (state == CELL_STATE_REVEALED && type == CELL_TYPE_EMPTY) {
         gui_rect_init(&dot_rect, rect.x + rect.width / 2 - 1, rect.y + rect.height / 2, 2, 1);
@@ -400,6 +400,6 @@ show_app(void)
 
 app_st app_mines = {
     "Mines",
-    &bitmap_icon_mines,
+    &bitmap_i_mines,
     show_app,
 };

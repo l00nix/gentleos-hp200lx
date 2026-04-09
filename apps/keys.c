@@ -252,6 +252,6 @@ show_app(void)
 
 app_st app_keymap = {
     "Keys",
-    &bitmap_icon_keys,
+    &bitmap_i_keys,
     show_app,
 };
