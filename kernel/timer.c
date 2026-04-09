@@ -76,7 +76,6 @@ krn_timer_get_cpu_usage(void)
 void
 krn_timer_init(void)
 {
-    uint16_t flags;
     uint16_t div = 1193180 / TIMER_HZ;
 
     /* Set Counter 0, write both LSB and MSB, use mode 3, binary counter */
