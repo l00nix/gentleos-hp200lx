@@ -10,6 +10,9 @@ boot: all .SYMBOLIC
 genmake: .SYMBOLIC
     perl misc/genmake.pl
 
+procbmp: .SYMBOLIC
+    perl misc/procbmp.pl
+
 clean: .SYMBOLIC
 	-del build\apps\*.*
 	-del build\data\*.*

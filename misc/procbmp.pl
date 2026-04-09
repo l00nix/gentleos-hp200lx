@@ -1,0 +1,229 @@
+#!/usr/bin/perl
+#
+# Copyright (c) 2026 luke8086
+# Distributed under the terms of GPL-2 License.
+#
+# File: procbmp.pl - Convert bitmaps and fonts to hardcoded C data
+#
+
+my @FONTS = (
+    {
+        path => "fonts/evxme58.pbm",
+        name => "Evx ME 5x8",
+        width => 5,
+        height => 8,
+        pitch => 8,
+    },
+    {
+        path => "fonts/atarism.pbm",
+        name => "Atari Small 4x8",
+        width => 4,
+        height => 8,
+        pitch => 4,
+    },
+);
+
+my $FONT_MAX_CHARS = 128;
+
+sub load_pbm {
+    my ($path) = @_;
+    open(my $fh, "<", $path) or die "Cannot read $path: $!\n";
+
+    my @header;
+    my $raster = "";
+    while (my $line = <$fh>) {
+        $line =~ s/#.*$//;
+        if (@header < 3) {
+            my @parts = split(' ', $line);
+            while (@parts && @header < 3) {
+                push @header, shift @parts;
+            }
+            $raster .= join("", @parts);
+        } else {
+            $raster .= $line;
+        }
+    }
+    close $fh;
+
+    if (@header < 3 || $header[0] ne "P1") {
+        die "Not a P1 PBM file: $path\n";
+    }
+
+
+    my $width = int($header[1]);
+    my $height = int($header[2]);
+
+    print "  image: ${width}x${height}\n";
+
+    $raster =~ s/\s+//g;
+    my @flat = split(//, $raster);
+
+    my @pixels;
+    for (my $i = 0; $i < @flat; $i += $width) {
+        push @pixels, [@flat[$i .. $i + $width - 1]];
+    }
+
+    return (\@pixels, $width, $height);
+}
+
+sub bitmap_name {
+    my ($p) = @_;
+    $p =~ s{.*[/\\]}{};
+    $p =~ s{\.[^.]*$}{};
+    return $p;
+}
+
+sub process_bitmap {
+    my ($path) = @_;
+    print "Processing bitmap: $path\n";
+
+    my $name = bitmap_name($path);
+    my ($pixels, $width, $height) = load_pbm($path);
+    my $pitch = int(($width + 7) / 8);
+
+    my @pixel_lines;
+
+    foreach my $row (@$pixels) {
+        my @bytes;
+        for (my $i = 0; $i < @$row; $i += 8) {
+            my $byte = 0;
+            for (my $bit_pos = 0; $bit_pos < 8; $bit_pos++) {
+                if ($i + $bit_pos < @$row) {
+                    $byte |= $row->[$i + $bit_pos] << (7 - $bit_pos);
+                }
+            }
+            push @bytes, $byte;
+        }
+
+        my $pixel_str = join("", map { sprintf("\\x%02x", $_) } @bytes);
+        push @pixel_lines, "        \"$pixel_str\" \\";
+    }
+
+    my @lines = (
+        "bitmap_st bitmap_$name = {",
+        "    { $width, $height },",
+        "    $pitch,",
+        "    (uint8_t *)",
+        @pixel_lines,
+        "};",
+        "",
+    );
+
+    return join("\r\n", @lines);
+}
+
+sub process_bitmaps {
+    my @bitmap_files = sort(glob("bitmaps/*.pbm"));
+
+    my @lines = ("#include <gui.h>", "");
+    foreach my $f (@bitmap_files) {
+        push @lines, process_bitmap($f);
+    }
+
+    open(my $fh, ">", "data/data_bmp.c") or die "Cannot write data/data_bmp.c: $!\n";
+    binmode($fh);
+    print $fh join("\r\n", @lines);
+    close($fh);
+}
+
+sub load_font {
+    my ($font) = @_;
+    my $path = $font->{path};
+    my $width = $font->{width};
+    my $height = $font->{height};
+    my $pitch = $font->{pitch};
+
+    print "Processing font: $path\n";
+    my ($pixels, $img_width, $img_height) = load_pbm($path);
+
+    my $cols = int($img_width / $pitch);
+    my $rows = int($img_height / $height);
+    my $num_chars = $cols * $rows;
+
+    print "  image: ${img_width}x${img_height}, grid: ${cols}x${rows} = $num_chars chars\n";
+
+    if ($num_chars > $FONT_MAX_CHARS) {
+        $num_chars = $FONT_MAX_CHARS;
+    }
+    my $max_bytes = $FONT_MAX_CHARS * $height;
+
+    my @glyph_bytes;
+    for (my $ch = 0; $ch < $num_chars; $ch++) {
+        my $col = $ch % $cols;
+        my $row = int($ch / $cols);
+        my $x_start = $col * $pitch;
+        my $y_start = $row * $height;
+
+        for (my $j = 0; $j < $height; $j++) {
+            my $byte = 0;
+            for (my $i = 0; $i < $pitch; $i++) {
+                my $x = $x_start + $i;
+                my $y = $y_start + $j;
+                my $p = $pixels->[$y][$x];
+                $byte |= $p << (7 - $i);
+            }
+            push @glyph_bytes, $byte;
+        }
+    }
+
+    while (@glyph_bytes < $max_bytes) {
+        push @glyph_bytes, 0;
+    }
+
+    return [@glyph_bytes[0 .. $max_bytes - 1]];
+}
+
+sub format_font_pixels {
+    my ($glyph_bytes, $height) = @_;
+    my @lines;
+    my $num_chars = int(@$glyph_bytes / $height);
+
+    for (my $i = 0; $i < $num_chars; $i++) {
+        my $offset = $i * $height;
+        my @chunk = @{$glyph_bytes}[$offset .. $offset + $height - 1];
+        my $hex_str = join("", map { sprintf("\\x%02x", $_) } @chunk);
+        push @lines, "            \"$hex_str\" \\";
+    }
+
+    return join("\r\n", @lines);
+}
+
+sub process_fonts {
+    my @font_data;
+    foreach my $font (@FONTS) {
+        my $glyph_bytes = load_font($font);
+        push @font_data, [$font, $glyph_bytes];
+    }
+
+    my @lines = (
+        "#include <gui.h>",
+        "",
+        "font_st fonts[] = {",
+    );
+
+    foreach my $entry (@font_data) {
+        my ($font, $glyph_bytes) = @$entry;
+        my $name = $font->{name};
+        my $width = $font->{width};
+        my $height = $font->{height};
+        push @lines, (
+            "    {",
+            "        { $width, $height },",
+            "        \"$name\",",
+            "        (uint8_t *)",
+            format_font_pixels($glyph_bytes, $height),
+            "    },",
+        );
+    }
+
+    push @lines, "};";
+    push @lines, "";
+
+    open(my $fh, ">", "data/data_fnt.c") or die "Cannot write data/data_fnt.c: $!\n";
+    binmode($fh);
+    print $fh join("\r\n", @lines);
+    close($fh);
+}
+
+process_bitmaps();
+process_fonts();
