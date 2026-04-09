@@ -3,7 +3,7 @@
 font_st fonts[] = {
     {
         { 5, 8 },
-        "EverexME_5x8",
+        "Evx ME 5x8",
         (uint8_t *)
             "\x00\x00\x00\x00\x00\x00\x00\x00" \
             "\x70\x88\xd8\x88\xf8\xa8\x70\x00" \
@@ -136,7 +136,7 @@ font_st fonts[] = {
     },
     {
         { 4, 8 },
-        "Atari Small",
+        "Atari Small 4x8",
         (uint8_t *)
             "\x00\x00\x00\x00\x00\x00\x00\x00" \
             "\x00\x20\x70\xf0\x70\x20\x00\x00" \

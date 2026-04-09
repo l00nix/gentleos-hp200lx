@@ -6,15 +6,15 @@ import glob
 
 FONTS = [
     {
-        "path": "vendor/fonts/EverexME_5x8-8.pbm",
-        "name": "EverexME_5x8",
+        "path": "fonts/evxme58.pbm",
+        "name": "Evx ME 5x8",
         "width": 5,
         "height": 8,
         "pitch": 8,
     },
     {
-        "path": "vendor/atari-small/atari-small.pbm",
-        "name": "Atari Small",
+        "path": "fonts/atarism.pbm",
+        "name": "Atari Small 4x8",
         "width": 4,
         "height": 8,
         "pitch": 4,
