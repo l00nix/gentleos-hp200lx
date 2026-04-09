@@ -9,6 +9,9 @@ all: disks .SYMBOLIC
 disks: build/kernel.com build/boot.bin .SYMBOLIC
     perl misc/mkdisks.pl
 
+run: all .SYMBOLIC
+    build\kernel.com
+
 boot: all .SYMBOLIC
     boot build\fd1440.img
 
