@@ -53,3 +53,15 @@ bios_uart_putc(char c)
 
     intr(0x14, &regs);
 }
+
+void
+bios_uart_puts(const char *s)
+{
+    while (*s) {
+        if ((*s) == '\n') {
+            bios_uart_putc('\r');
+        }
+
+        bios_uart_putc(*s++);
+    }
+}

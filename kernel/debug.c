@@ -14,17 +14,15 @@ int krn_debug_text_mode_enabled = 1;
 void
 krn_debug_printf(const char *fmt, ...)
 {
-    int i, count;
-
     va_list args;
 
     va_start(args, fmt);
-    count = vsnprintf(buf, sizeof(buf), fmt, args);
+    (void)vsnprintf(buf, sizeof(buf), fmt, args);
     va_end(args);
 
-    for (i = 0; i < count; i++) {
-        bios_uart_putc(buf[i]);
-    }
+#if DEBUG_TO_UART
+    bios_uart_puts(buf);
+#endif
 
     if (krn_debug_text_mode_enabled) {
         bios_puts(buf);
