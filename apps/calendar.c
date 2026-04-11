@@ -237,12 +237,12 @@ init_day_buttons(void)
 static void
 init_current_date(void)
 {
-    time_st t;
-    krn_rtc_get_time(&t);
+    date_st d;
+    bios_get_date(&d);
 
-    current_month = t.month;
-    current_year = t.year;
-    current_day = t.day;
+    current_month = d.month;
+    current_year = d.year;
+    current_day = d.day;
 
     selected_month = current_month;
     selected_year = current_year;

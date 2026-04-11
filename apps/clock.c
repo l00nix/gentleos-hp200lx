@@ -57,9 +57,11 @@ static void
 draw_time(void)
 {
     time_st t;
-    krn_rtc_get_time(&t);
 
-    if (krn_rtc_are_times_equal(&t, &last_time)) {
+    bios_get_time(&t);
+
+    if (t.hour == last_time.hour && t.minute == last_time.minute &&
+        t.second == last_time.second) {
         return;
     }
 

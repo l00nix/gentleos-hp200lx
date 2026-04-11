@@ -33,7 +33,6 @@ file build/kernel/heap.obj
 file build/kernel/isr.obj
 file build/kernel/keyboard.obj
 file build/kernel/main.obj
-file build/kernel/rtc.obj
 file build/kernel/speaker.obj
 file build/kernel/system.obj
 file build/kernel/timer.obj

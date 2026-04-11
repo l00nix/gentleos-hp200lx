@@ -64,6 +64,7 @@ typedef int32_t ssize_t;
 
 #include <config.h>
 
+
 #define NULL ((void *)0)
 
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
@@ -76,6 +77,23 @@ typedef int32_t ssize_t;
         return;                         \
     }                                   \
     _already_called = 1;
+
+
+typedef struct {
+    uint8_t second;
+    uint8_t minute;
+    uint8_t hour;
+    uint8_t day;
+    uint8_t month;
+    uint16_t year;
+} time_st;
+
+typedef struct {
+    uint8_t day;
+    uint8_t month;
+    uint16_t year;
+} date_st;
+
 
 /* lib/cpu.s */
 typedef union {
@@ -99,6 +117,7 @@ void cpu_hlt(void);
 uint8_t inb(uint16_t port);
 void outb(uint8_t value, uint16_t port);
 void intr(int, regs_st *);
+
 
 /* lib/string.c */
 extern void far *memcpy_far(void far *dest, const void far *src, size_t n);

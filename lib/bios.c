@@ -55,13 +55,32 @@ bios_uart_putc(char c)
 }
 
 void
-bios_uart_puts(const char *s)
+bios_get_time(time_st *t)
 {
-    while (*s) {
-        if ((*s) == '\n') {
-            bios_uart_putc('\r');
-        }
+    regs_st regs;
 
-        bios_uart_putc(*s++);
-    }
+    regs.h.ah = 0x02;
+
+    intr(0x1a, &regs);
+
+    t->hour = ((regs.h.ch >> 4) & 0x0F) * 10 + (regs.h.ch & 0x0F);
+    t->minute = ((regs.h.cl >> 4) & 0x0F) * 10 + (regs.h.cl & 0x0F);
+    t->second = ((regs.h.dh >> 4) & 0x0F) * 10 + (regs.h.dh & 0x0F);
+}
+
+void
+bios_get_date(date_st *d)
+{
+    regs_st regs;
+
+    regs.h.ah = 0x04;
+
+    intr(0x1a, &regs);
+
+    d->year = ((regs.h.ch >> 4) & 0x0F) * 1000
+        + (regs.h.ch & 0x0F) * 100
+        + ((regs.h.cl >> 4) & 0x0F) * 10
+        + (regs.h.cl & 0x0F);
+    d->month = ((regs.h.dh >> 4) & 0x0F) * 10 + (regs.h.dh & 0x0F);
+    d->day = ((regs.h.dl >> 4) & 0x0F) * 10 + (regs.h.dl & 0x0F);
 }

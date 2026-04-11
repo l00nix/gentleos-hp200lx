@@ -56,7 +56,6 @@ OBJS = &
 	build/kernel/isr.obj &
 	build/kernel/keyboard.obj &
 	build/kernel/main.obj &
-	build/kernel/rtc.obj &
 	build/kernel/speaker.obj &
 	build/kernel/system.obj &
 	build/kernel/timer.obj &
@@ -294,13 +293,6 @@ build\kernel\main.obj: kernel\main.c $(INCLUDES)
 	tcc -mt -u -g1 -c -Iinclude -nbuild\kernel kernel\main.c
 !else
 	wcc -fo=build\kernel\main.obj kernel\main.c @misc\wcc.occ
-!endif
-
-build\kernel\rtc.obj: kernel\rtc.c $(INCLUDES)
-!ifdef TC
-	tcc -mt -u -g1 -c -Iinclude -nbuild\kernel kernel\rtc.c
-!else
-	wcc -fo=build\kernel\rtc.obj kernel\rtc.c @misc\wcc.occ
 !endif
 
 build\kernel\speaker.obj: kernel\speaker.c $(INCLUDES)

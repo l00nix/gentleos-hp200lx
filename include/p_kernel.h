@@ -19,9 +19,6 @@ extern void krn_main(void);
 extern void krn_exit(void);
 extern void krn_set_isr(uint8_t no, uint16_t seg, uint16_t ofs);
 extern void krn_get_isr(uint8_t no, isr_st *dst);
-/* kernel/rtc.c */
-extern int krn_rtc_are_times_equal(time_st *t1, time_st *t2);
-extern void krn_rtc_get_time(time_st *t);
 /* kernel/speaker.c */
 extern void krn_speaker_stop(void);
 extern void krn_speaker_play(uint16_t hz);
