@@ -95,7 +95,6 @@ draw_font_label(void)
     gui_wm_render_window_region(&window.origin, &r);
 }
 
-/*
 static void
 set_prev_font(void)
 {
@@ -113,7 +112,6 @@ set_next_font(void)
     draw_font_label();
     draw_all_cells();
 }
-*/
 
 static void
 update_current_cell(int dx, int dy)
@@ -140,6 +138,8 @@ on_key_down(window_st *window, const event_st *event)
         case KEY_RIGHT: update_current_cell(1, 0); return;
         case KEY_UP:    update_current_cell(0, -1); return;
         case KEY_DOWN:  update_current_cell(0, 1); return;
+        case KEY_PGUP:  set_prev_font(); return;
+        case KEY_PGDN:  set_next_font(); return;
     }
 }
 
@@ -183,6 +183,7 @@ show_app(void)
 
     draw_font_label();
     draw_all_cells();
+    gui_status_set_br("PgUp/PgDn: Select font");
 
     update_status();
 }

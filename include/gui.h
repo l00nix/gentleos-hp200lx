@@ -28,7 +28,7 @@ typedef struct {
 } rect_st;
 
 enum {
-    FONT_COUNT = 1,
+    FONT_COUNT = 2,
 };
 
 typedef struct {
@@ -124,6 +124,8 @@ enum {
     KEY_ENTER = 0x1c,
     KEY_SPACE = 0x39,
     KEY_ESC = 0x01,
+    KEY_PGUP = 0x49,
+    KEY_PGDN = 0x51,
 };
 
 enum {
