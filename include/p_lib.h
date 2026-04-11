@@ -3,6 +3,7 @@ extern void bios_putc(char c);
 extern void bios_puts(const char *s);
 extern uint16_t bios_getc(void);
 extern void bios_uart_putc(char c);
+extern void bios_uart_puts(const char *s);
 extern void bios_get_time(time_st *t);
 extern void bios_get_date(date_st *d);
 /* lib/math.c */
