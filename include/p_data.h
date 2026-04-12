@@ -22,12 +22,12 @@ extern bitmap_st bitmap_p_ghost;
 extern bitmap_st bitmap_p_rabbit;
 extern bitmap_st bitmap_p_snake;
 extern bitmap_st bitmap_p_turtle;
-extern bitmap_st bitmap_s_club;
-extern bitmap_st bitmap_s_diamnd;
+extern bitmap_st bitmap_s_club_1;
+extern bitmap_st bitmap_s_dmnd_1;
 extern bitmap_st bitmap_s_flag;
 extern bitmap_st bitmap_s_github;
-extern bitmap_st bitmap_s_heart;
+extern bitmap_st bitmap_s_hert_1;
 extern bitmap_st bitmap_s_mine;
-extern bitmap_st bitmap_s_spade;
+extern bitmap_st bitmap_s_spde_1;
 /* data/data_fnt.c */
 extern font_st fonts[];

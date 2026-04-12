@@ -37,10 +37,10 @@ static const char *rank_str[] = {
 };
 
 static bitmap_st *suit_bmp[] = {
-    &bitmap_s_heart,
-    &bitmap_s_diamnd,
-    &bitmap_s_club,
-    &bitmap_s_spade,
+    &bitmap_s_hert_1,
+    &bitmap_s_dmnd_1,
+    &bitmap_s_club_1,
+    &bitmap_s_spde_1,
 };
 
 static window_st window;
