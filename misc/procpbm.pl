@@ -3,7 +3,7 @@
 # Copyright (c) 2026 luke8086
 # Distributed under the terms of GPL-2 License.
 #
-# File: procbmp.pl - Convert bitmaps and fonts to hardcoded C data
+# File: procpbm.pl - Convert bitmaps and fonts to hardcoded C data
 #
 
 my @FONTS = (

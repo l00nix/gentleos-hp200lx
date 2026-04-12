@@ -11,12 +11,12 @@ boot: all .SYMBOLIC
     boot build\fd1440.img
 
 regen: .SYMBOLIC
-    perl misc/procbmp.pl
+    perl misc/procpbm.pl
     perl misc/cproto.pl
     perl misc/genmake.pl
 
-procbmp: .SYMBOLIC
-    perl misc/procbmp.pl
+procpbm: .SYMBOLIC
+    perl misc/procpbm.pl
 
 clean: .SYMBOLIC
 	-del build\apps\*.*
