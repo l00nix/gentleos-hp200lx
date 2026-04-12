@@ -123,6 +123,7 @@ sub process_bitmap {
 
     my $prefix = "bitmap_";
     $prefix = "icon_" if $dirname eq "assets/icons";
+    $prefix = "sprite_" if $dirname eq "assets/sprites";
 
     my @lines = (
         "global bitmap_st $prefix$name = {",
@@ -138,7 +139,11 @@ sub process_bitmap {
 }
 
 sub process_bitmaps {
-    my @bitmap_files = sort((glob("bitmaps/*.pbm"), glob("assets/icons/*.pbm")));
+    my @bitmap_files = sort((
+        glob("bitmaps/*.pbm"),
+        glob("assets/icons/*.pbm"),
+        glob("assets/sprites/*.pbm"),
+    ));
 
     my @lines = ("#include <gui.h>", "");
     foreach my $f (@bitmap_files) {

@@ -132,8 +132,8 @@ gui_status_init(void)
     gui_surface_draw_h_seg(&origin, 0, STATUS_HEIGHT - 1, STATUS_WIDTH, COLOR_FG);
     gui_surface_draw_h_seg(&origin, 0, GUI_HEIGHT - STATUS_HEIGHT, STATUS_WIDTH, COLOR_FG);
     gui_surface_draw_bitmap(&origin, &size,
-        STATUS_WIDTH - 2 * TEXT_X - 19 * FONT_WIDTH - bitmap_s_github.size.width,
-        1, &bitmap_s_github, COLOR_FG);
+        STATUS_WIDTH - 2 * TEXT_X - 19 * FONT_WIDTH - sprite_github.size.width,
+        1, &sprite_github, COLOR_FG);
 
     gui_status_set("");
     gui_status_set_tl("");
