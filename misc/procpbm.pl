@@ -23,6 +23,13 @@ my @FONTS = (
         height => 8,
         pitch => 4,
     },
+    {
+        path => "assets/fonts/font_4x6.pbm",
+        name => "Font 4x6",
+        width => 4,
+        height => 6,
+        pitch => 4,
+    },
 );
 
 my $FONT_MAX_CHARS = 128;

@@ -64,11 +64,15 @@ extern bitmap_st sprite_mj_ci_8;
 extern bitmap_st sprite_mj_ci_9;
 extern bitmap_st sprite_mj_dr_w;
 extern bitmap_st sprite_club_1;
+extern bitmap_st sprite_club_2;
 extern bitmap_st sprite_diamnd_1;
+extern bitmap_st sprite_diamnd_2;
 extern bitmap_st sprite_flag;
 extern bitmap_st sprite_github;
 extern bitmap_st sprite_heart_1;
+extern bitmap_st sprite_heart_2;
 extern bitmap_st sprite_mine;
 extern bitmap_st sprite_spade_1;
+extern bitmap_st sprite_spade_2;
 /* data/data_fnt.c */
 extern font_st fonts[];
