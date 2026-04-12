@@ -8,10 +8,10 @@
 #include <gui.h>
 
 enum {
-    GRID_CELL_WIDTH = 36,
-    GRID_CELL_HEIGHT = 36,
-    GRID_ROWS = 4,
-    GRID_COLS = 5,
+    GRID_CELL_WIDTH = 26,
+    GRID_CELL_HEIGHT = 26,
+    GRID_ROWS = 5,
+    GRID_COLS = 6,
     GRID_CELL_COUNT = GRID_ROWS * GRID_COLS,
     GRID_WIDTH = GRID_WIDTH_SPACED(GRID_CELL_WIDTH, GRID_COLS),
     GRID_HEIGHT = GRID_HEIGHT_SPACED(GRID_CELL_HEIGHT, GRID_ROWS),
@@ -33,16 +33,21 @@ static widget_st *widgets[GRID_CELL_COUNT];
 static grid_st grid;
 
 static bitmap_st *icons[PAIR_COUNT] = {
-    &bitmap_p_bear,
-    &bitmap_p_bot,
-    &bitmap_p_btrfly,
-    &bitmap_p_cat,
-    &bitmap_p_elepht,
-    &bitmap_p_fish,
-    &bitmap_p_ghost,
-    &bitmap_p_rabbit,
-    &bitmap_p_snake,
-    &bitmap_p_turtle,
+    &glyph_mn_beaver,
+    &glyph_mn_dolphin,
+    &glyph_mn_drmcamel,
+    &glyph_mn_elephant,
+    &glyph_mn_flamingo,
+    &glyph_mn_horsefac,
+    &glyph_mn_monkey,
+    &glyph_mn_octopus,
+    &glyph_mn_pandafac,
+    &glyph_mn_rabbit,
+    &glyph_mn_robotfac,
+    &glyph_mn_sloth,
+    &glyph_mn_snail,
+    &glyph_mn_tigerfac,
+    &glyph_mn_trex,
 };
 
 enum {
@@ -124,7 +129,7 @@ static void
 update_status(void)
 {
     if (matched_count == PAIR_COUNT) {
-        gui_status_set("You won after %d tries! Press r play again", tries);
+        gui_status_set("You won after %d tries! Press r to play again", tries);
     } else {
         gui_status_set("Tries: %d", tries);
     }
