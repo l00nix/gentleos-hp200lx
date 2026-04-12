@@ -10,14 +10,14 @@ use File::Basename;
 
 my @FONTS = (
     {
-        path => "fonts/evxme58.pbm",
+        path => "assets/fonts/evxme58.pbm",
         name => "Evx ME 5x8",
         width => 5,
         height => 8,
         pitch => 8,
     },
     {
-        path => "fonts/atarism.pbm",
+        path => "assets/fonts/atarism.pbm",
         name => "Atari Small 4x8",
         width => 4,
         height => 8,
