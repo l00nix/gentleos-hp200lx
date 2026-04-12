@@ -7,8 +7,34 @@
 
 #include <lib.h>
 
-CPROTO_IGNORE
-void far *
+global void *
+memcpy(void *dest, const void *src, size_t n)
+{
+    uint8_t *srcb = (uint8_t *)src;
+    uint8_t *destb = (uint8_t *)dest;
+    uint16_t *srcw, *destw;
+
+    for (; n > 0 && ((uintptr_t)destb % 2) != 0; --n) {
+        *(destb++) = *(srcb++);
+    }
+
+    srcw = (uint16_t *)srcb;
+    destw = (uint16_t *)destb;
+
+    for (; n >= sizeof(*destw); n -= sizeof(*destw)) {
+        *(destw++) = *(srcw++);
+    }
+
+    srcb = (uint8_t *)srcw;
+    destb = (uint8_t *)destw;
+    for (; n > 0; --n) {
+        *(destb++) = *(srcb++);
+    }
+
+    return dest;
+}
+
+global void far *
 memcpy_far(void far *dest, const void far *src, size_t n)
 {
     uint8_t far *srcb = (uint8_t far *)src;
@@ -36,35 +62,7 @@ memcpy_far(void far *dest, const void far *src, size_t n)
     return dest;
 }
 
-
-void *
-memcpy(void *dest, const void *src, size_t n)
-{
-    uint8_t *srcb = (uint8_t *)src;
-    uint8_t *destb = (uint8_t *)dest;
-    uint16_t *srcw, *destw;
-
-    for (; n > 0 && ((uintptr_t)destb % 2) != 0; --n) {
-        *(destb++) = *(srcb++);
-    }
-
-    srcw = (uint16_t *)srcb;
-    destw = (uint16_t *)destb;
-
-    for (; n >= sizeof(*destw); n -= sizeof(*destw)) {
-        *(destw++) = *(srcw++);
-    }
-
-    srcb = (uint8_t *)srcw;
-    destb = (uint8_t *)destw;
-    for (; n > 0; --n) {
-        *(destb++) = *(srcb++);
-    }
-
-    return dest;
-}
-
-void *
+global void *
 memset(void *dest, int c, size_t n)
 {
     uint8_t *dest8 = (uint8_t *)dest;
@@ -90,8 +88,7 @@ memset(void *dest, int c, size_t n)
     return dest;
 }
 
-CPROTO_IGNORE
-void far *
+global void far *
 memset_far(void far *dest, int c, size_t n)
 {
     uint8_t far *dest8 = (uint8_t far *)dest;
@@ -118,7 +115,7 @@ memset_far(void far *dest, int c, size_t n)
     return dest;
 }
 
-int32_t
+global int32_t
 strcmp(const char *s1, const char *s2)
 {
     while (*s1 && (*s1 == *s2)) {
@@ -129,7 +126,7 @@ strcmp(const char *s1, const char *s2)
     return (*s1 - *s2);
 }
 
-size_t
+global size_t
 strlen(const char *s1)
 {
     size_t ret = 0;
@@ -141,7 +138,7 @@ strlen(const char *s1)
     return ret;
 }
 
-char *
+global char *
 strncpy(char *dest, const char *src, size_t n)
 {
     size_t i;

@@ -250,7 +250,7 @@ show_app(void)
     draw_keyboard();
 }
 
-app_st app_keymap = {
+global app_st app_keymap = {
     "Keys",
     &bitmap_i_keys,
     show_app,

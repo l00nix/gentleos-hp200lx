@@ -56,11 +56,7 @@ typedef int32_t ssize_t;
 
 #endif
 
-#ifdef __CPROTO__
-#define CPROTO_IGNORE static
-#else
-#define CPROTO_IGNORE
-#endif
+#define global
 
 #include <config.h>
 
@@ -117,11 +113,6 @@ void cpu_hlt(void);
 uint8_t inb(uint16_t port);
 void outb(uint8_t value, uint16_t port);
 void intr(int, regs_st *);
-
-
-/* lib/string.c */
-extern void far *memcpy_far(void far *dest, const void far *src, size_t n);
-void far *memset_far(void far *dest, int c, size_t n);
 
 #include "p_lib.h"
 

@@ -11,15 +11,14 @@
 
 extern uint32_t krn_marker_data_end;
 
-CPROTO_IGNORE
-isr_st far *krn_ivt;
+global isr_st far *krn_ivt;
 
 
 #if ENABLE_TESTS
 extern void tests_run(void);
 #endif
 
-void
+global void
 krn_main(void)
 {
     krn_debug_printf("\n");
@@ -51,7 +50,7 @@ krn_main(void)
     };
 }
 
-void
+global void
 krn_exit(void)
 {
     regs_st regs;
@@ -69,7 +68,7 @@ krn_exit(void)
     intr(0x20, &regs);
 }
 
-void
+global void
 krn_set_isr(uint8_t no, uint16_t seg, uint16_t ofs)
 {
     uint16_t flags = cpu_get_flags();
@@ -80,7 +79,7 @@ krn_set_isr(uint8_t no, uint16_t seg, uint16_t ofs)
     cpu_set_flags(flags);
 }
 
-void
+global void
 krn_get_isr(uint8_t no, isr_st *dst)
 {
     dst->seg = krn_ivt[no].seg;

@@ -240,7 +240,7 @@ show_app(void)
     gui_status_set("Control: letters and digits");
 }
 
-app_st app_sounds = {
+global app_st app_sounds = {
     "Sounds",
     &bitmap_i_sounds,
     show_app,

@@ -7,7 +7,7 @@
 
 #include <kernel.h>
 
-void
+global void
 krn_vga_init(void)
 {
     uint8_t dac_index;
@@ -36,7 +36,7 @@ krn_vga_init(void)
 #endif
 }
 
-void
+global void
 krn_vga_deinit(void)
 {
     regs_st regs;

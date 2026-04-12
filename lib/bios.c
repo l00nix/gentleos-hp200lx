@@ -7,7 +7,7 @@
 
 #include <lib.h>
 
-void
+global void
 bios_putc(char c)
 {
     regs_st regs;
@@ -19,7 +19,7 @@ bios_putc(char c)
     intr(0x10, &regs);
 }
 
-void
+global void
 bios_puts(const char *s)
 {
     while (*s) {
@@ -31,7 +31,7 @@ bios_puts(const char *s)
     }
 }
 
-uint16_t
+global uint16_t
 bios_getc(void)
 {
     regs_st regs;
@@ -42,7 +42,7 @@ bios_getc(void)
     return regs.x.ax;
 }
 
-void
+global void
 bios_uart_putc(char c)
 {
     regs_st regs;
@@ -54,7 +54,7 @@ bios_uart_putc(char c)
     intr(0x14, &regs);
 }
 
-void
+global void
 bios_uart_puts(const char *s)
 {
     while (*s) {
@@ -66,7 +66,7 @@ bios_uart_puts(const char *s)
     }
 }
 
-void
+global void
 bios_get_time(time_st *t)
 {
     regs_st regs;
@@ -80,7 +80,7 @@ bios_get_time(time_st *t)
     t->second = ((regs.h.dh >> 4) & 0x0F) * 10 + (regs.h.dh & 0x0F);
 }
 
-void
+global void
 bios_get_date(date_st *d)
 {
     regs_st regs;

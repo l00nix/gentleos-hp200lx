@@ -7,17 +7,17 @@
 
 #include <gui.h>
 
-const rect_st GUI_RECT_ZERO = {
+global const rect_st GUI_RECT_ZERO = {
     0, 0, 0, 0
 };
 
-const rect_st GUI_RECT_SCREEN = {
+global const rect_st GUI_RECT_SCREEN = {
     0, 0, GUI_WIDTH, GUI_HEIGHT
 };
 
-const point_st GUI_POINT_ZERO = { 0, 0 };
+global const point_st GUI_POINT_ZERO = { 0, 0 };
 
-void
+global void
 gui_rect_copy(rect_st *dst, const rect_st *src)
 {
     dst->x = src->x;
@@ -26,27 +26,27 @@ gui_rect_copy(rect_st *dst, const rect_st *src)
     dst->height = src->height;
 }
 
-void
+global void
 gui_point_copy(point_st *dst, const point_st *src)
 {
     dst->x = src->x;
     dst->y = src->y;
 }
 
-void
+global void
 gui_size_copy(size_st *dst, const size_st *src)
 {
     dst->width = src->width;
     dst->height = src->height;
 }
 
-int
+global int
 gui_rect_is_empty(const rect_st *r)
 {
     return r->width <= 0 || r->height <= 0;
 }
 
-void
+global void
 gui_rect_init(rect_st *out, int x, int y, int width, int height)
 {
     out->x = x;
@@ -55,27 +55,27 @@ gui_rect_init(rect_st *out, int x, int y, int width, int height)
     out->height = height;
 }
 
-void
+global void
 gui_rect_translate(rect_st *r, const point_st *v)
 {
     r->x += v->x;
     r->y += v->y;
 }
 
-void
+global void
 gui_rect_translate_back(rect_st *r, const point_st *v)
 {
     r->x -= v->x;
     r->y -= v->y;
 }
 
-int
+global int
 gui_rect_contains_point(const rect_st *r, const point_st *p)
 {
     return p->x >= r->x && p->x < r->x + r->width && p->y >= r->y && p->y < r->y + r->height;
 }
 
-void
+global void
 gui_rect_center(rect_st *r, const rect_st *container)
 {
     r->x = container->x + (container->width - r->width) / 2;
@@ -85,7 +85,7 @@ gui_rect_center(rect_st *r, const rect_st *container)
     r->y = r->y < container->y ? container->y : r->y;
 }
 
-void
+global void
 gui_rect_limit(rect_st *r, const rect_st *container)
 {
     if (r->x < container->x) {
@@ -105,7 +105,7 @@ gui_rect_limit(rect_st *r, const rect_st *container)
     }
 }
 
-void
+global void
 gui_rect_shrink(rect_st *r, int amount)
 {
     r->x += amount;
@@ -118,7 +118,7 @@ gui_rect_shrink(rect_st *r, int amount)
     r->height = MAX(r->height, 0);
 }
 
-void
+global void
 gui_rect_enclose(rect_st *a, const rect_st *b)
 {
     int x2, y2;
@@ -141,7 +141,7 @@ gui_rect_enclose(rect_st *a, const rect_st *b)
     a->height = y2 - a->y;
 }
 
-void
+global void
 gui_rect_clip(rect_st *r, const rect_st *clipper)
 {
     if (r->x < clipper->x) {
@@ -170,7 +170,7 @@ gui_rect_clip(rect_st *r, const rect_st *clipper)
     }
 }
 
-const char *
+global const char *
 gui_rect_format(const rect_st *r)
 {
     static char buf[100];

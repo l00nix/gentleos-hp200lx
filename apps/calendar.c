@@ -269,7 +269,7 @@ show_app(void)
 }
 
 
-app_st app_calendar = {
+global app_st app_calendar = {
     "Calendar",
     &bitmap_i_calndr,
     show_app,

@@ -17,9 +17,6 @@ TODO
 
 TODO
 
-- cproto (for rebuilding includes)
-- Python with PIL library (for processing images)
-
 ## Building
 
 TODO

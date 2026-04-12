@@ -9,9 +9,9 @@
 
 static char buf[256];
 
-int krn_debug_text_mode_enabled = 1;
+global int krn_debug_text_mode_enabled = 1;
 
-void
+global void
 krn_debug_printf(const char *fmt, ...)
 {
     va_list args;
@@ -29,7 +29,7 @@ krn_debug_printf(const char *fmt, ...)
     }
 }
 
-void
+global void
 krn_debug_beep_adv(unsigned hz, unsigned msecs, unsigned count)
 {
     unsigned i;
@@ -42,7 +42,7 @@ krn_debug_beep_adv(unsigned hz, unsigned msecs, unsigned count)
     }
 }
 
-void
+global void
 krn_debug_beep(void)
 {
     krn_debug_beep_adv(300, 200, 1);

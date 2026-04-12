@@ -34,7 +34,7 @@ enum {
     CELL_FRUIT = 3,
 };
 
-uint8_t cell_colors[4] = { COLOR_BG, COLOR_FG, COLOR_FG, COLOR_FG };
+static uint8_t cell_colors[4] = { COLOR_BG, COLOR_FG, COLOR_FG, COLOR_FG };
 
 static uint8_t cells[GRID_COLS][GRID_ROWS];
 
@@ -262,7 +262,7 @@ show_app(void)
     restart_game();
 }
 
-app_st app_snake = {
+global app_st app_snake = {
     "Snake",
     &bitmap_i_snake,
     show_app,

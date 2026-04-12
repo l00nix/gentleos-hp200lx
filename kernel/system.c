@@ -7,19 +7,19 @@
 
 #include <kernel.h>
 
-uint32_t
+global uint32_t
 krn_system_get_total_mem(void)
 {
     return 0;
 }
 
-uint32_t
+global uint32_t
 krn_system_get_used_mem(void)
 {
     return 0;
 }
 
-uint32_t
+global uint32_t
 krn_system_get_avail_mem(void)
 {
     return 0;

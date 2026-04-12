@@ -7,7 +7,7 @@
 
 #include <gui.h>
 
-void
+global void
 gui_button_draw(widget_st *widget)
 {
     rect_st rect, full_rect;

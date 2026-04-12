@@ -332,7 +332,7 @@ show_app(void)
     restart_game();
 }
 
-app_st app_tetris = {
+global app_st app_tetris = {
     "Tetris",
     &bitmap_i_tetris,
     show_app,

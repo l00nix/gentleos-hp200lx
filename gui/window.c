@@ -7,7 +7,7 @@
 
 #include <gui.h>
 
-void
+global void
 gui_window_rect(window_st *window, rect_st *out)
 {
     gui_rect_init(out,
@@ -18,13 +18,13 @@ gui_window_rect(window_st *window, rect_st *out)
     );
 }
 
-void
+global void
 gui_window_area(window_st *window, rect_st *out)
 {
     gui_rect_init(out, 0, 0, window->size.width, window->size.height);
 }
 
-void
+global void
 gui_window_init(window_st *window, int width, int height)
 {
     rect_st rect;
@@ -41,7 +41,7 @@ gui_window_init(window_st *window, int width, int height)
     window->origin.y = rect.y;
 }
 
-void
+global void
 gui_window_draw(window_st *window)
 {
     rect_st area;
@@ -61,7 +61,7 @@ gui_window_draw(window_st *window)
     gui_wm_render_window_region(&window->origin, &area);
 }
 
-int
+global int
 gui_window_add_widget(window_st *window, widget_st *widget)
 {
     if (window->widgets_count >= window->widgets_capacity) {
@@ -74,7 +74,7 @@ gui_window_add_widget(window_st *window, widget_st *widget)
     return 0;
 }
 
-void
+global void
 gui_window_on_close(window_st *window)
 {
     if (window->on_close) {
@@ -138,7 +138,7 @@ gui_window_update_focus(window_st *window, int dir_x, int dir_y)
     }
 }
 
-void
+global void
 gui_window_on_key_down(window_st *window, const event_st *event)
 {
     widget_st *focused = window->focused_widget;
@@ -175,7 +175,7 @@ gui_window_on_key_down(window_st *window, const event_st *event)
     }
 }
 
-void
+global void
 gui_window_on_key_up(window_st *window, const event_st *event)
 {
     if (window->on_key_up) {
@@ -183,7 +183,7 @@ gui_window_on_key_up(window_st *window, const event_st *event)
     }
 }
 
-void
+global void
 gui_window_on_tick(window_st *window)
 {
     if (window->on_tick) {

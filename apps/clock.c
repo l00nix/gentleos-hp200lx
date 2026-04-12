@@ -129,7 +129,7 @@ show_app(void)
     draw_time();
 }
 
-app_st app_clock = {
+global app_st app_clock = {
     "Clock",
     &bitmap_i_clock,
     show_app,

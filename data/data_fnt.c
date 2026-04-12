@@ -1,6 +1,6 @@
 #include <gui.h>
 
-font_st fonts[] = {
+global font_st fonts[] = {
     {
         { 5, 8 },
         "Evx ME 5x8",

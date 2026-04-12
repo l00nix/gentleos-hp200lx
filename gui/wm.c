@@ -7,8 +7,8 @@
 
 #include <gui.h>
 
-rect_st gui_wm_container;
-window_st *gui_wm_current_window = NULL;
+global rect_st gui_wm_container;
+global window_st *gui_wm_current_window = NULL;
 
 static void
 gui_wm_render_wallpaper(const rect_st *rect)
@@ -17,7 +17,7 @@ gui_wm_render_wallpaper(const rect_st *rect)
     gui_surface_mark_dirty(rect);
 }
 
-int
+global int
 gui_wm_add_window(struct window *w)
 {
     if (gui_wm_current_window) {
@@ -35,7 +35,7 @@ gui_wm_add_window(struct window *w)
     return 0;
 }
 
-void
+global void
 gui_wm_render_window_region(const point_st *origin, const rect_st *window_reg)
 {
     rect_st translated;
@@ -44,7 +44,7 @@ gui_wm_render_window_region(const point_st *origin, const rect_st *window_reg)
     gui_surface_mark_dirty(&translated);
 }
 
-void
+global void
 gui_wm_init(void)
 {
     gui_wm_container.x = 0;

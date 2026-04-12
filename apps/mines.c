@@ -398,7 +398,7 @@ show_app(void)
     restart_game();
 }
 
-app_st app_mines = {
+global app_st app_mines = {
     "Mines",
     &bitmap_i_mines,
     show_app,

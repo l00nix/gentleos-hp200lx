@@ -125,7 +125,7 @@ test_append32(void)
     check_math32("append32", append32, 0, 10, 0, 1);
 }
 
-void
+global void
 tests_run(void)
 {
     tests_failed = 0;

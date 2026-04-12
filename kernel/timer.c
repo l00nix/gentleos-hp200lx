@@ -17,13 +17,13 @@ enum {
 static isr_st saved_isr_handler;
 extern void *krn_isr_timer;
 
-volatile uint8_t krn_timer_is_cpu_idle = 0;
+global volatile uint8_t krn_timer_is_cpu_idle = 0;
 
 volatile static uint32_t timer_msecs = 0;
 static uint32_t idle_ticks = 0;
 static uint32_t total_ticks = 0;
 
-void
+global void
 krn_timer_handle_intr(void)
 {
     event_st event;
@@ -41,13 +41,13 @@ krn_timer_handle_intr(void)
     (void)krn_event_ipush(&event);
 }
 
-uint32_t
+global uint32_t
 krn_timer_get_msecs(void)
 {
     return timer_msecs;
 }
 
-uint8_t
+global uint8_t
 krn_timer_get_cpu_usage(void)
 {
     return 0;
@@ -73,7 +73,7 @@ krn_timer_get_cpu_usage(void)
     */
 }
 
-void
+global void
 krn_timer_init(void)
 {
     uint16_t div = 1193180 / TIMER_HZ;
@@ -89,7 +89,7 @@ krn_timer_init(void)
     krn_set_isr(0x1c, krn_data_seg, (uint16_t)(uint32_t)&krn_isr_timer);
 }
 
-void
+global void
 krn_timer_deinit(void)
 {
     krn_set_isr(0x1c, saved_isr_handler.seg, saved_isr_handler.ofs);

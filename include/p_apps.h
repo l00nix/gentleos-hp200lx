@@ -19,7 +19,6 @@ extern app_st app_mines;
 /* apps/pairs.c */
 extern app_st app_pairs;
 /* apps/snake.c */
-extern uint8_t cell_colors[4];
 extern app_st app_snake;
 /* apps/sounds.c */
 extern app_st app_sounds;

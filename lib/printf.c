@@ -453,7 +453,7 @@ pf_vasnprintf(char *buf, size_t nbyte, const char *fmt,
     return c->error ? -1 : (p->i - 1);
 }
 
-int
+global int
 vsnprintf(char *buf, size_t nbyte, const char *fmt, va_list va)
 {
 #ifdef __TURBOC__
@@ -470,7 +470,7 @@ vsnprintf(char *buf, size_t nbyte, const char *fmt, va_list va)
 #endif
 }
 
-int
+global int
 snprintf(char *buf, size_t nbyte, const char *fmt, ...)
 {
     va_list va;

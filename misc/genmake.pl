@@ -1,4 +1,9 @@
-#!/usr/bin/perl
+#
+# Copyright (c) 2026 luke8086
+# Distributed under the terms of GPL-2 License.
+#
+# File: genmake.pl - Script for genereating Makefile and linker scripts
+#
 
 my @SOURCE_DIRS = ("apps", "data", "kernel", "lib", "gui");
 
@@ -15,7 +20,9 @@ run: all .SYMBOLIC
 boot: all .SYMBOLIC
     boot build\fd1440.img
 
-genmake: .SYMBOLIC
+regen: .SYMBOLIC
+    perl misc/procbmp.pl
+    perl misc/cproto.pl
     perl misc/genmake.pl
 
 procbmp: .SYMBOLIC

@@ -131,7 +131,7 @@ show_app(void)
     draw_info();
 }
 
-app_st app_about = {
+global app_st app_about = {
     "About",
     &bitmap_i_about,
     show_app,

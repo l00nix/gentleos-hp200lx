@@ -41,11 +41,7 @@ static app_st *apps[] = {
     &app_blackjack,
 };
 
-#if __CPROTO__
-#define APPS_COUNT 1
-#else
 #define APPS_COUNT (sizeof(apps) / sizeof(apps[0]))
-#endif
 
 static window_st window;
 
@@ -122,7 +118,7 @@ show_app(void)
     gui_status_set_tl("GentleOS");
 }
 
-app_st app_launcher = {
+global app_st app_launcher = {
     "Launcher",
 	0,
     show_app,

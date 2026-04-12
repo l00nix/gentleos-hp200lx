@@ -341,7 +341,7 @@ show_app(void)
     restart_game();
 }
 
-app_st app_blackjack = {
+global app_st app_blackjack = {
     "Blackjack",
     &bitmap_i_bjack,
     show_app,

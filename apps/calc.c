@@ -318,7 +318,7 @@ show_app(void)
     update_display();
 }
 
-app_st app_calc = {
+global app_st app_calc = {
     "Calculator",
     &bitmap_i_calc,
     show_app,

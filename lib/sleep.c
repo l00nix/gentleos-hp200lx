@@ -7,7 +7,7 @@
 
 #include <kernel.h>
 
-void
+global void
 sleep(uint32_t msecs)
 {
     uint32_t start = krn_timer_get_msecs();

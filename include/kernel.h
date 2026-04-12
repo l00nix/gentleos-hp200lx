@@ -40,10 +40,6 @@ extern void *krn_link_start;
 extern void *krn_link_end;
 extern uint16_t krn_data_seg;
 
-#ifndef __CPROTO__
-extern isr_st far *krn_ivt;
-#endif
-
 void far *krn_heap_alloc(uint16_t);
 
 #include "p_kernel.h"

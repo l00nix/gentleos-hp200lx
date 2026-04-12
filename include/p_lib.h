@@ -23,9 +23,12 @@ extern uint16_t rand(void);
 /* lib/sleep.c */
 extern void sleep(uint32_t msecs);
 /* lib/string.c */
-extern void *memcpy(void *dest, const void *src, size_t n);
-extern void *memset(void *dest, int c, size_t n);
+extern void * memcpy(void *dest, const void *src, size_t n);
+extern void far * memcpy_far(void far *dest, const void far *src, size_t n);
+extern void * memset(void *dest, int c, size_t n);
+extern void far * memset_far(void far *dest, int c, size_t n);
 extern int32_t strcmp(const char *s1, const char *s2);
 extern size_t strlen(const char *s1);
-extern char *strncpy(char *dest, const char *src, size_t n);
+extern char * strncpy(char *dest, const char *src, size_t n);
 /* lib/tests.c */
+extern void tests_run(void);

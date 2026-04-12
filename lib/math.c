@@ -55,7 +55,7 @@ udivmod32(uint32_t dividend, uint32_t divisor, uint32_t *quotient, uint32_t *rem
     return 0;
 }
 
-int
+global int
 udiv32(uint32_t *out, uint32_t dividend, uint32_t divisor)
 {
     uint32_t quot, remd;
@@ -68,7 +68,7 @@ udiv32(uint32_t *out, uint32_t dividend, uint32_t divisor)
     return 0;
 }
 
-int
+global int
 umod32(uint32_t *out, uint32_t dividend, uint32_t divisor)
 {
     uint32_t quot, remd;
@@ -81,7 +81,7 @@ umod32(uint32_t *out, uint32_t dividend, uint32_t divisor)
     return 0;
 }
 
-int
+global int
 add32(int32_t *out, int32_t a, int32_t b)
 {
     int32_t res = a + b;
@@ -98,7 +98,7 @@ add32(int32_t *out, int32_t a, int32_t b)
     return 0;
 }
 
-int
+global int
 sub32(int32_t *out, int32_t a, int32_t b)
 {
     int32_t res = a - b;
@@ -115,7 +115,7 @@ sub32(int32_t *out, int32_t a, int32_t b)
     return 0;
 }
 
-int
+global int
 mul32(int32_t *out, int32_t a, int32_t b)
 {
     uint32_t res = 0;
@@ -155,7 +155,7 @@ mul32(int32_t *out, int32_t a, int32_t b)
     return 0;
 }
 
-int
+global int
 div32(int32_t *out, int32_t a, int32_t b)
 {
     uint32_t ua = a < 0 ? -a : a;
@@ -182,7 +182,7 @@ div32(int32_t *out, int32_t a, int32_t b)
     return 0;
 }
 
-int
+global int
 append32(int32_t *out, int32_t a, int32_t d)
 {
     int32_t res;

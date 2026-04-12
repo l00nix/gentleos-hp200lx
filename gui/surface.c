@@ -10,14 +10,14 @@
 static uint8_t far *gui_surface_pixels;
 static rect_st gui_surface_dirty_rect = { 0 };
 
-void
+global void
 gui_surface_init(void)
 {
     gui_surface_pixels = krn_heap_alloc(GUI_FB_PLANE_SIZE);
     gui_rect_init(&gui_surface_dirty_rect, 0, 0, 0, 0);
 }
 
-void
+global void
 gui_surface_mark_dirty(const rect_st *rect)
 {
     static rect_st screen_rect = { 0, 0, GUI_WIDTH, GUI_HEIGHT };
@@ -30,7 +30,7 @@ gui_surface_mark_dirty(const rect_st *rect)
     gui_rect_copy(&gui_surface_dirty_rect, &combined);
 }
 
-void
+global void
 gui_surface_flush(void)
 {
     rect_st rect;
@@ -70,7 +70,7 @@ gui_surface_draw_pixel(int x, int y, uint8_t color)
     gui_surface_pixels[byte_idx] = (gui_surface_pixels[byte_idx] & ~mask) | val;
 }
 
-void
+global void
 gui_surface_draw_h_seg(const point_st *origin, int x, int y, int w, uint8_t color)
 {
     rect_st r;
@@ -78,7 +78,7 @@ gui_surface_draw_h_seg(const point_st *origin, int x, int y, int w, uint8_t colo
     gui_surface_draw_rect(origin, &r, color);
 }
 
-void
+global void
 gui_surface_draw_v_seg(const point_st *origin, int x, int y, int h, uint8_t color)
 {
     int i;
@@ -90,7 +90,7 @@ gui_surface_draw_v_seg(const point_st *origin, int x, int y, int h, uint8_t colo
     }
 }
 
-void
+global void
 gui_surface_draw_border(const point_st *origin, const rect_st *r, uint8_t color)
 {
     gui_surface_draw_h_seg(origin, r->x, r->y, r->width, color);
@@ -99,7 +99,7 @@ gui_surface_draw_border(const point_st *origin, const rect_st *r, uint8_t color)
     gui_surface_draw_v_seg(origin, r->x + r->width - 1, r->y, r->height, color);
 }
 
-void
+global void
 gui_surface_draw_rect(const point_st *origin, const rect_st *rect, uint8_t color)
 {
     rect_st translated;
@@ -146,7 +146,7 @@ gui_surface_draw_rect(const point_st *origin, const rect_st *rect, uint8_t color
     }
 }
 
-void
+global void
 gui_surface_draw_char(const point_st *origin, uint16_t x, uint16_t y,
     font_st *font, uint8_t ch, uint8_t fg, uint8_t bg)
 {
@@ -196,7 +196,7 @@ gui_surface_draw_char(const point_st *origin, uint16_t x, uint16_t y,
     }
 }
 
-void
+global void
 gui_surface_draw_str(const point_st *origin, uint16_t x, uint16_t y,
     font_st *font, const char *s, uint8_t fg, uint8_t bg)
 {
@@ -211,7 +211,7 @@ gui_surface_draw_str(const point_st *origin, uint16_t x, uint16_t y,
     }
 }
 
-void
+global void
 gui_surface_draw_str_centered(const point_st *origin, const rect_st *rect,
     font_st *font, const char *s, uint8_t fg, uint8_t bg)
 {
@@ -229,7 +229,7 @@ gui_surface_draw_str_centered(const point_st *origin, const rect_st *rect,
     gui_surface_draw_str(origin, x, y, font, s, fg, bg);
 }
 
-void
+global void
 gui_surface_draw_bitmap(const point_st *origin, const size_st *bounds, int dst_x, int dst_y,
     bitmap_st *bitmap, uint8_t fill)
 {
@@ -269,7 +269,7 @@ gui_surface_draw_bitmap(const point_st *origin, const size_st *bounds, int dst_x
     }
 }
 
-void
+global void
 gui_surface_draw_bitmap_centered(const point_st *origin, const size_st *bounds, const rect_st *rect,
     bitmap_st *bitmap, uint8_t fill)
 {

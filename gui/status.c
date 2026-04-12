@@ -73,7 +73,7 @@ gui_status_set_text(int corner, const char *text)
     status_text_len[corner] = len;
 }
 
-void
+global void
 gui_status_set_tl(const char *fmt, ...)
 {
     va_list args;
@@ -85,7 +85,7 @@ gui_status_set_tl(const char *fmt, ...)
     gui_status_set_text(CORNER_TL, status_text_buf);
 }
 
-void
+global void
 gui_status_set_tr(const char *fmt, ...)
 {
     va_list args;
@@ -97,7 +97,7 @@ gui_status_set_tr(const char *fmt, ...)
     gui_status_set_text(CORNER_TR, status_text_buf);
 }
 
-void
+global void
 gui_status_set(const char *fmt, ...)
 {
     va_list args;
@@ -109,7 +109,7 @@ gui_status_set(const char *fmt, ...)
     gui_status_set_text(CORNER_BL, status_text_buf);
 }
 
-void
+global void
 gui_status_set_br(const char *fmt, ...)
 {
     va_list args;
@@ -121,7 +121,7 @@ gui_status_set_br(const char *fmt, ...)
     gui_status_set_text(CORNER_BR, status_text_buf);
 }
 
-void
+global void
 gui_status_init(void)
 {
     point_st origin = { 0, 0 };

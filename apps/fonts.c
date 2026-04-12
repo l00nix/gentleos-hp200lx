@@ -188,7 +188,7 @@ show_app(void)
     update_status();
 }
 
-app_st app_fonts = {
+global app_st app_fonts = {
     "Fonts",
     &bitmap_i_fonts,
     show_app,

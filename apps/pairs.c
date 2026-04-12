@@ -281,7 +281,7 @@ show_app(void)
     restart_game();
 }
 
-app_st app_pairs = {
+global app_st app_pairs = {
     "Pairs",
     &bitmap_i_pairs,
     show_app,

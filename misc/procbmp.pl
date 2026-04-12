@@ -115,7 +115,7 @@ sub process_bitmap {
     }
 
     my @lines = (
-        "bitmap_st bitmap_$name = {",
+        "global bitmap_st bitmap_$name = {",
         "    { $width, $height },",
         "    $pitch,",
         "    (uint8_t *)",
@@ -213,7 +213,7 @@ sub process_fonts {
     my @lines = (
         "#include <gui.h>",
         "",
-        "font_st fonts[] = {",
+        "global font_st fonts[] = {",
     );
 
     foreach my $entry (@font_data) {

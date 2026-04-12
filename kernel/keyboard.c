@@ -47,7 +47,7 @@ krn_keyboard_finish_handling()
     outb(0x20, 0x20);
 }
 
-void
+global void
 krn_keyboard_handle_intr(void)
 {
     static uint8_t shift = 0;
@@ -109,14 +109,14 @@ krn_keyboard_handle_intr(void)
     krn_keyboard_finish_handling();
 }
 
-void
+global void
 krn_keyboard_init(void)
 {
     krn_get_isr(0x09, &saved_isr_handler);
     krn_set_isr(0x09, krn_data_seg, (uint16_t)(uint32_t)&krn_isr_keyboard);
 }
 
-void
+global void
 krn_keyboard_deinit(void)
 {
     krn_set_isr(0x09, saved_isr_handler.seg, saved_isr_handler.ofs);

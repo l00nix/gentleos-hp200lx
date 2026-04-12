@@ -7,7 +7,7 @@
 
 #include <gui.h>
 
-void
+global void
 gui_grid_rect(grid_st *grid, rect_st *out)
 {
     out->x = grid->x;
@@ -16,7 +16,7 @@ gui_grid_rect(grid_st *grid, rect_st *out)
     out->height = GRID_HEIGHT_SPACED(grid->cell_height, grid->rows);
 }
 
-void
+global void
 gui_grid_cell_rect(grid_st *grid, int col, int row, rect_st *out)
 {
     out->x = grid->x + col * grid->cell_width + col;
@@ -25,7 +25,7 @@ gui_grid_cell_rect(grid_st *grid, int col, int row, rect_st *out)
     out->height = grid->cell_height;
 }
 
-void
+global void
 gui_grid_draw_background(grid_st *grid, window_st *window, uint8_t color)
 {
     rect_st grid_rect;

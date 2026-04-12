@@ -10,7 +10,9 @@ run: all .SYMBOLIC
 boot: all .SYMBOLIC
     boot build\fd1440.img
 
-genmake: .SYMBOLIC
+regen: .SYMBOLIC
+    perl misc/procbmp.pl
+    perl misc/cproto.pl
     perl misc/genmake.pl
 
 procbmp: .SYMBOLIC
