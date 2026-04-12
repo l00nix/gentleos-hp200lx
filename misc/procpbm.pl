@@ -44,7 +44,7 @@ sub load_pbm {
     my ($path) = @_;
     open(my $fh, "<", $path) or die "Cannot read $path: $!\n";
 
-    printf "- %-20s", $path;
+    printf "- %-28s", $path;
 
     my @header;
     my $raster = "";
