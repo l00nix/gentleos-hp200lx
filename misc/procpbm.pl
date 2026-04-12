@@ -124,6 +124,8 @@ sub process_bitmap {
     my $prefix = "bitmap_";
     $prefix = "icon_" if $dirname eq "assets/icons";
     $prefix = "sprite_" if $dirname eq "assets/sprites";
+    $prefix = "sprite_mj_" if $dirname eq "assets/mahjong";
+    $prefix = "glyph_mn_" if $dirname eq "assets/glyphsmn";
 
     my @lines = (
         "global bitmap_st $prefix$name = {",
@@ -142,7 +144,9 @@ sub process_bitmaps {
     my @bitmap_files = sort((
         glob("bitmaps/*.pbm"),
         glob("assets/icons/*.pbm"),
+        glob("assets/mahjong/*.pbm"),
         glob("assets/sprites/*.pbm"),
+        glob("assets/glyphsmn/*.pbm"),
     ));
 
     my @lines = ("#include <gui.h>", "");
