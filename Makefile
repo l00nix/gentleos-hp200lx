@@ -25,9 +25,11 @@ OBJS = &
 	build/apps/calc.obj &
 	build/apps/calendar.obj &
 	build/apps/clock.obj &
+	build/apps/fcell.obj &
 	build/apps/fonts.obj &
 	build/apps/keys.obj &
 	build/apps/launcher.obj &
+	build/apps/mahjong.obj &
 	build/apps/mines.obj &
 	build/apps/pairs.obj &
 	build/apps/snake.obj &
@@ -118,6 +120,13 @@ build\apps\clock.obj: apps\clock.c $(INCLUDES)
 	wcc -fo=build\apps\clock.obj apps\clock.c @misc\wcc.occ
 !endif
 
+build\apps\fcell.obj: apps\fcell.c $(INCLUDES)
+!ifdef TC
+	tcc -mt -u -g1 -c -Iinclude -nbuild\apps apps\fcell.c
+!else
+	wcc -fo=build\apps\fcell.obj apps\fcell.c @misc\wcc.occ
+!endif
+
 build\apps\fonts.obj: apps\fonts.c $(INCLUDES)
 !ifdef TC
 	tcc -mt -u -g1 -c -Iinclude -nbuild\apps apps\fonts.c
@@ -137,6 +146,13 @@ build\apps\launcher.obj: apps\launcher.c $(INCLUDES)
 	tcc -mt -u -g1 -c -Iinclude -nbuild\apps apps\launcher.c
 !else
 	wcc -fo=build\apps\launcher.obj apps\launcher.c @misc\wcc.occ
+!endif
+
+build\apps\mahjong.obj: apps\mahjong.c $(INCLUDES)
+!ifdef TC
+	tcc -mt -u -g1 -c -Iinclude -nbuild\apps apps\mahjong.c
+!else
+	wcc -fo=build\apps\mahjong.obj apps\mahjong.c @misc\wcc.occ
 !endif
 
 build\apps\mines.obj: apps\mines.c $(INCLUDES)

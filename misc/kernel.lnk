@@ -8,9 +8,11 @@ file build/apps/bjack.obj
 file build/apps/calc.obj
 file build/apps/calendar.obj
 file build/apps/clock.obj
+file build/apps/fcell.obj
 file build/apps/fonts.obj
 file build/apps/keys.obj
 file build/apps/launcher.obj
+file build/apps/mahjong.obj
 file build/apps/mines.obj
 file build/apps/pairs.obj
 file build/apps/snake.obj

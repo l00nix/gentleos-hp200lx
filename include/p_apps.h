@@ -8,12 +8,16 @@ extern app_st app_calc;
 extern app_st app_calendar;
 /* apps/clock.c */
 extern app_st app_clock;
+/* apps/fcell.c */
+extern app_st app_freecell;
 /* apps/fonts.c */
 extern app_st app_fonts;
 /* apps/keys.c */
 extern app_st app_keymap;
 /* apps/launcher.c */
 extern app_st app_launcher;
+/* apps/mahjong.c */
+extern app_st app_mahjong;
 /* apps/mines.c */
 extern app_st app_mines;
 /* apps/pairs.c */
