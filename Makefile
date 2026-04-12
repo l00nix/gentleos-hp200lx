@@ -2,7 +2,7 @@ all: disks .SYMBOLIC
     @echo All done!
 
 disks: build/kernel.com build/boot.bin .SYMBOLIC
-    perl misc/mkdisks.pl
+    perl tools/mkdisks.pl
 
 run: all .SYMBOLIC
     build\kernel.com
