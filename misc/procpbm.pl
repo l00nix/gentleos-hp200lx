@@ -42,6 +42,8 @@ sub load_pbm {
     my ($path) = @_;
     open(my $fh, "<", $path) or die "Cannot read $path: $!\n";
 
+    printf "- %-20s", $path;
+
     my @header;
     my $raster = "";
     while (my $line = <$fh>) {
@@ -59,14 +61,14 @@ sub load_pbm {
     close $fh;
 
     if (@header < 3 || $header[0] ne "P1") {
-        die "Not a P1 PBM file: $path\n";
+        die "\nNot a P1 PBM file\n";
     }
 
 
     my $width = int($header[1]);
     my $height = int($header[2]);
 
-    print "  image: ${width}x${height}\n";
+    print "  size: ${width}x${height}";
 
     $raster =~ s/\s+//g;
     my @flat = split(//, $raster);
@@ -88,13 +90,14 @@ sub bitmap_name {
 
 sub process_bitmap {
     my ($path) = @_;
-    print "Processing bitmap: $path\n";
 
     clean_pbm($path);
 
     my $name = bitmap_name($path);
     my ($pixels, $width, $height) = load_pbm($path);
     my $pitch = int(($width + 7) / 8);
+
+    print "\n";
 
     my @pixel_lines;
 
@@ -148,14 +151,13 @@ sub load_font {
     my $height = $font->{height};
     my $pitch = $font->{pitch};
 
-    print "Processing font: $path\n";
     my ($pixels, $img_width, $img_height) = load_pbm($path);
 
     my $cols = int($img_width / $pitch);
     my $rows = int($img_height / $height);
     my $num_chars = $cols * $rows;
 
-    print "  image: ${img_width}x${img_height}, grid: ${cols}x${rows} = $num_chars chars\n";
+    print "  grid: ${cols}x${rows}  chars: $num_chars\n";
 
     if ($num_chars > $FONT_MAX_CHARS) {
         $num_chars = $FONT_MAX_CHARS;
