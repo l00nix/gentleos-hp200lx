@@ -2,6 +2,7 @@ system dos com
 name build/kernel.com
 option nodefaultlibs
 option quiet
+option map=build/kernel.map
 file build/kernel/start.obj
 file build/apps/about.obj
 file build/apps/bjack.obj

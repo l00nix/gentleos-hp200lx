@@ -146,6 +146,7 @@ sub generate_kernel_lnk {
         "name build/kernel.com",
         "option nodefaultlibs",
         "option quiet",
+        "option map=build/kernel.map",
     );
 
     foreach my $src (@$sources_ref) {
