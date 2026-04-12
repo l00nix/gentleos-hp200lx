@@ -58,6 +58,7 @@ draw_text_sm(int col, int row, const char *text)
         text, COLOR_FG, COLOR_BG);
 }
 
+/*
 static void
 draw_github_line(void)
 {
@@ -76,6 +77,7 @@ draw_github_line(void)
     gui_surface_draw_bitmap_centered(&window.origin, &window.size, &r, &bitmap_i_github,
         COLOR_FG);
 }
+*/
 
 static void
 draw_info(void)
@@ -91,7 +93,7 @@ draw_info(void)
     draw_text_lg((GRID_COLS - strlen(title)) / 2, line++, title);
     line++;
 
-    draw_github_line();
+    /* draw_github_line(); */
 
     gui_wm_render_window_region(&window.origin, &r);
 }

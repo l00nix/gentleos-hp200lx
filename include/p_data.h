@@ -5,7 +5,6 @@ extern bitmap_st bitmap_i_calc;
 extern bitmap_st bitmap_i_calndr;
 extern bitmap_st bitmap_i_clock;
 extern bitmap_st bitmap_i_fonts;
-extern bitmap_st bitmap_i_github;
 extern bitmap_st bitmap_i_keys;
 extern bitmap_st bitmap_i_mines;
 extern bitmap_st bitmap_i_pairs;
