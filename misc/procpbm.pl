@@ -6,6 +6,8 @@
 # File: procpbm.pl - Convert bitmaps and fonts to hardcoded C data
 #
 
+use File::Basename;
+
 my @FONTS = (
     {
         path => "fonts/evxme58.pbm",
@@ -94,6 +96,8 @@ sub process_bitmap {
     clean_pbm($path);
 
     my $name = bitmap_name($path);
+    my $dirname = dirname($path);
+
     my ($pixels, $width, $height) = load_pbm($path);
     my $pitch = int(($width + 7) / 8);
 
@@ -117,8 +121,11 @@ sub process_bitmap {
         push @pixel_lines, "        \"$pixel_str\" \\";
     }
 
+    my $prefix = "bitmap_";
+    $prefix = "icon_" if $dirname eq "assets/icons";
+
     my @lines = (
-        "global bitmap_st bitmap_$name = {",
+        "global bitmap_st $prefix$name = {",
         "    { $width, $height },",
         "    $pitch,",
         "    (uint8_t *)",
@@ -131,7 +138,7 @@ sub process_bitmap {
 }
 
 sub process_bitmaps {
-    my @bitmap_files = sort(glob("bitmaps/*.pbm"));
+    my @bitmap_files = sort((glob("bitmaps/*.pbm"), glob("assets/icons/*.pbm")));
 
     my @lines = ("#include <gui.h>", "");
     foreach my $f (@bitmap_files) {

@@ -320,6 +320,6 @@ show_app(void)
 
 global app_st app_calc = {
     "Calculator",
-    &bitmap_i_calc,
+    &icon_calc,
     show_app,
 };

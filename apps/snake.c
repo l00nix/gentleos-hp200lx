@@ -264,6 +264,6 @@ show_app(void)
 
 global app_st app_snake = {
     "Snake",
-    &bitmap_i_snake,
+    &icon_snake,
     show_app,
 };

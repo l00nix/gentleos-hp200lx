@@ -131,6 +131,6 @@ show_app(void)
 
 global app_st app_clock = {
     "Clock",
-    &bitmap_i_clock,
+    &icon_clock,
     show_app,
 };

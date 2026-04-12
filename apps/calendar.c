@@ -271,6 +271,6 @@ show_app(void)
 
 global app_st app_calendar = {
     "Calendar",
-    &bitmap_i_calndr,
+    &icon_calendar,
     show_app,
 };

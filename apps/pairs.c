@@ -283,6 +283,6 @@ show_app(void)
 
 global app_st app_pairs = {
     "Pairs",
-    &bitmap_i_pairs,
+    &icon_pairs,
     show_app,
 };

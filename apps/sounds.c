@@ -242,6 +242,6 @@ show_app(void)
 
 global app_st app_sounds = {
     "Sounds",
-    &bitmap_i_sounds,
+    &icon_sounds,
     show_app,
 };

@@ -343,6 +343,6 @@ show_app(void)
 
 global app_st app_blackjack = {
     "Blackjack",
-    &bitmap_i_bjack,
+    &icon_bjack,
     show_app,
 };

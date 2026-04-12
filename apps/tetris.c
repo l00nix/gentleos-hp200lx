@@ -334,6 +334,6 @@ show_app(void)
 
 global app_st app_tetris = {
     "Tetris",
-    &bitmap_i_tetris,
+    &icon_tetris,
     show_app,
 };

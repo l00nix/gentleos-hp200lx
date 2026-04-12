@@ -135,6 +135,6 @@ show_app(void)
 
 global app_st app_about = {
     "About",
-    &bitmap_i_about,
+    &icon_about,
     show_app,
 };

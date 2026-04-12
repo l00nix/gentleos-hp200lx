@@ -190,6 +190,6 @@ show_app(void)
 
 global app_st app_fonts = {
     "Fonts",
-    &bitmap_i_fonts,
+    &icon_fonts,
     show_app,
 };

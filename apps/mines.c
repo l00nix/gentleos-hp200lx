@@ -400,6 +400,6 @@ show_app(void)
 
 global app_st app_mines = {
     "Mines",
-    &bitmap_i_mines,
+    &icon_mines,
     show_app,
 };
