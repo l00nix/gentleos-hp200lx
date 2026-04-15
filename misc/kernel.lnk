@@ -19,8 +19,7 @@ file build/apps/pairs.obj
 file build/apps/snake.obj
 file build/apps/sounds.obj
 file build/apps/tetris.obj
-file build/data/data_bmp.obj
-file build/data/data_fnt.obj
+file build/data/data.obj
 file build/gui/button.obj
 file build/gui/grid.obj
 file build/gui/main.obj

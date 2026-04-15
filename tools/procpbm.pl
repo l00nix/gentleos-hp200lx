@@ -10,21 +10,21 @@ use File::Basename;
 
 my @FONTS = (
     {
-        path => "assets/fonts/evxme58.pbm",
+        path => "vendor/int10h/evxme58.pbm",
         name => "Evx ME 5x8",
         width => 5,
         height => 8,
         pitch => 8,
     },
     {
-        path => "assets/fonts/atarism.pbm",
+        path => "vendor/atarism/atarism.pbm",
         name => "Atari Small 4x8",
         width => 4,
         height => 8,
         pitch => 4,
     },
     {
-        path => "assets/fonts/font_4x6.pbm",
+        path => "vendor/font4x6/font_4x6.pbm",
         name => "Font 4x6",
         width => 4,
         height => 6,
@@ -130,10 +130,10 @@ sub process_bitmap {
 
     my $prefix = "bitmap_";
     $prefix = "icon_" if $dirname eq "assets/icons";
-    $prefix = "icon_" if $dirname eq "assets/icn8";
+    $prefix = "icon_" if $dirname eq "vendor/icons8";
     $prefix = "sprite_" if $dirname eq "assets/sprites";
     $prefix = "sprite_mj_" if $dirname eq "assets/mahjong";
-    $prefix = "glyph_mn_" if $dirname eq "assets/glyphsmn";
+    $prefix = "glyph_mn_" if $dirname eq "vendor/mona";
 
     my @lines = (
         "global bitmap_st $prefix$name = {",
@@ -152,21 +152,15 @@ sub process_bitmaps {
     my @bitmap_files = sort((
         glob("bitmaps/*.pbm"),
         glob("assets/icons/*.pbm"),
-        glob("assets/icn8/*.pbm"),
         glob("assets/mahjong/*.pbm"),
         glob("assets/sprites/*.pbm"),
-        glob("assets/glyphsmn/*.pbm"),
+        glob("vendor/icons8/*.pbm"),
+        glob("vendor/mona/*.pbm"),
     ));
 
-    my @lines = ("#include <gui.h>", "");
-    foreach my $f (@bitmap_files) {
-        push @lines, process_bitmap($f);
-    }
+    my @lines = map { process_bitmap($_) } @bitmap_files;
 
-    open(my $fh, ">", "data/data_bmp.c") or die "Cannot write data/data_bmp.c: $!\n";
-    binmode($fh);
-    print $fh join("\r\n", @lines);
-    close($fh);
+    return join("\r\n", @lines)
 }
 
 sub load_font {
@@ -238,8 +232,6 @@ sub process_fonts {
     }
 
     my @lines = (
-        "#include <gui.h>",
-        "",
         "global font_st fonts[] = {",
     );
 
@@ -259,13 +251,28 @@ sub process_fonts {
     }
 
     push @lines, "};";
-    push @lines, "";
 
-    open(my $fh, ">", "data/data_fnt.c") or die "Cannot write data/data_fnt.c: $!\n";
+    return join("\r\n", @lines);
+
+}
+
+sub process_all {
+    my $bitmap_lines = process_bitmaps();
+    my $font_lines = process_fonts();
+
+    my @lines = (
+        "#include <gui.h>",
+        "",
+        $bitmap_lines,
+        $font_lines,
+        ""
+    );
+
+    open(my $fh, ">", "data/data.c") or die "Cannot write data/data.c: $!\n";
     binmode($fh);
     print $fh join("\r\n", @lines);
     close($fh);
+
 }
 
-process_bitmaps();
-process_fonts();
+process_all();

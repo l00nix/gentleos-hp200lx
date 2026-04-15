@@ -35,8 +35,7 @@ OBJS = &
 	build/apps/snake.obj &
 	build/apps/sounds.obj &
 	build/apps/tetris.obj &
-	build/data/data_bmp.obj &
-	build/data/data_fnt.obj &
+	build/data/data.obj &
 	build/gui/button.obj &
 	build/gui/grid.obj &
 	build/gui/main.obj &
@@ -190,18 +189,11 @@ build\apps\tetris.obj: apps\tetris.c $(INCLUDES)
 	wcc -fo=build\apps\tetris.obj apps\tetris.c @misc\wcc.occ
 !endif
 
-build\data\data_bmp.obj: data\data_bmp.c $(INCLUDES)
+build\data\data.obj: data\data.c $(INCLUDES)
 !ifdef TC
-	tcc -mt -u -g1 -c -Iinclude -nbuild\data data\data_bmp.c
+	tcc -mt -u -g1 -c -Iinclude -nbuild\data data\data.c
 !else
-	wcc -fo=build\data\data_bmp.obj data\data_bmp.c @misc\wcc.occ
-!endif
-
-build\data\data_fnt.obj: data\data_fnt.c $(INCLUDES)
-!ifdef TC
-	tcc -mt -u -g1 -c -Iinclude -nbuild\data data\data_fnt.c
-!else
-	wcc -fo=build\data\data_fnt.obj data\data_fnt.c @misc\wcc.occ
+	wcc -fo=build\data\data.obj data\data.c @misc\wcc.occ
 !endif
 
 build\gui\button.obj: gui\button.c $(INCLUDES)

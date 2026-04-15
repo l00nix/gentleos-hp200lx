@@ -1,0 +1,4 @@
+Assets in this directory are based on icons originally obtained
+from https://icons8.com/ on a free license
+
+See https://web.archive.org/web/20260325111643/https://icons8.com/license
