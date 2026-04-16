@@ -22,6 +22,7 @@ extern bitmap_st sprite_mj_ci_7;
 extern bitmap_st sprite_mj_ci_8;
 extern bitmap_st sprite_mj_ci_9;
 extern bitmap_st sprite_mj_dr_w;
+extern bitmap_st sprite_arr_up;
 extern bitmap_st sprite_club_1;
 extern bitmap_st sprite_club_2;
 extern bitmap_st sprite_diamnd_1;
