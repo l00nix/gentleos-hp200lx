@@ -1,3 +1,4 @@
+perl tools/mkbuild.pl
 perl tools/fixlns.pl
 perl tools/procpbm.pl
 perl tools/cproto.pl

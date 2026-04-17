@@ -21,12 +21,7 @@ boot: all .SYMBOLIC
     boot build\fd1440.img
 
 clean: .SYMBOLIC
-	-del build\apps\*.*
-	-del build\data\*.*
-	-del build\gui\*.*
-	-del build\lib\*.*
-	-del build\kernel\*.*
-	-del build\*.*
+    perl tools/clean.pl
 
 OBJS = &
 <OBJS>
@@ -38,7 +33,7 @@ build/boot.bin: boot/boot.s
     nasm -o build/boot.bin boot/boot.s
 
 build\kernel.com: $(OBJS)
-	wlink @misc/kernel.lnk
+	wlink @build/kernel.lnk
 
 <OBJECT_RULES>
 EOT
@@ -157,7 +152,7 @@ sub generate_kernel_lnk {
 
     push @lines, "";
 
-    open(my $fh, ">", "misc/kernel.lnk") or die "Cannot open misc/kernel.lnk: $!";
+    open(my $fh, ">", "build/kernel.lnk") or die "Cannot open build/kernel.lnk: $!";
     binmode($fh);
     print $fh join("\r\n", @lines);
     close($fh);

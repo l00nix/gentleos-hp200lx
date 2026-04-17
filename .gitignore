@@ -1,7 +1,10 @@
 .DS_Store
 /.vscode/*
-/build/*
-/data/data.c
+/build
+/BUILD
+/MAKEFILE
+/Makefile
+/data/*
 /include/config.h
 /tmp/*
 *.swp
