@@ -26,10 +26,6 @@ enum {
 };
 
 static window_st window;
-
-static widget_st buttons[GRID_CELL_COUNT];
-static widget_st *widgets[GRID_CELL_COUNT];
-
 static grid_st grid;
 
 static bitmap_st *icons[PAIR_COUNT] = {
@@ -51,13 +47,16 @@ static bitmap_st *icons[PAIR_COUNT] = {
 };
 
 enum {
-    BUTTON_STATE_HIDDEN = 0,
-    BUTTON_STATE_REVEALED = 1,
-    BUTTON_STATE_MATCHED = 2,
+    CELL_STATE_HIDDEN = 0,
+    CELL_STATE_REVEALED = 1,
+    CELL_STATE_MATCHED = 2,
 };
 
-static uint8_t button_icons[GRID_CELL_COUNT];
-static uint8_t button_states[GRID_CELL_COUNT];
+static uint8_t cell_icons[GRID_CELL_COUNT];
+static uint8_t cell_states[GRID_CELL_COUNT];
+
+static int current_col = 0;
+static int current_row = 0;
 
 static int first_pick;
 static int second_pick;
@@ -85,26 +84,26 @@ shuffle_icons(void)
     }
 
     for (i = 0; i < GRID_CELL_COUNT; i++) {
-        button_icons[i] = deck[i];
+        cell_icons[i] = deck[i];
     }
 }
 
 static void
-draw_button(widget_st *widget)
+draw_cell(int col, int row)
 {
-    int idx = widget->tag1;
-    uint8_t state = button_states[idx];
+    int idx = row * GRID_COLS + col;
+    uint8_t state = cell_states[idx];
     rect_st rect;
 
-    gui_rect_copy(&rect, &widget->rect);
+    gui_grid_cell_rect(&grid, col, row, &rect);
     gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
 
-    if (state == BUTTON_STATE_REVEALED || state == BUTTON_STATE_MATCHED) {
+    if (state == CELL_STATE_REVEALED || state == CELL_STATE_MATCHED) {
         gui_surface_draw_bitmap_centered(&window.origin, &window.size, &rect,
-            icons[button_icons[idx]], COLOR_FG);
+            icons[cell_icons[idx]], COLOR_FG);
     }
 
-    if (widget == widget->window->focused_widget) {
+    if (col == current_col && row == current_row) {
         gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
     }
 
@@ -112,17 +111,23 @@ draw_button(widget_st *widget)
 }
 
 static void
+draw_cell_by_idx(int idx)
+{
+    draw_cell(idx % GRID_COLS, idx / GRID_COLS);
+}
+
+static void
 reveal_icon(int idx)
 {
-    button_states[idx] = BUTTON_STATE_REVEALED;
-    draw_button(&buttons[idx]);
+    cell_states[idx] = CELL_STATE_REVEALED;
+    draw_cell_by_idx(idx);
 }
 
 static void
 hide_icon(int idx)
 {
-    button_states[idx] = BUTTON_STATE_HIDDEN;
-    draw_button(&buttons[idx]);
+    cell_states[idx] = CELL_STATE_HIDDEN;
+    draw_cell_by_idx(idx);
 }
 
 static void
@@ -149,8 +154,8 @@ restart_game(void)
     waiting = 0;
 
     for (i = 0; i < GRID_CELL_COUNT; i++) {
-        button_states[i] = BUTTON_STATE_HIDDEN;
-        draw_button(&buttons[i]);
+        cell_states[i] = CELL_STATE_HIDDEN;
+        draw_cell_by_idx(i);
     }
 
     update_status();
@@ -179,15 +184,28 @@ on_tick(window_st *window)
 }
 
 static void
-on_cell_press(widget_st *widget)
+update_current_cell(int dx, int dy)
 {
-    int idx = widget->tag1;
+    int prev_col = current_col;
+    int prev_row = current_row;
+
+    current_col = MAX(0, MIN(GRID_COLS - 1, current_col + dx));
+    current_row = MAX(0, MIN(GRID_ROWS - 1, current_row + dy));
+
+    draw_cell(prev_col, prev_row);
+    draw_cell(current_col, current_row);
+}
+
+static void
+on_enter(void)
+{
+    int idx = current_row * GRID_COLS + current_col;
 
     if (waiting) {
         return;
     }
 
-    if (button_states[idx] != BUTTON_STATE_HIDDEN) {
+    if (cell_states[idx] != CELL_STATE_HIDDEN) {
         return;
     }
 
@@ -201,9 +219,9 @@ on_cell_press(widget_st *widget)
     reveal_icon(second_pick);
     tries++;
 
-    if (button_icons[first_pick] == button_icons[second_pick]) {
-        button_states[first_pick] = BUTTON_STATE_MATCHED;
-        button_states[second_pick] = BUTTON_STATE_MATCHED;
+    if (cell_icons[first_pick] == cell_icons[second_pick]) {
+        cell_states[first_pick] = CELL_STATE_MATCHED;
+        cell_states[second_pick] = CELL_STATE_MATCHED;
         first_pick = -1;
         second_pick = -1;
         matched_count++;
@@ -215,7 +233,22 @@ on_cell_press(widget_st *widget)
 }
 
 static void
-on_key_up(window_st *window, const event_st *event)
+on_key_down(window_st *win, const event_st *event)
+{
+    int key_code = event->payload.key.key_code;
+
+    switch (key_code) {
+        case KEY_LEFT: update_current_cell(-1, 0); return;
+        case KEY_RIGHT: update_current_cell(1, 0); return;
+        case KEY_UP: update_current_cell(0, -1); return;
+        case KEY_DOWN: update_current_cell(0, 1); return;
+        case KEY_SPACE:
+        case KEY_ENTER: on_enter(); return;
+    }
+}
+
+static void
+on_key_up(window_st *win, const event_st *event)
 {
     int ch = event->payload.key.key_char;
 
@@ -231,43 +264,20 @@ init_window(void)
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     window.bg_color = COLOR_FG;
-    window.widgets = widgets;
-    window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
-    window.focused_widget = &buttons[0];
     window.on_tick = on_tick;
+    window.on_key_down = on_key_down;
     window.on_key_up = on_key_up;
 }
 
 static void
 init_grid(void)
 {
-    int i, col, row;
-
     grid.cell_width = GRID_CELL_WIDTH;
     grid.cell_height = GRID_CELL_HEIGHT;
     grid.cols = GRID_COLS;
     grid.rows = GRID_ROWS;
     grid.x = GRID_X;
     grid.y = GRID_Y;
-
-    memset(buttons, 0, sizeof(buttons));
-
-    for (i = 0; i < GRID_CELL_COUNT; i++) {
-        col = i % GRID_COLS;
-        row = i / GRID_COLS;
-
-        buttons[i].type = WIDGET_TYPE_BUTTON;
-        gui_grid_cell_rect(&grid, col, row, &buttons[i].rect);
-        buttons[i].tag1 = i;
-        buttons[i].draw = draw_button;
-        buttons[i].on_press = on_cell_press;
-        buttons[i].hide_border = 1;
-        buttons[i].focusable = 1;
-        buttons[i].focus_x = col;
-        buttons[i].focus_y = row;
-
-        gui_window_add_widget(&window, &buttons[i]);
-    }
 }
 
 static void
