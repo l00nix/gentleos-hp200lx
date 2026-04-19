@@ -58,7 +58,7 @@ gui_window_draw(window_st *window)
         gui_widget_draw(window->widgets[i]);
     }
 
-    gui_wm_render_window_region(&window->origin, &area);
+    gui_surface_mark_dirty(&window->origin, &area);
 }
 
 global int

@@ -68,7 +68,7 @@ gui_status_set_text(int corner, const char *text)
     }
 
     gui_rect_init(&text_rect, TEXT_X, 0, STATUS_WIDTH - TEXT_X * 2, STATUS_HEIGHT);
-    gui_wm_render_window_region(&origin, &text_rect);
+    gui_surface_mark_dirty(&origin, &text_rect);
 
     status_text_len[corner] = len;
 }

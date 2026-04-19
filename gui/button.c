@@ -50,5 +50,5 @@ gui_button_draw(widget_st *widget)
         );
     }
 
-    gui_wm_render_window_region(&widget->window->origin, &full_rect);
+    gui_surface_mark_dirty(&widget->window->origin, &full_rect);
 }

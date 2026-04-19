@@ -18,13 +18,17 @@ gui_surface_init(void)
 }
 
 global void
-gui_surface_mark_dirty(const rect_st *rect)
+gui_surface_mark_dirty(const point_st *origin, const rect_st *rect)
 {
     static rect_st screen_rect = { 0, 0, GUI_WIDTH, GUI_HEIGHT };
     rect_st combined;
+    rect_st translated;
+
+    gui_rect_copy(&translated, rect);
+    gui_rect_translate(&translated, origin);
 
     gui_rect_copy(&combined, &gui_surface_dirty_rect);
-    gui_rect_enclose(&combined, rect);
+    gui_rect_enclose(&combined, &translated);
     gui_rect_clip(&combined, &screen_rect);
 
     gui_rect_copy(&gui_surface_dirty_rect, &combined);

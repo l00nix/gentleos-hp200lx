@@ -14,7 +14,7 @@ static void
 gui_wm_render_wallpaper(const rect_st *rect)
 {
     gui_surface_draw_rect(&GUI_POINT_ZERO, rect, COLOR_BG);
-    gui_surface_mark_dirty(rect);
+    gui_surface_mark_dirty(&GUI_POINT_ZERO, rect);
 }
 
 global int
@@ -33,15 +33,6 @@ gui_wm_add_window(struct window *w)
     gui_status_set("");
 
     return 0;
-}
-
-global void
-gui_wm_render_window_region(const point_st *origin, const rect_st *window_reg)
-{
-    rect_st translated;
-    gui_rect_copy(&translated, window_reg);
-    gui_rect_translate(&translated, origin);
-    gui_surface_mark_dirty(&translated);
 }
 
 global void

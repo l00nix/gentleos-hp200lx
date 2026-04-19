@@ -188,7 +188,7 @@ draw_hand(uint8_t *hand)
         draw_card(x, y, hand[i], all_face_up || i == 0);
     }
 
-    gui_wm_render_window_region(&window.origin, &r);
+    gui_surface_mark_dirty(&window.origin, &r);
 }
 
 static void

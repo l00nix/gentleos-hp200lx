@@ -63,7 +63,7 @@ draw_key_w(widget_st *widget)
     rect_bottom.height -= KEY_B_HEIGHT;
     gui_surface_draw_rect(&widget->window->origin, &rect_bottom, color);
 
-    gui_wm_render_window_region(&widget->window->origin, &widget->rect);
+    gui_surface_mark_dirty(&widget->window->origin, &widget->rect);
 }
 
 static void
@@ -73,7 +73,7 @@ draw_key_b(widget_st *widget)
 
     gui_surface_draw_rect(&widget->window->origin, &widget->rect, color);
 
-    gui_wm_render_window_region(&widget->window->origin, &widget->rect);
+    gui_surface_mark_dirty(&widget->window->origin, &widget->rect);
 }
 
 static unsigned

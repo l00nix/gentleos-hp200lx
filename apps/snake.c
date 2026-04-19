@@ -71,7 +71,7 @@ draw_cell(int x, int y, uint8_t cell_type)
 
     gui_grid_cell_rect(&grid, x, y, &r);
     gui_surface_draw_rect(&window.origin, &r, cell_colors[cell_type]);
-    gui_wm_render_window_region(&window.origin, &r);
+    gui_surface_mark_dirty(&window.origin, &r);
 }
 
 static void

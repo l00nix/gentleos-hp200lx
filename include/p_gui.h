@@ -32,7 +32,7 @@ extern void gui_status_set_br(const char *fmt, ...);
 extern void gui_status_init(void);
 /* gui/surface.c */
 extern void gui_surface_init(void);
-extern void gui_surface_mark_dirty(const rect_st *rect);
+extern void gui_surface_mark_dirty(const point_st *origin, const rect_st *rect);
 extern void gui_surface_flush(void);
 extern void gui_surface_draw_h_seg(const point_st *origin, int x, int y, int w, uint8_t color);
 extern void gui_surface_draw_v_seg(const point_st *origin, int x, int y, int h, uint8_t color);
@@ -59,5 +59,4 @@ extern void gui_window_on_tick(window_st *window);
 extern rect_st gui_wm_container;
 extern window_st *gui_wm_current_window;
 extern int gui_wm_add_window(struct window *w);
-extern void gui_wm_render_window_region(const point_st *origin, const rect_st *window_reg);
 extern void gui_wm_init(void);

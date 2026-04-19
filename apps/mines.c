@@ -131,7 +131,7 @@ draw_cell(int col, int row)
         gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
     }
 
-    gui_wm_render_window_region(&window.origin, &rect);
+    gui_surface_mark_dirty(&window.origin, &rect);
 }
 
 static void

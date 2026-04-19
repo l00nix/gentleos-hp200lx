@@ -95,7 +95,7 @@ draw_info(void)
 
     /* draw_github_line(); */
 
-    gui_wm_render_window_region(&window.origin, &r);
+    gui_surface_mark_dirty(&window.origin, &r);
 }
 
 static void

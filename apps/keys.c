@@ -169,7 +169,7 @@ draw_key(const key_st *key, int pressed)
     }
 
     gui_surface_draw_str_centered(&window.origin, &rect, &fonts[1], key->label, fg, bg);
-    gui_wm_render_window_region(&window.origin, &rect);
+    gui_surface_mark_dirty(&window.origin, &rect);
 }
 
 static void

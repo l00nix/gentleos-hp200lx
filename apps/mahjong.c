@@ -229,7 +229,7 @@ draw_board(void)
     }
 
     gui_rect_init(&rect, 0, 0, window.size.width, window.size.height);
-    gui_wm_render_window_region(&window.origin, &rect);
+    gui_surface_mark_dirty(&window.origin, &rect);
 }
 
 static void

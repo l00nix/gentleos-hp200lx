@@ -205,7 +205,7 @@ draw_cell(int pile, int idx)
         draw_card(x, y, card, is_sel);
     }
 
-    gui_wm_render_window_region(&window.origin, &r);
+    gui_surface_mark_dirty(&window.origin, &r);
 }
 
 static void
@@ -236,7 +236,7 @@ draw_column(int col)
         }
     }
 
-    gui_wm_render_window_region(&window.origin, &r);
+    gui_surface_mark_dirty(&window.origin, &r);
 }
 
 static void
@@ -282,7 +282,7 @@ draw_cursor(int visible)
         gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
     }
 
-    gui_wm_render_window_region(&window.origin, &r);
+    gui_surface_mark_dirty(&window.origin, &r);
 }
 
 static void
@@ -684,7 +684,7 @@ show_help(void)
         y += HELP_LINE_HEIGHT;
     }
 
-    gui_wm_render_window_region(&window.origin, &r);
+    gui_surface_mark_dirty(&window.origin, &r);
 
     state = STATE_HELP;
 }
