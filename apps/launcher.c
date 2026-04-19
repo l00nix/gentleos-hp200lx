@@ -34,6 +34,7 @@ static app_st *apps[] = {
     &app_fonts,
     &app_keymap,
     &app_sounds,
+    &app_serial,
     &app_mines,
     &app_pairs,
     &app_mahjong,
@@ -41,6 +42,7 @@ static app_st *apps[] = {
     &app_tetris,
     &app_freecell,
     &app_blackjack,
+    &app_setup,
 };
 
 #define APPS_COUNT (sizeof(apps) / sizeof(apps[0]))
