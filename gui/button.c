@@ -25,15 +25,7 @@ gui_button_draw(widget_st *widget)
 
     gui_surface_draw_rect(&widget->window->origin, &rect, is_pressed ? COLOR_FG : COLOR_BG);
 
-    if (widget->bitmap) {
-        gui_surface_draw_bitmap_centered(
-            &widget->window->origin,
-            &widget->window->size,
-            &rect,
-            widget->bitmap,
-            is_pressed ? COLOR_BG : COLOR_FG
-        );
-    } else if (widget->label) {
+    if (widget->label) {
         gui_surface_draw_str_centered(
             &widget->window->origin,
             &rect,

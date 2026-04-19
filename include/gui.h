@@ -68,7 +68,6 @@ struct widget {
     void (*draw)(widget_st *);
 
     const char *label;
-    bitmap_st *bitmap;
 };
 
 struct window {
