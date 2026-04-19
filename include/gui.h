@@ -66,7 +66,6 @@ struct widget {
     int hide_border;
 
     void (*draw)(widget_st *);
-    void (*on_press)(widget_st *);
 
     const char *label;
     bitmap_st *bitmap;
