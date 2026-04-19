@@ -48,18 +48,90 @@ static app_st *apps[] = {
 #define APPS_COUNT (sizeof(apps) / sizeof(apps[0]))
 
 static window_st window;
-
-static widget_st app_buttons[APPS_COUNT];
-static widget_st *widgets[APPS_COUNT];
+static int current_col = 0;
+static int current_row = 0;
 
 static void
-on_button_press(widget_st *widget)
+cell_rect_init(rect_st *out, int col, int row)
 {
-    gui_widget_draw(widget);
+    out->x = GRID_X + col * APP_BUTTON_H_STRIDE;
+    out->y = GRID_Y + row * APP_BUTTON_V_STRIDE;
+    out->width = APP_BUTTON_WIDTH;
+    out->height = APP_BUTTON_HEIGHT;
+}
 
-    if (apps[widget->tag1]) {
-        apps[widget->tag1]->show();
-        gui_status_set_tl("GentleOS > %s", apps[widget->tag1]->name);
+static void
+draw_cell(int col, int row)
+{
+    rect_st rect, cur_rect;
+    int i = row * GRID_COLS + col;
+
+    cell_rect_init(&rect, col, row);
+    gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
+    gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
+
+    if (i < APPS_COUNT && apps[i] && apps[i]->icon) {
+        gui_surface_draw_bitmap_centered(&window.origin, &window.size, &rect,
+            apps[i]->icon, COLOR_FG);
+    }
+
+    if (col == current_col && row == current_row) {
+        gui_rect_copy(&cur_rect, &rect);
+        gui_rect_shrink(&cur_rect, 1);
+        gui_surface_draw_border(&window.origin, &cur_rect, COLOR_FG);
+    }
+
+    gui_surface_mark_dirty(&window.origin, &rect);
+}
+
+static void
+draw_all_cells(void)
+{
+    int col, row;
+
+    for (row = 0; row < GRID_ROWS; ++row) {
+        for (col = 0; col < GRID_COLS; ++col) {
+            draw_cell(col, row);
+        }
+    }
+}
+
+static void
+update_current_cell(int dx, int dy)
+{
+    int prev_col = current_col;
+    int prev_row = current_row;
+
+    current_col = MAX(0, MIN(GRID_COLS - 1, current_col + dx));
+    current_row = MAX(0, MIN(GRID_ROWS - 1, current_row + dy));
+
+    draw_cell(prev_col, prev_row);
+    draw_cell(current_col, current_row);
+}
+
+static void
+launch_current_app(void)
+{
+    int i = current_row * GRID_COLS + current_col;
+
+    if (i < APPS_COUNT && apps[i]) {
+        apps[i]->show();
+        gui_status_set_tl("GentleOS > %s", apps[i]->name);
+    }
+}
+
+static void
+on_key_down(window_st *win, const event_st *event)
+{
+    int key_code = event->payload.key.key_code;
+
+    switch (key_code) {
+        case KEY_LEFT: update_current_cell(-1, 0); return;
+        case KEY_RIGHT: update_current_cell(1, 0); return;
+        case KEY_UP: update_current_cell(0, -1); return;
+        case KEY_DOWN: update_current_cell(0, 1); return;
+        case KEY_SPACE:
+        case KEY_ENTER: launch_current_app(); return;
     }
 }
 
@@ -72,37 +144,7 @@ init_window(void)
     window.size.height = WINDOW_HEIGHT;
     window.hide_border = 1;
     window.bg_color = COLOR_BG;
-    window.widgets = widgets;
-    window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
-    window.focused_widget = &app_buttons[0];
-}
-
-static void
-init_app_buttons(void)
-{
-    uint16_t i;
-    int col, row;
-
-    memset(&app_buttons, 0, sizeof(app_buttons));
-
-    for (i = 0; i < APPS_COUNT; i++) {
-        col = i % GRID_COLS;
-        row = i / GRID_COLS;
-
-        app_buttons[i].type = WIDGET_TYPE_BUTTON;
-        app_buttons[i].rect.x = GRID_X + col * APP_BUTTON_H_STRIDE;
-        app_buttons[i].rect.y = GRID_Y + row * APP_BUTTON_V_STRIDE;
-        app_buttons[i].rect.width = APP_BUTTON_WIDTH;
-        app_buttons[i].rect.height = APP_BUTTON_HEIGHT;
-        app_buttons[i].bitmap = apps[i]->icon;
-        app_buttons[i].tag1 = i;
-        app_buttons[i].on_press = on_button_press;
-        app_buttons[i].focusable = 1;
-        app_buttons[i].focus_x = col;
-        app_buttons[i].focus_y = row;
-
-        gui_window_add_widget(&window, &app_buttons[i]);
-    }
+    window.on_key_down = on_key_down;
 }
 
 static void
@@ -112,12 +154,12 @@ show_app(void)
 
     if (!initialized) {
         init_window();
-        init_app_buttons();
         initialized = 1;
     }
 
     gui_wm_add_window(&window);
     gui_window_draw(&window);
+    draw_all_cells();
 
     gui_status_set_tl("GentleOS");
 }
