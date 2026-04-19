@@ -11,20 +11,14 @@ global void
 gui_button_draw(widget_st *widget)
 {
     rect_st rect, full_rect;
-    int is_pressed, is_focused;
+    int is_pressed;
 
     gui_rect_copy(&rect, &widget->rect);
     gui_rect_copy(&full_rect, &rect);
 
     is_pressed = widget->active;
-    is_focused = (widget == widget->window->focused_widget);
 
     if (!widget->hide_border) {
-        gui_surface_draw_border(&widget->window->origin, &rect, COLOR_FG);
-        gui_rect_shrink(&rect, 1);
-    }
-
-    if (is_focused && !is_pressed) {
         gui_surface_draw_border(&widget->window->origin, &rect, COLOR_FG);
         gui_rect_shrink(&rect, 1);
     }

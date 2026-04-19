@@ -64,9 +64,6 @@ struct widget {
 
     int active;
     int hide_border;
-    int focusable;
-    int focus_x;
-    int focus_y;
 
     void (*draw)(widget_st *);
     void (*on_press)(widget_st *);
@@ -87,7 +84,6 @@ struct window {
     widget_st **widgets;
     size_t widgets_count;
     size_t widgets_capacity;
-    widget_st *focused_widget;
 
     void (*on_key_down)(window_st *, const event_st *);
     void (*on_key_up)(window_st *, const event_st *);

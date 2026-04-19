@@ -82,82 +82,11 @@ gui_window_on_close(window_st *window)
     }
 }
 
-static void
-gui_window_update_focus(window_st *window, int dir_x, int dir_y)
-{
-    widget_st *current_widget = window->focused_widget;
-    widget_st *best_widget = NULL;
-    widget_st *w;
-    int cur_x, cur_y;
-    int min_fwd_dist = 0xfff;
-    int min_lat_dist = 0xfff;
-    int diff_x, diff_y;
-    int fwd_dist, lat_dist;
-    size_t i;
-
-    if (!current_widget) {
-        return;
-    }
-
-    cur_x = current_widget->focus_x;
-    cur_y = current_widget->focus_y;
-
-    for (i = 0; i < window->widgets_count; ++i) {
-        w = window->widgets[i];
-
-        if (!w->focusable || w == current_widget) {
-            continue;
-        }
-
-        diff_x = w->focus_x - cur_x;
-        diff_y = w->focus_y - cur_y;
-
-        fwd_dist = dir_x ? (diff_x * dir_x) : (diff_y * dir_y);
-        lat_dist = dir_x ? ABS(diff_y) : ABS(diff_x);
-
-        if (fwd_dist <= 0) {
-            continue;
-        }
-
-        if (fwd_dist < min_fwd_dist ||
-            (fwd_dist == min_fwd_dist && lat_dist < min_lat_dist)) {
-            best_widget = w;
-            min_fwd_dist = fwd_dist;
-            min_lat_dist = lat_dist;
-        }
-    }
-
-    if (best_widget) {
-        window->focused_widget = best_widget;
-        gui_widget_draw(current_widget);
-        gui_widget_draw(best_widget);
-
-        if (window->on_focus_changed) {
-            window->on_focus_changed(window);
-        }
-    }
-}
-
 global void
 gui_window_on_key_down(window_st *window, const event_st *event)
 {
-    widget_st *focused = window->focused_widget;
     int key_code = event->payload.key.key_code;
     int key_char = event->payload.key.key_char;
-
-    if (focused) {
-        switch (key_code) {
-            case KEY_LEFT:  gui_window_update_focus(window, -1, 0); return;
-            case KEY_RIGHT: gui_window_update_focus(window, 1, 0); return;
-            case KEY_UP:    gui_window_update_focus(window, 0, -1); return;
-            case KEY_DOWN:  gui_window_update_focus(window, 0, 1); return;
-        }
-
-        if ((key_code == KEY_ENTER || key_char == ' ') && focused->on_press) {
-            focused->on_press(focused);
-            return;
-        }
-    }
 
     if (key_code == KEY_ESC) {
         app_launcher.show();
