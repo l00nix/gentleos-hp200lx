@@ -7,6 +7,13 @@
 
 my @SOURCE_DIRS = ("apps", "data", "kernel", "lib", "gui");
 
+sub uniq {
+    my (@list) = @_;
+    my %hash = map { $_ => 1 } @list;
+    my @ret = keys(%hash);
+    return @ret;
+}
+
 sub process_file {
     my ($file) = @_;
     my @protos;
@@ -30,7 +37,11 @@ sub process_file {
 
 sub main {
     foreach my $dir (@SOURCE_DIRS) {
-        my @files = sort(glob("$dir/*.c"));
+        my @files = glob("$dir/*.c $dir/*.C");
+        @files = map(lc, @files);
+        @files = uniq(@files);
+        @files = sort(@files);
+
         my @lines;
 
         foreach my $file (@files) {
