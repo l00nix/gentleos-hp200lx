@@ -43,30 +43,6 @@ bios_getc(void)
 }
 
 global void
-bios_uart_putc(char c)
-{
-    regs_st regs;
-
-    regs.h.ah = 0x01;
-    regs.h.al = c;
-    regs.x.dx = 0;
-
-    intr(0x14, &regs);
-}
-
-global void
-bios_uart_puts(const char *s)
-{
-    while (*s) {
-        if ((*s) == '\n') {
-            bios_uart_putc('\r');
-        }
-
-        bios_uart_putc(*s++);
-    }
-}
-
-global void
 bios_get_time(time_st *t)
 {
     regs_st regs;

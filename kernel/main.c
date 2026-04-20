@@ -21,6 +21,8 @@ extern void tests_run(void);
 global void
 krn_main(void)
 {
+    krn_uart_init();
+
     krn_debug_printf("\n");
     krn_ivt = MK_FP(0, 0);
 
@@ -64,6 +66,7 @@ krn_exit(void)
     krn_vga_deinit();
     krn_timer_deinit();
     krn_keyboard_deinit();
+    krn_uart_deinit();
 
     intr(0x20, &regs);
 }
