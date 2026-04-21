@@ -77,8 +77,6 @@ struct widget {
 struct window {
     point_st origin;
     size_st size;
-    uint8_t bg_color;
-    int hide_border;
 };
 
 typedef struct {

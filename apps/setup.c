@@ -15,24 +15,17 @@ enum {
 static window_st window;
 
 static void
-init_window(void)
-{
-    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-    window.bg_color = COLOR_BG;
-}
-
-static void
 on_show(void)
 {
     static int initialized = 0;
 
     if (!initialized) {
-        init_window();
+        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
         initialized = 1;
     }
 
-    gui_window_draw(&window);
+    gui_window_draw(&window, COLOR_BG, 1);
 }
 
 global app_st app_setup = {

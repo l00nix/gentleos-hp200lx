@@ -187,24 +187,14 @@ on_tick(void)
 }
 
 static void
-init_window(void)
-{
-    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-    /* Align window to 4px boundary to use gui_surface_scroll_up */
-    window.origin.x &= ~3;
-
-    window.bg_color = COLOR_BG;
-
-}
-
-static void
 on_show(void)
 {
     static int initialized = 0;
 
     if (!initialized) {
-        init_window();
+        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+        /* Align window to 4px boundary to use gui_surface_scroll_up */
+        window.origin.x &= ~3;
 
         app_terminal.on_key_down = on_key_down;
         app_terminal.on_uart_rx = on_uart_rx;
@@ -213,7 +203,7 @@ on_show(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window);
+    gui_window_draw(&window, COLOR_BG, 1);
 
     cursor_col = 0;
     cursor_row = ROWS - 1;

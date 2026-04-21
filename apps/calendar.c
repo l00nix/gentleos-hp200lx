@@ -195,14 +195,6 @@ on_key_up(const event_st *event)
 }
 
 static void
-init_window(void)
-{
-    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-    window.bg_color = COLOR_BG;
-}
-
-static void
 init_day_buttons(void)
 {
     uint16_t i;
@@ -249,7 +241,8 @@ on_show(void)
     int i;
 
     if (!initialized) {
-        init_window();
+        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
         init_day_buttons();
         init_current_date();
 
@@ -258,7 +251,7 @@ on_show(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window);
+    gui_window_draw(&window, COLOR_BG, 1);
 
     for (i = 0; i < GRID_CELLS_COUNT; ++i) {
         gui_widget_draw(&day_buttons[i]);

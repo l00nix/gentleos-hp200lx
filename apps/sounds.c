@@ -173,14 +173,6 @@ on_key_up(const event_st *event)
 }
 
 static void
-init_window(void)
-{
-    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-    window.bg_color = COLOR_FG;
-}
-
-static void
 init_keys(void)
 {
     int i;
@@ -225,7 +217,8 @@ on_show(void)
     int i;
 
     if (!initialized) {
-        init_window();
+        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
         init_keys();
 
         app_sounds.on_key_down = on_key_down;
@@ -234,7 +227,7 @@ on_show(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window);
+    gui_window_draw(&window, COLOR_FG, 1);
 
     for (i = 0; i < KEY_B_COUNT; ++i) {
         gui_widget_draw(&keys_b[i]);

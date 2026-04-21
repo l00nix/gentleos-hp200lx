@@ -42,15 +42,15 @@ gui_window_init(window_st *window, int width, int height)
 }
 
 global void
-gui_window_draw(window_st *window)
+gui_window_draw(window_st *window, uint8_t bg_color, int border)
 {
     rect_st area;
     size_t i;
 
     gui_window_area(window, &area);
-    gui_surface_draw_rect(&window->origin, &area, window->bg_color);
+    gui_surface_draw_rect(&window->origin, &area, bg_color);
 
-    if (!window->hide_border) {
+    if (border) {
         gui_surface_draw_border(&window->origin, &area, COLOR_FG);
     }
 

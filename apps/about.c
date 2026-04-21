@@ -87,7 +87,7 @@ draw_info(void)
     const char *title = "-=[ GENTLE OS ]=-";
 
     gui_grid_rect(&grid, &r);
-    gui_surface_draw_rect(&window.origin, &r, window.bg_color);
+    gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
 
     line++;
     draw_text_lg((GRID_COLS - strlen(title)) / 2, line++, title);
@@ -96,14 +96,6 @@ draw_info(void)
     /* draw_github_line(); */
 
     gui_surface_mark_dirty(&window.origin, &r);
-}
-
-static void
-init_window(void)
-{
-    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-    window.bg_color = COLOR_BG;
 }
 
 static void
@@ -123,12 +115,14 @@ on_show(void)
     static int initialized = 0;
 
     if (!initialized) {
-        init_window();
+        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
         init_grid();
+
         initialized = 1;
     }
 
-    gui_window_draw(&window);
+    gui_window_draw(&window, COLOR_BG, 1);
     draw_info();
 }
 

@@ -259,14 +259,6 @@ on_key_down(const event_st *event)
 }
 
 static void
-init_window(void)
-{
-    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-    window.bg_color = COLOR_FG;
-}
-
-static void
 init_buttons(void)
 {
     int row, col, idx;
@@ -303,7 +295,8 @@ on_show(void)
     int i;
 
     if (!initialized) {
-        init_window();
+        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
         init_buttons();
 
         app_calc.on_key_down = on_key_down;
@@ -312,7 +305,7 @@ on_show(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window);
+    gui_window_draw(&window, COLOR_FG, 1);
 
     for (i = 0; i < BUTTONS_COUNT; ++i) {
         gui_widget_draw(&button_widgets[i]);

@@ -93,15 +93,6 @@ on_tick(void)
 }
 
 static void
-init_window(void)
-{
-    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-    window.bg_color = COLOR_BG;
-    window.hide_border = 1;
-}
-
-static void
 init_grid(void)
 {
     grid.cell_width = GRID_CELL_WIDTH;
@@ -118,7 +109,8 @@ on_show(void)
     static int initialized = 0;
 
     if (!initialized) {
-        init_window();
+        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
         init_grid();
 
         app_clock.on_tick = on_tick;
@@ -126,7 +118,6 @@ on_show(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window);
     draw_time();
 }
 

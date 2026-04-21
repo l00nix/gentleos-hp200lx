@@ -409,26 +409,17 @@ on_key_down(const event_st *event)
 }
 
 static void
-init_window(void)
-{
-    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-    window.bg_color = COLOR_BG;
-    window.hide_border = 1;
-}
-
-static void
 on_show(void)
 {
     static int initialized = 0;
 
     if (!initialized) {
-        init_window();
+        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
         app_mahjong.on_key_down = on_key_down;
+
         initialized = 1;
     }
-
-    gui_window_draw(&window);
 
     restart_game();
 }

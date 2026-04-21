@@ -359,14 +359,6 @@ on_key_down(const event_st *event)
 }
 
 static void
-init_window(void)
-{
-    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-    window.bg_color = COLOR_FG;
-}
-
-static void
 init_grid(void)
 {
     grid.cell_width = GRID_CELL_WIDTH;
@@ -383,7 +375,8 @@ on_show(void)
     static int initialized = 0;
 
     if (!initialized) {
-        init_window();
+        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
         init_grid();
 
         app_mines.on_key_down = on_key_down;
@@ -394,7 +387,7 @@ on_show(void)
     current_row = 0;
     current_col = 0;
 
-    gui_window_draw(&window);
+    gui_window_draw(&window, COLOR_FG, 1);
     draw_all_cells();
     restart_game();
 }

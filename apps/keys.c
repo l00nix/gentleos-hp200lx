@@ -227,20 +227,14 @@ on_key_up(const event_st *event)
 }
 
 static void
-init_window(void)
-{
-    gui_window_init(&window, window.size.width, window.size.height);
-    window.bg_color = COLOR_BG;
-}
-
-static void
 on_show(void)
 {
     static int initialized = 0;
 
     if (!initialized) {
         init_keys();
-        init_window();
+
+        gui_window_init(&window, window.size.width, window.size.height);
 
         app_keymap.on_key_down = on_key_down;
         app_keymap.on_key_up = on_key_up;
