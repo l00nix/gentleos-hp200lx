@@ -7,14 +7,6 @@
 
 #include <gui.h>
 
-global const rect_st GUI_RECT_ZERO = {
-    0, 0, 0, 0
-};
-
-global const rect_st GUI_RECT_SCREEN = {
-    0, 0, GUI_WIDTH, GUI_HEIGHT
-};
-
 global const point_st GUI_POINT_ZERO = { 0, 0 };
 
 global void
@@ -63,19 +55,6 @@ gui_rect_translate(rect_st *r, const point_st *v)
 }
 
 global void
-gui_rect_translate_back(rect_st *r, const point_st *v)
-{
-    r->x -= v->x;
-    r->y -= v->y;
-}
-
-global int
-gui_rect_contains_point(const rect_st *r, const point_st *p)
-{
-    return p->x >= r->x && p->x < r->x + r->width && p->y >= r->y && p->y < r->y + r->height;
-}
-
-global void
 gui_rect_center(rect_st *r, const rect_st *container)
 {
     r->x = container->x + (container->width - r->width) / 2;
@@ -83,26 +62,6 @@ gui_rect_center(rect_st *r, const rect_st *container)
 
     r->y = container->y + (container->height - r->height) / 2;
     r->y = r->y < container->y ? container->y : r->y;
-}
-
-global void
-gui_rect_limit(rect_st *r, const rect_st *container)
-{
-    if (r->x < container->x) {
-        r->x = container->x;
-    }
-
-    if (r->y < container->y) {
-        r->y = container->y;
-    }
-
-    if (r->x + r->width > container->x + container->width) {
-        r->x = container->x + container->width - r->width;
-    }
-
-    if (r->y + r->height > container->y + container->height) {
-        r->y = container->y + container->height - r->height;
-    }
 }
 
 global void

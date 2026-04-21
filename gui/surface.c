@@ -60,7 +60,7 @@ gui_surface_flush(void)
         );
     }
 
-    gui_rect_copy(&gui_surface_dirty_rect, &GUI_RECT_ZERO);
+    gui_rect_init(&gui_surface_dirty_rect, 0, 0, 0, 0);
 }
 
 static void
