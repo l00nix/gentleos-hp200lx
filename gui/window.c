@@ -8,35 +8,16 @@
 #include <gui.h>
 
 global void
-gui_window_rect(window_st *window, rect_st *out)
-{
-    gui_rect_init(out,
-        window->origin.x,
-        window->origin.y,
-        window->size.width,
-        window->size.height
-    );
-}
-
-global void
-gui_window_area(window_st *window, rect_st *out)
-{
-    gui_rect_init(out, 0, 0, window->size.width, window->size.height);
-}
-
-global void
 gui_window_init(window_st *window, int width, int height)
 {
     rect_st rect;
 
-    memset(window, 0, sizeof(*window));
-
-    window->size.width = width;
-    window->size.height = height;
-
-    gui_window_area(window, &rect);
+    rect.width = width;
+    rect.height = height;
     gui_rect_center(&rect, &gui_app_rect);
 
+    window->size.width = rect.width;
+    window->size.height = rect.height;
     window->origin.x = rect.x;
     window->origin.y = rect.y;
 }
@@ -44,15 +25,15 @@ gui_window_init(window_st *window, int width, int height)
 global void
 gui_window_draw(window_st *window, uint8_t bg_color, int border)
 {
-    rect_st area;
-    size_t i;
+    rect_st rect;
 
-    gui_window_area(window, &area);
-    gui_surface_draw_rect(&window->origin, &area, bg_color);
+    gui_rect_init(&rect, 0, 0, window->size.width, window->size.height);
+
+    gui_surface_draw_rect(&window->origin, &rect, bg_color);
 
     if (border) {
-        gui_surface_draw_border(&window->origin, &area, COLOR_FG);
+        gui_surface_draw_border(&window->origin, &rect, COLOR_FG);
     }
 
-    gui_surface_mark_dirty(&window->origin, &area);
+    gui_surface_mark_dirty(&window->origin, &rect);
 }
