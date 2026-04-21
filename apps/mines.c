@@ -395,6 +395,5 @@ on_show(void)
 global app_st app_mines = {
     "Mines",
     &icon_mines,
-    &window,
     on_show,
 };

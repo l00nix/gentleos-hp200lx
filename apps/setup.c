@@ -31,6 +31,5 @@ on_show(void)
 global app_st app_setup = {
     "Setup",
     &icon_setup,
-    &window,
     on_show,
 };

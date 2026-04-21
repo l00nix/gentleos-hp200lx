@@ -315,6 +315,5 @@ on_show(void)
 global app_st app_calc = {
     "Calculator",
     &icon_calc,
-    &window,
     on_show,
 };

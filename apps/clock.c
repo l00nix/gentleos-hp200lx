@@ -124,6 +124,5 @@ on_show(void)
 global app_st app_clock = {
     "Clock",
     &icon_clock,
-    &window,
     on_show,
 };

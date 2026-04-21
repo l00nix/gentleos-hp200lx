@@ -329,6 +329,5 @@ on_show(void)
 global app_st app_tetris = {
     "Tetris",
     &icon_tetris,
-    &window,
     on_show,
 };

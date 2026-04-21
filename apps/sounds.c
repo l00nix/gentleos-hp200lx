@@ -241,6 +241,5 @@ on_show(void)
 global app_st app_sounds = {
     "Sounds",
     &icon_sounds,
-    &window,
     on_show,
 };

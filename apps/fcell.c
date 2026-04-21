@@ -776,6 +776,5 @@ on_show(void)
 global app_st app_freecell = {
     "FreeCell",
     &icon_fcell,
-    &window,
     on_show,
 };

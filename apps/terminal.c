@@ -214,6 +214,5 @@ on_show(void)
 global app_st app_terminal = {
     "Serial Terminal",
     &icon_serial,
-    &window,
     on_show,
 };

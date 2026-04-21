@@ -157,6 +157,5 @@ on_show(void)
 global app_st app_launcher = {
     "Launcher",
 	0,
-    &window,
     on_show,
 };

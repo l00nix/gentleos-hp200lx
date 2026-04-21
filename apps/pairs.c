@@ -293,6 +293,5 @@ on_show(void)
 global app_st app_pairs = {
     "Pairs",
     &icon_pairs,
-    &window,
     on_show,
 };

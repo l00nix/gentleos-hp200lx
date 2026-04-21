@@ -82,7 +82,6 @@ typedef struct {
 typedef struct {
     const char *name;
     bitmap_st *icon;
-    window_st *window;
     void (*on_show)(void);
     void (*on_key_down)(const event_st *);
     void (*on_key_up)(const event_st *);
