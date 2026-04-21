@@ -278,11 +278,10 @@ init_buttons(void)
             idx = row * BUTTON_COLS + col;
             button = &button_widgets[idx];
 
-            button->window = &window;
+            button->origin = &window.origin;
             button->type = WIDGET_TYPE_BUTTON;
             gui_grid_cell_rect(&grid, col, row, &button->rect);
             button->hide_border = 1;
-            button->window = &window;
             button->label = button_labels[idx];
         }
     }

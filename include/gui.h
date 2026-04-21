@@ -52,14 +52,11 @@ enum {
     WIDGET_TYPE_BUTTON = 1,
 };
 
-struct window;
-typedef struct window window_st;
-
 struct widget;
 typedef struct widget widget_st;
 
 struct widget {
-    window_st *window;
+    point_st *origin;
     rect_st rect;
 
     int type;
@@ -74,10 +71,10 @@ struct widget {
     const char *label;
 };
 
-struct window {
+typedef struct {
     point_st origin;
     size_st size;
-};
+} window_st;
 
 typedef struct {
     int cell_width;

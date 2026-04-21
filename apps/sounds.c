@@ -55,14 +55,14 @@ draw_key_w(widget_st *widget)
     if ((ofs == 0 && octave < 2) || ofs == 1 || ofs == 3 || ofs == 4 || ofs == 5) {
         rect_top.width -= KEY_B_WIDTH / 2;
     }
-    gui_surface_draw_rect(&widget->window->origin, &rect_top, color);
+    gui_surface_draw_rect(widget->origin, &rect_top, color);
 
     gui_rect_copy(&rect_bottom, &rect_base);
     rect_bottom.y += KEY_B_HEIGHT;
     rect_bottom.height -= KEY_B_HEIGHT;
-    gui_surface_draw_rect(&widget->window->origin, &rect_bottom, color);
+    gui_surface_draw_rect(widget->origin, &rect_bottom, color);
 
-    gui_surface_mark_dirty(&widget->window->origin, &widget->rect);
+    gui_surface_mark_dirty(widget->origin, &widget->rect);
 }
 
 static void
@@ -70,9 +70,9 @@ draw_key_b(widget_st *widget)
 {
     uint8_t color = (widget == pressed_widget) ? COLOR_BG : COLOR_FG;
 
-    gui_surface_draw_rect(&widget->window->origin, &widget->rect, color);
+    gui_surface_draw_rect(widget->origin, &widget->rect, color);
 
-    gui_surface_mark_dirty(&widget->window->origin, &widget->rect);
+    gui_surface_mark_dirty(widget->origin, &widget->rect);
 }
 
 static unsigned
@@ -186,7 +186,7 @@ init_keys(void)
         octave_ofs = i % 5;
         key_w_idx = (octave_no * 7) + octave_ofs + 1 + (octave_ofs > 1 ? 1 : 0);
 
-        keys_b[i].window = &window;
+        keys_b[i].origin = &window.origin;
         keys_b[i].type = WIDGET_TYPE_BUTTON;
         keys_b[i].rect.x = (key_w_idx * KEY_W_WIDTH) - key_w_idx - (KEY_B_WIDTH / 2);
         keys_b[i].rect.y = 1;
@@ -198,7 +198,7 @@ init_keys(void)
     }
 
     for (i = 0; i < KEY_W_COUNT; i++) {
-        keys_w[i].window = &window;
+        keys_w[i].origin = &window.origin;
         keys_w[i].type = WIDGET_TYPE_BUTTON;
         keys_w[i].rect.x = (i * KEY_W_WIDTH) - i;
         keys_w[i].rect.y = 0;

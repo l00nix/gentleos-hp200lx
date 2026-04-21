@@ -103,21 +103,21 @@ draw_day_button(widget_st *widget)
     char buf[3];
 
     if (!is_in_month) {
-        gui_surface_draw_rect(&widget->window->origin, &widget->rect, COLOR_BG);
-        gui_surface_mark_dirty(&widget->window->origin, &widget->rect);
+        gui_surface_draw_rect(widget->origin, &widget->rect, COLOR_BG);
+        gui_surface_mark_dirty(widget->origin, &widget->rect);
         return;
     }
 
     fg = is_current ? COLOR_BG : COLOR_FG;
     bg = is_current ? COLOR_FG : COLOR_BG;
 
-    gui_surface_draw_rect(&widget->window->origin, &widget->rect, bg);
+    gui_surface_draw_rect(widget->origin, &widget->rect, bg);
 
     snprintf(buf, sizeof(buf), "%d", day + 1);
-    gui_surface_draw_str_centered(&widget->window->origin, &widget->rect, NULL,
+    gui_surface_draw_str_centered(widget->origin, &widget->rect, NULL,
         buf, fg, bg);
 
-    gui_surface_mark_dirty(&widget->window->origin, &widget->rect);
+    gui_surface_mark_dirty(widget->origin, &widget->rect);
 }
 
 static void
@@ -213,7 +213,7 @@ init_day_buttons(void)
         col = i % GRID_COLS;
         row = i / GRID_COLS;
 
-        day_buttons[i].window = &window;
+        day_buttons[i].origin = &window.origin;
         day_buttons[i].type = WIDGET_TYPE_BUTTON;
         gui_grid_cell_rect(&grid, col, row, &day_buttons[i].rect);
         day_buttons[i].draw = draw_day_button;
