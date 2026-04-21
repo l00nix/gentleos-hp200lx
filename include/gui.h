@@ -47,11 +47,6 @@ typedef struct {
     const uint8_t *pixels;
 } bitmap_st;
 
-enum {
-    WIDGET_TYPE_UNKNOWN = 0,
-    WIDGET_TYPE_BUTTON = 1,
-};
-
 struct widget;
 typedef struct widget widget_st;
 
@@ -59,7 +54,6 @@ struct widget {
     point_st *origin;
     rect_st rect;
 
-    int type;
     int tag1;
     int tag2;
 

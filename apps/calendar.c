@@ -128,7 +128,7 @@ draw_selected_month(void)
 
     for (i = 0; i < GRID_CELLS_COUNT; ++i) {
         day_buttons[i].tag1 = i - day_of_week;
-        gui_widget_draw(&day_buttons[i]);
+        day_buttons[i].draw(&day_buttons[i]);
     }
 
     draw_month_label();
@@ -214,7 +214,6 @@ init_day_buttons(void)
         row = i / GRID_COLS;
 
         day_buttons[i].origin = &window.origin;
-        day_buttons[i].type = WIDGET_TYPE_BUTTON;
         gui_grid_cell_rect(&grid, col, row, &day_buttons[i].rect);
         day_buttons[i].draw = draw_day_button;
     }
@@ -254,7 +253,7 @@ on_show(void)
     gui_window_draw(&window, COLOR_BG, 1);
 
     for (i = 0; i < GRID_CELLS_COUNT; ++i) {
-        gui_widget_draw(&day_buttons[i]);
+        day_buttons[i].draw(&day_buttons[i]);
     }
 
     draw_week_bar();

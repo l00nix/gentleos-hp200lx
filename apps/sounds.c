@@ -149,12 +149,12 @@ on_key_down(const event_st *event)
     if (pressed_widget) {
         prev_widget = pressed_widget;
         pressed_widget = NULL;
-        gui_widget_draw(prev_widget);
+        prev_widget->draw(prev_widget);
     }
 
     krn_speaker_play(key_frequency(widget));
     pressed_widget = widget;
-    gui_widget_draw(widget);
+    widget->draw(widget);
 }
 
 static void
@@ -168,7 +168,7 @@ on_key_up(const event_st *event)
     }
 
     pressed_widget = NULL;
-    gui_widget_draw(widget);
+    widget->draw(widget);
     krn_speaker_stop();
 }
 
@@ -187,7 +187,6 @@ init_keys(void)
         key_w_idx = (octave_no * 7) + octave_ofs + 1 + (octave_ofs > 1 ? 1 : 0);
 
         keys_b[i].origin = &window.origin;
-        keys_b[i].type = WIDGET_TYPE_BUTTON;
         keys_b[i].rect.x = (key_w_idx * KEY_W_WIDTH) - key_w_idx - (KEY_B_WIDTH / 2);
         keys_b[i].rect.y = 1;
         keys_b[i].rect.width = KEY_B_WIDTH;
@@ -199,7 +198,6 @@ init_keys(void)
 
     for (i = 0; i < KEY_W_COUNT; i++) {
         keys_w[i].origin = &window.origin;
-        keys_w[i].type = WIDGET_TYPE_BUTTON;
         keys_w[i].rect.x = (i * KEY_W_WIDTH) - i;
         keys_w[i].rect.y = 0;
         keys_w[i].rect.width = KEY_W_WIDTH;
@@ -230,11 +228,11 @@ on_show(void)
     gui_window_draw(&window, COLOR_FG, 1);
 
     for (i = 0; i < KEY_B_COUNT; ++i) {
-        gui_widget_draw(&keys_b[i]);
+        keys_b[i].draw(&keys_b[i]);
     }
 
     for (i = 0; i < KEY_W_COUNT; ++i) {
-        gui_widget_draw(&keys_w[i]);
+        keys_w[i].draw(&keys_w[i]);
     }
 
     gui_status_set("Control: letters and digits");

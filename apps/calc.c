@@ -227,7 +227,7 @@ on_key_up(const event_st *event)
     if (prev_pressed_button) {
         pressed_button = NULL;
         prev_pressed_button->active = 0;
-        gui_widget_draw(prev_pressed_button);
+        prev_pressed_button->draw(prev_pressed_button);
     }
 }
 
@@ -248,14 +248,13 @@ on_key_down(const event_st *event)
     if (prev_pressed_button) {
         pressed_button = 0;
         prev_pressed_button->active = 0;
-        gui_widget_draw(prev_pressed_button);
+        prev_pressed_button->draw(prev_pressed_button);
     }
 
     pressed_button = button;
     button->active = 1;
-    gui_button_draw(button);
+    button->draw(button);
     on_button_press(button);
-
 }
 
 static void
@@ -279,10 +278,10 @@ init_buttons(void)
             button = &button_widgets[idx];
 
             button->origin = &window.origin;
-            button->type = WIDGET_TYPE_BUTTON;
             gui_grid_cell_rect(&grid, col, row, &button->rect);
             button->hide_border = 1;
             button->label = button_labels[idx];
+            button->draw = gui_button_draw;
         }
     }
 }
@@ -307,7 +306,7 @@ on_show(void)
     gui_window_draw(&window, COLOR_FG, 1);
 
     for (i = 0; i < BUTTONS_COUNT; ++i) {
-        gui_widget_draw(&button_widgets[i]);
+        button_widgets[i].draw(&button_widgets[i]);
     }
 
     update_display();

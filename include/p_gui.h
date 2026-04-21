@@ -47,8 +47,6 @@ extern void gui_surface_draw_str(const point_st *origin, uint16_t x, uint16_t y,
 extern void gui_surface_draw_str_centered(const point_st *origin, const rect_st *rect, font_st *font, const char *s, uint8_t fg, uint8_t bg);
 extern void gui_surface_draw_bitmap(const point_st *origin, const size_st *bounds, int dst_x, int dst_y, bitmap_st *bitmap, uint8_t fill);
 extern void gui_surface_draw_bitmap_centered(const point_st *origin, const size_st *bounds, const rect_st *rect, bitmap_st *bitmap, uint8_t fill);
-/* gui/widget.c */
-extern void gui_widget_draw(widget_st *widget);
 /* gui/window.c */
 extern void gui_window_rect(window_st *window, rect_st *out);
 extern void gui_window_area(window_st *window, rect_st *out);
