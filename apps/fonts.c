@@ -129,7 +129,7 @@ update_current_cell(int dx, int dy)
 }
 
 static void
-on_key_down(window_st *window, const event_st *event)
+on_key_down(const event_st *event)
 {
     int key_code = event->payload.key.key_code;
 
@@ -149,7 +149,6 @@ init_window(void)
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     window.bg_color = COLOR_FG;
-    window.on_key_down = on_key_down;
 }
 
 static void
@@ -171,6 +170,9 @@ on_show(void)
     if (!initialized) {
         init_window();
         init_grid();
+
+        app_fonts.on_key_down = on_key_down;
+
         initialized = 1;
     }
 

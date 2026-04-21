@@ -162,7 +162,7 @@ restart_game(void)
 }
 
 static void
-on_tick(window_st *window)
+on_tick(void)
 {
     if (!waiting) {
         return;
@@ -233,7 +233,7 @@ on_enter(void)
 }
 
 static void
-on_key_down(window_st *win, const event_st *event)
+on_key_down(const event_st *event)
 {
     int key_code = event->payload.key.key_code;
 
@@ -248,7 +248,7 @@ on_key_down(window_st *win, const event_st *event)
 }
 
 static void
-on_key_up(window_st *win, const event_st *event)
+on_key_up(const event_st *event)
 {
     int ch = event->payload.key.key_char;
 
@@ -264,9 +264,6 @@ init_window(void)
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     window.bg_color = COLOR_FG;
-    window.on_tick = on_tick;
-    window.on_key_down = on_key_down;
-    window.on_key_up = on_key_up;
 }
 
 static void
@@ -288,6 +285,11 @@ on_show(void)
     if (!initialized) {
         init_window();
         init_grid();
+
+        app_pairs.on_tick = on_tick;
+        app_pairs.on_key_down = on_key_down;
+        app_pairs.on_key_up = on_key_up;
+
         initialized = 1;
     }
 

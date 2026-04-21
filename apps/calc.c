@@ -221,7 +221,7 @@ button_for_char(int ch)
 }
 
 static void
-on_key_up(window_st *window, const event_st *event)
+on_key_up(const event_st *event)
 {
     widget_st *prev_pressed_button = pressed_button;
 
@@ -233,7 +233,7 @@ on_key_up(window_st *window, const event_st *event)
 }
 
 static void
-on_key_down(window_st *window, const event_st *event)
+on_key_down(const event_st *event)
 {
     widget_st *prev_pressed_button = pressed_button;
     widget_st *button = button_for_char(event->payload.key.key_char);
@@ -267,8 +267,6 @@ init_window(void)
     window.bg_color = COLOR_FG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
-    window.on_key_down = on_key_down;
-    window.on_key_up = on_key_up;
 }
 
 static void
@@ -310,6 +308,10 @@ on_show(void)
     if (!initialized) {
         init_window();
         init_buttons();
+
+        app_calc.on_key_down = on_key_down;
+        app_calc.on_key_up = on_key_up;
+
         initialized = 1;
     }
 

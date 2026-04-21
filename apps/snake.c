@@ -202,7 +202,7 @@ on_timeout(void)
 }
 
 static void
-on_tick(window_st *window)
+on_tick(void)
 {
     static unsigned count = 0;
 
@@ -215,7 +215,7 @@ on_tick(window_st *window)
 }
 
 static void
-on_keyboard(window_st *window, const event_st *event)
+on_key_down(const event_st *event)
 {
     int key = event->payload.key.key_code;
 
@@ -231,8 +231,6 @@ init_window(void)
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     window.bg_color = COLOR_BG;
-    window.on_tick = on_tick;
-    window.on_key_down = on_keyboard;
 }
 
 static void
@@ -254,6 +252,10 @@ on_show(void)
     if (!initialized) {
         init_window();
         init_grid();
+
+        app_snake.on_tick = on_tick;
+        app_snake.on_key_down = on_key_down;
+
         initialized = 1;
     }
 

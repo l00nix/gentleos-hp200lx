@@ -148,7 +148,7 @@ send_char(uint8_t c)
 }
 
 static void
-on_uart_rx(window_st *win, const event_st *event)
+on_uart_rx(const event_st *event)
 {
     set_cursor_visible(0);
     put_char(event->payload.uart.byte);
@@ -156,7 +156,7 @@ on_uart_rx(window_st *win, const event_st *event)
 }
 
 static void
-on_key_down(window_st *win, const event_st *event)
+on_key_down(const event_st *event)
 {
     uint8_t ch = event->payload.key.key_char;
 
@@ -173,7 +173,7 @@ on_key_down(window_st *win, const event_st *event)
 }
 
 static void
-on_tick(window_st *win)
+on_tick(void)
 {
     static unsigned cursor_blink_count = 0;
 
@@ -195,9 +195,7 @@ init_window(void)
     window.origin.x &= ~3;
 
     window.bg_color = COLOR_BG;
-    window.on_key_down = on_key_down;
-    window.on_uart_rx = on_uart_rx;
-    window.on_tick = on_tick;
+
 }
 
 static void
@@ -207,6 +205,11 @@ on_show(void)
 
     if (!initialized) {
         init_window();
+
+        app_terminal.on_key_down = on_key_down;
+        app_terminal.on_uart_rx = on_uart_rx;
+        app_terminal.on_tick = on_tick;
+
         initialized = 1;
     }
 

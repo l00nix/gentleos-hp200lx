@@ -302,7 +302,7 @@ player_hit(void)
 }
 
 static void
-on_key_up(window_st *window, const event_st *event)
+on_key_up(const event_st *event)
 {
     int ch = event->payload.key.key_char;
 
@@ -321,7 +321,6 @@ init_window(void)
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     window.bg_color = COLOR_BG;
-    window.on_key_up = on_key_up;
 }
 
 static void
@@ -331,6 +330,7 @@ on_show(void)
 
     if (!initialized) {
         init_window();
+        app_blackjack.on_key_up = on_key_up;
         initialized = 1;
     }
 

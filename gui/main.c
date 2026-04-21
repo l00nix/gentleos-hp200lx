@@ -15,7 +15,6 @@ gui_run_app(app_st *app)
 {
     if (gui_current_app) {
         gui_current_app->window->visible = 0;
-        gui_window_on_close(gui_current_app->window);
         gui_current_app = NULL;
     }
 
@@ -25,15 +24,15 @@ gui_run_app(app_st *app)
     gui_status_set_br("");
 
     gui_current_app = app;
-    gui_current_app->window->visible = 1;
     gui_current_app->on_show();
+    gui_current_app->window->visible = 1;
 }
 
 global void
 gui_main(void)
 {
     event_st event;
-    window_st *w;
+    app_st *app;
 
     gui_app_rect.x = 0;
     gui_app_rect.y = STATUS_HEIGHT;
@@ -57,16 +56,28 @@ gui_main(void)
             continue;
         }
 
-        w = gui_current_app->window;
+        app = gui_current_app;
 
         if (event.type == EVENT_TIMER_TICK) {
-            gui_window_on_tick(w);
-        } else if (event.type == EVENT_KEY_DOWN && w) {
-            gui_window_on_key_down(w, &event);
-        } else if (event.type == EVENT_KEY_UP && w) {
-            gui_window_on_key_up(w, &event);
-        } else if (event.type == EVENT_UART_RX && w) {
-            gui_window_on_uart_rx(w, &event);
+            if (app->on_tick) {
+                app->on_tick();
+            }
+        } else if (event.type == EVENT_KEY_DOWN) {
+            if (event.payload.key.key_code == KEY_ESC) {
+                gui_run_app(&app_launcher);
+            } else if (event.payload.key.key_char == 'Q') {
+                krn_exit();
+            } else if (app->on_key_down) {
+                app->on_key_down(&event);
+            }
+        } else if (event.type == EVENT_KEY_UP) {
+            if (app->on_key_up) {
+                app->on_key_up(&event);
+            }
+        } else if (event.type == EVENT_UART_RX) {
+            if (app->on_uart_rx) {
+                app->on_uart_rx(&event);
+            }
         }
 
         if (krn_event_count() == 0) {

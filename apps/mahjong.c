@@ -379,7 +379,7 @@ restart_game(void)
 }
 
 static void
-on_key_down(window_st *win, const event_st *event)
+on_key_down(const event_st *event)
 {
     int key_code = event->payload.key.key_code;
     int key_ch = event->payload.key.key_char;
@@ -415,7 +415,6 @@ init_window(void)
 
     window.bg_color = COLOR_BG;
     window.hide_border = 1;
-    window.on_key_down = on_key_down;
 }
 
 static void
@@ -425,6 +424,7 @@ on_show(void)
 
     if (!initialized) {
         init_window();
+        app_mahjong.on_key_down = on_key_down;
         initialized = 1;
     }
 

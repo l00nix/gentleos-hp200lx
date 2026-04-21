@@ -80,7 +80,7 @@ draw_time(void)
 }
 
 static void
-on_tick(window_st *window)
+on_tick(void)
 {
     static unsigned count = 0;
 
@@ -99,7 +99,6 @@ init_window(void)
 
     window.bg_color = COLOR_BG;
     window.hide_border = 1;
-    window.on_tick = on_tick;
 }
 
 static void
@@ -121,6 +120,9 @@ on_show(void)
     if (!initialized) {
         init_window();
         init_grid();
+
+        app_clock.on_tick = on_tick;
+
         initialized = 1;
     }
 

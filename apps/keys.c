@@ -215,13 +215,13 @@ update_key(uint16_t code, int escaped, int pressed)
 }
 
 static void
-on_key_down(window_st *win, const event_st *event)
+on_key_down(const event_st *event)
 {
     update_key(event->payload.key.key_code, event->payload.key.key_escaped, 1);
 }
 
 static void
-on_key_up(window_st *win, const event_st *event)
+on_key_up(const event_st *event)
 {
     update_key(event->payload.key.key_code, event->payload.key.key_escaped, 0);
 }
@@ -231,8 +231,6 @@ init_window(void)
 {
     gui_window_init(&window, window.size.width, window.size.height);
     window.bg_color = COLOR_BG;
-    window.on_key_down = on_key_down;
-    window.on_key_up = on_key_up;
 }
 
 static void
@@ -243,6 +241,10 @@ on_show(void)
     if (!initialized) {
         init_keys();
         init_window();
+
+        app_keymap.on_key_down = on_key_down;
+        app_keymap.on_key_up = on_key_up;
+
         initialized = 1;
     }
 

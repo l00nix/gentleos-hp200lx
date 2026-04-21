@@ -86,13 +86,6 @@ struct window {
     widget_st **widgets;
     size_t widgets_count;
     size_t widgets_capacity;
-
-    void (*on_key_down)(window_st *, const event_st *);
-    void (*on_key_up)(window_st *, const event_st *);
-    void (*on_uart_rx)(window_st *, const event_st *);
-    void (*on_focus_changed)(window_st *);
-    void (*on_close)(window_st *);
-    void (*on_tick)(window_st *);
 };
 
 typedef struct {
@@ -109,6 +102,11 @@ typedef struct {
     bitmap_st *icon;
     window_st *window;
     void (*on_show)(void);
+    void (*on_key_down)(const event_st *);
+    void (*on_key_up)(const event_st *);
+    void (*on_uart_rx)(const event_st *);
+    void (*on_close)(void);
+    void (*on_tick)(void);
 } app_st;
 
 enum {

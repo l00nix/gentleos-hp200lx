@@ -186,7 +186,7 @@ set_next_month(void)
 }
 
 static void
-on_key_up(window_st *window, const event_st *event)
+on_key_up(const event_st *event)
 {
     int ch = event->payload.key.key_char;
 
@@ -204,7 +204,6 @@ init_window(void)
     window.bg_color = COLOR_BG;
     window.widgets = widgets;
     window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
-    window.on_key_up = on_key_up;
 }
 
 static void
@@ -257,6 +256,8 @@ on_show(void)
         init_window();
         init_day_buttons();
         init_current_date();
+
+        app_calendar.on_key_up = on_key_up;
 
         initialized = 1;
     }
