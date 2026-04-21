@@ -167,10 +167,6 @@ on_timeout(void)
     coords_st next_head;
     uint8_t next_block;
 
-    if (!window.visible) {
-        return;
-    }
-
     next_head = move_head(*body.head);
 
     if (next_head.x < 0 || next_head.x >= GRID_COLS ||

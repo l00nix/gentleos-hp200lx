@@ -14,7 +14,6 @@ global void
 gui_run_app(app_st *app)
 {
     if (gui_current_app) {
-        gui_current_app->window->visible = 0;
         gui_current_app = NULL;
     }
 
@@ -25,7 +24,6 @@ gui_run_app(app_st *app)
 
     gui_current_app = app;
     gui_current_app->on_show();
-    gui_current_app->window->visible = 1;
 }
 
 global void
