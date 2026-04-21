@@ -82,10 +82,6 @@ struct window {
 
     uint8_t bg_color;
     int hide_border;
-
-    widget_st **widgets;
-    size_t widgets_count;
-    size_t widgets_capacity;
 };
 
 typedef struct {

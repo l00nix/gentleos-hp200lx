@@ -54,4 +54,3 @@ extern void gui_window_rect(window_st *window, rect_st *out);
 extern void gui_window_area(window_st *window, rect_st *out);
 extern void gui_window_init(window_st *window, int width, int height);
 extern void gui_window_draw(window_st *window);
-extern int gui_window_add_widget(window_st *window, widget_st *widget);

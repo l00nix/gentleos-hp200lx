@@ -54,22 +54,5 @@ gui_window_draw(window_st *window)
         gui_surface_draw_border(&window->origin, &area, COLOR_FG);
     }
 
-    for (i = 0; i < window->widgets_count; ++i) {
-        gui_widget_draw(window->widgets[i]);
-    }
-
     gui_surface_mark_dirty(&window->origin, &area);
-}
-
-global int
-gui_window_add_widget(window_st *window, widget_st *widget)
-{
-    if (window->widgets_count >= window->widgets_capacity) {
-        return -1;
-    }
-
-    widget->window = window;
-    window->widgets[window->widgets_count++] = widget;
-
-    return 0;
 }

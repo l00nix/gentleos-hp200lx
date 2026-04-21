@@ -30,7 +30,6 @@ static window_st window;
 
 static widget_st keys_w[KEY_W_COUNT];
 static widget_st keys_b[KEY_B_COUNT];
-static widget_st *widgets[KEY_W_COUNT + KEY_B_COUNT];
 static widget_st *pressed_widget = 0;
 
 static void
@@ -179,8 +178,6 @@ init_window(void)
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     window.bg_color = COLOR_FG;
-    window.widgets = widgets;
-    window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
 }
 
 static void
@@ -197,6 +194,7 @@ init_keys(void)
         octave_ofs = i % 5;
         key_w_idx = (octave_no * 7) + octave_ofs + 1 + (octave_ofs > 1 ? 1 : 0);
 
+        keys_b[i].window = &window;
         keys_b[i].type = WIDGET_TYPE_BUTTON;
         keys_b[i].rect.x = (key_w_idx * KEY_W_WIDTH) - key_w_idx - (KEY_B_WIDTH / 2);
         keys_b[i].rect.y = 1;
@@ -205,10 +203,10 @@ init_keys(void)
         keys_b[i].draw = draw_key_b;
         keys_b[i].tag1 = TAG_KEY_B;
         keys_b[i].tag2 = i;
-        gui_window_add_widget(&window, &keys_b[i]);
     }
 
     for (i = 0; i < KEY_W_COUNT; i++) {
+        keys_w[i].window = &window;
         keys_w[i].type = WIDGET_TYPE_BUTTON;
         keys_w[i].rect.x = (i * KEY_W_WIDTH) - i;
         keys_w[i].rect.y = 0;
@@ -217,7 +215,6 @@ init_keys(void)
         keys_w[i].draw = draw_key_w;
         keys_w[i].tag1 = TAG_KEY_W;
         keys_w[i].tag2 = i;
-        gui_window_add_widget(&window, &keys_w[i]);
     }
 }
 
@@ -225,6 +222,7 @@ static void
 on_show(void)
 {
     static int initialized = 0;
+    int i;
 
     if (!initialized) {
         init_window();
@@ -237,6 +235,14 @@ on_show(void)
     }
 
     gui_window_draw(&window);
+
+    for (i = 0; i < KEY_B_COUNT; ++i) {
+        gui_widget_draw(&keys_b[i]);
+    }
+
+    for (i = 0; i < KEY_W_COUNT; ++i) {
+        gui_widget_draw(&keys_w[i]);
+    }
 
     gui_status_set("Control: letters and digits");
 }

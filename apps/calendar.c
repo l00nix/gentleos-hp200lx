@@ -30,8 +30,6 @@ enum {
 };
 
 static widget_st day_buttons[GRID_CELLS_COUNT];
-static widget_st *widgets[GRID_CELLS_COUNT];
-
 static window_st window;
 
 enum {
@@ -202,8 +200,6 @@ init_window(void)
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     window.bg_color = COLOR_BG;
-    window.widgets = widgets;
-    window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
 }
 
 static void
@@ -225,11 +221,10 @@ init_day_buttons(void)
         col = i % GRID_COLS;
         row = i / GRID_COLS;
 
+        day_buttons[i].window = &window;
         day_buttons[i].type = WIDGET_TYPE_BUTTON;
         gui_grid_cell_rect(&grid, col, row, &day_buttons[i].rect);
         day_buttons[i].draw = draw_day_button;
-
-        gui_window_add_widget(&window, &day_buttons[i]);
     }
 }
 
@@ -251,6 +246,7 @@ static void
 on_show(void)
 {
     static int initialized = 0;
+    int i;
 
     if (!initialized) {
         init_window();
@@ -263,6 +259,11 @@ on_show(void)
     }
 
     gui_window_draw(&window);
+
+    for (i = 0; i < GRID_CELLS_COUNT; ++i) {
+        gui_widget_draw(&day_buttons[i]);
+    }
+
     draw_week_bar();
     draw_selected_month();
     gui_status_set("p:prev month  n:next month");

@@ -32,7 +32,6 @@ enum {
 static window_st window;
 
 static widget_st button_widgets[BUTTONS_COUNT];
-static widget_st *widgets[BUTTONS_COUNT];
 static widget_st *pressed_button = NULL;
 
 static grid_st grid;
@@ -265,8 +264,6 @@ init_window(void)
     gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
     window.bg_color = COLOR_FG;
-    window.widgets = widgets;
-    window.widgets_capacity = sizeof(widgets) / sizeof(widgets[0]);
 }
 
 static void
@@ -289,13 +286,12 @@ init_buttons(void)
             idx = row * BUTTON_COLS + col;
             button = &button_widgets[idx];
 
+            button->window = &window;
             button->type = WIDGET_TYPE_BUTTON;
             gui_grid_cell_rect(&grid, col, row, &button->rect);
             button->hide_border = 1;
             button->window = &window;
             button->label = button_labels[idx];
-
-            gui_window_add_widget(&window, button);
         }
     }
 }
@@ -304,6 +300,7 @@ static void
 on_show(void)
 {
     static int initialized = 0;
+    int i;
 
     if (!initialized) {
         init_window();
@@ -316,6 +313,11 @@ on_show(void)
     }
 
     gui_window_draw(&window);
+
+    for (i = 0; i < BUTTONS_COUNT; ++i) {
+        gui_widget_draw(&button_widgets[i]);
+    }
+
     update_display();
 }
 
