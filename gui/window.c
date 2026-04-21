@@ -35,7 +35,7 @@ gui_window_init(window_st *window, int width, int height)
     window->size.height = height;
 
     gui_window_area(window, &rect);
-    gui_rect_center(&rect, &gui_wm_container);
+    gui_rect_center(&rect, &gui_app_rect);
 
     window->origin.x = rect.x;
     window->origin.y = rect.y;

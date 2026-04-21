@@ -7,13 +7,21 @@
 
 #include <gui.h>
 
+global rect_st gui_app_rect;
+
 global void
 gui_main(void)
 {
     event_st event;
     window_st *w;
 
+    gui_app_rect.x = 0;
+    gui_app_rect.y = STATUS_HEIGHT;
+    gui_app_rect.width = GUI_WIDTH;
+    gui_app_rect.height = GUI_HEIGHT - STATUS_HEIGHT * 2;
+
     gui_surface_init();
+    gui_status_init();
     gui_wm_init();
     gui_surface_flush();
 

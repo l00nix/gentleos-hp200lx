@@ -7,7 +7,6 @@
 
 #include <gui.h>
 
-global rect_st gui_wm_container;
 global window_st *gui_wm_current_window = NULL;
 
 static void
@@ -29,7 +28,7 @@ gui_wm_add_window(struct window *w)
     gui_wm_current_window = w;
     gui_wm_current_window->visible = 1;
 
-    gui_wm_render_wallpaper(&gui_wm_container);
+    gui_wm_render_wallpaper(&gui_app_rect);
     gui_status_set("");
 
     return 0;
@@ -38,12 +37,5 @@ gui_wm_add_window(struct window *w)
 global void
 gui_wm_init(void)
 {
-    gui_wm_container.x = 0;
-    gui_wm_container.y = STATUS_HEIGHT;
-    gui_wm_container.width = GUI_WIDTH;
-    gui_wm_container.height = GUI_HEIGHT - STATUS_HEIGHT * 2;
-    gui_wm_render_wallpaper(&gui_wm_container);
-
-    gui_status_init();
     app_launcher.show();
 }

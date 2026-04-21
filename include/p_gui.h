@@ -5,6 +5,7 @@ extern void gui_grid_rect(grid_st *grid, rect_st *out);
 extern void gui_grid_cell_rect(grid_st *grid, int col, int row, rect_st *out);
 extern void gui_grid_draw_background(grid_st *grid, window_st *window, uint8_t color);
 /* gui/main.c */
+extern rect_st gui_app_rect;
 extern void gui_main(void);
 /* gui/rect.c */
 extern const rect_st GUI_RECT_ZERO;
@@ -58,7 +59,6 @@ extern void gui_window_on_key_up(window_st *window, const event_st *event);
 extern void gui_window_on_uart_rx(window_st *window, const event_st *event);
 extern void gui_window_on_tick(window_st *window);
 /* gui/wm.c */
-extern rect_st gui_wm_container;
 extern window_st *gui_wm_current_window;
 extern int gui_wm_add_window(struct window *w);
 extern void gui_wm_init(void);
