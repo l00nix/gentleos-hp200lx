@@ -27,19 +27,9 @@ SECTOR_COUNT    equ 127
     ; Preserve disk number
     mov [cs:disk], dl
 
-    ; Print intro string using BIOS teletype output
-    mov si, intro
-.intro_loop:
-    mov al, [cs:si]
-    or al, al
-    jz .intro_done
-    mov ah, 0x0e
-    xor bx, bx
-    int 0x10
-    inc si
-    jmp .intro_loop
-.intro_done:
-
+    ; Print intro text
+    mov word [cs:puts_str], str_intro
+    call puts
 
     ; Retrieve sectors per track
     push es
@@ -63,7 +53,9 @@ SECTOR_COUNT    equ 127
     mov ax, 0x0201
     int 0x13
 
-    call print_dot
+    ; Print progress dot
+    mov word [cs:puts_str], str_dot
+    call puts
 
     ; Advance target buffer
     add bx, 512
@@ -85,35 +77,74 @@ SECTOR_COUNT    equ 127
     dec si
     jnz .read_loop
 
+    ; Print outro text
+    mov word [cs:puts_str], str_outro
+    call puts
 
     ; Save a known value to the beginning of the segment
     mov [0], word 0xcafe
-
 
     ; Jump to the COM file
     jmp TARGET_SEGMENT:TARGET_OFFSET
 
 
-; Print a debugging dot to the screen
-print_dot:
-    push ax
-    push bx
-    push cx
-    push dx
+; Print a string
+puts:
+    call save_regs
+
+    mov si, [cs:puts_str]
+
+.puts_loop:
+    mov al, [cs:si]
+    or al, al
+    jz .puts_done
 
     mov ah, 0x0e
-    mov al, '.'
     xor bx, bx
-    mov cx, 1
     int 0x10
 
-    pop dx
-    pop cx
-    pop bx
-    pop ax
+    inc si
+    jmp .puts_loop
+.puts_done:
 
+    call restore_regs
     ret
 
+; String to print
+puts_str:
+    dw 0
+
+; Save preserved registers
+save_regs:
+    mov [cs:saved_regs + 0], ax
+    mov [cs:saved_regs + 2], bx
+    mov [cs:saved_regs + 4], cx
+    mov [cs:saved_regs + 6], dx
+    mov [cs:saved_regs + 8], bp
+    mov [cs:saved_regs + 10], si
+    mov [cs:saved_regs + 12], di
+    ret
+
+; Restore preserved registers
+restore_regs:
+    mov ax, [cs:saved_regs + 0]
+    mov bx, [cs:saved_regs + 2]
+    mov cx, [cs:saved_regs + 4]
+    mov dx, [cs:saved_regs + 6]
+    mov bp, [cs:saved_regs + 8]
+    mov si, [cs:saved_regs + 10]
+    mov di, [cs:saved_regs + 12]
+    ret
+
+; Preserved registers
+saved_regs:
+    dw 0 ; AX
+    dw 0 ; BX
+    dw 0 ; CX
+    dw 0 ; DX
+    dw 0 ; BP
+    dw 0 ; SI
+    dw 0 ; DI
 
 ; Sectors per track (default 18, auto-detected at boot)
 spt: db 18
@@ -122,7 +153,13 @@ spt: db 18
 disk: db 0
 
 ; Intro text
-intro: db 0x0d, 0x0a, "Booting GentleOS [github.com/luke8086/gentleos]...", 0x00
+str_intro: db 0x0d, 0x0a, "Booting GentleOS [github.com/luke8086/gentleos]...", 0
+
+; Progress dot
+str_dot: db '.', 0
+
+; Outro text
+str_outro: db "ok", 0
 
 ; MBR partition table with a single bootable partition
 times 0x1be - ($ - $$) db 0
