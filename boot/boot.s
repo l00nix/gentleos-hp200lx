@@ -11,7 +11,6 @@
 [cpu 8086]
 
 TARGET_SEGMENT  equ 0x1000
-TARGET_OFFSET   equ 0x100
 SECTOR_COUNT    equ 127
 
 
@@ -42,11 +41,11 @@ SECTOR_COUNT    equ 127
 
     ; Read data from floppy, one sector at a time, ignoring errors
     mov si, SECTOR_COUNT
-    mov bx, TARGET_OFFSET
+    xor bx, bx
     xor ch, ch              ; Cylinder 0
     mov dl, [cs:disk]       ; Disk number
     xor dh, dh              ; Head 0
-    mov cl, 3               ; Start sector (1-indexed)
+    mov cl, 1               ; Start sector (1-indexed)
 
 .read_loop:
     ; Read one sector
@@ -81,11 +80,18 @@ SECTOR_COUNT    equ 127
     mov word [cs:puts_str], str_outro
     call puts
 
+    ; Move the loaded data back by 0x300 bytes, so that kernel starts at 0x100
+    mov si, 0x0300
+    mov di, 0x0000
+    mov cx, SECTOR_COUNT * (512 / 2)
+    cld
+    rep movsw
+
     ; Save a known value to the beginning of the segment
     mov [0], word 0xcafe
 
     ; Jump to the COM file
-    jmp TARGET_SEGMENT:TARGET_OFFSET
+    jmp TARGET_SEGMENT:0x100
 
 
 ; Print a string
