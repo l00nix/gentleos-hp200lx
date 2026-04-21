@@ -89,7 +89,7 @@ gui_window_on_key_down(window_st *window, const event_st *event)
     int key_char = event->payload.key.key_char;
 
     if (key_code == KEY_ESC) {
-        app_launcher.show();
+        gui_run_app(&app_launcher);
         return;
     }
 

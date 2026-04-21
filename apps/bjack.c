@@ -334,7 +334,6 @@ show_app(void)
         initialized = 1;
     }
 
-    gui_wm_add_window(&window);
     gui_window_draw(&window);
     gui_surface_draw_h_seg(&window.origin, 1, DIVIDER_Y, WINDOW_WIDTH - 2, COLOR_FG);
 

@@ -8,6 +8,26 @@
 #include <gui.h>
 
 global rect_st gui_app_rect;
+global app_st *gui_current_app;
+
+global void
+gui_run_app(app_st *app)
+{
+    if (gui_current_app) {
+        gui_current_app->window->visible = 0;
+        gui_window_on_close(gui_current_app->window);
+        gui_current_app = NULL;
+    }
+
+    gui_surface_draw_rect(&GUI_POINT_ZERO, &gui_app_rect, COLOR_BG);
+    gui_surface_mark_dirty(&GUI_POINT_ZERO, &gui_app_rect);
+    gui_status_set("");
+    gui_status_set_br("");
+
+    gui_current_app = app;
+    gui_current_app->window->visible = 1;
+    gui_current_app->show();
+}
 
 global void
 gui_main(void)
@@ -22,7 +42,7 @@ gui_main(void)
 
     gui_surface_init();
     gui_status_init();
-    gui_wm_init();
+    gui_run_app(&app_launcher);
     gui_surface_flush();
 
     while (1) {
@@ -37,7 +57,7 @@ gui_main(void)
             continue;
         }
 
-        w = gui_wm_current_window;
+        w = gui_current_app->window;
 
         if (event.type == EVENT_TIMER_TICK) {
             gui_window_on_tick(w);

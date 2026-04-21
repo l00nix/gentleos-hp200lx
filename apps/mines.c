@@ -392,7 +392,6 @@ show_app(void)
     current_row = 0;
     current_col = 0;
 
-    gui_wm_add_window(&window);
     gui_window_draw(&window);
     draw_all_cells();
     restart_game();

@@ -115,8 +115,8 @@ launch_current_app(void)
     int i = current_row * GRID_COLS + current_col;
 
     if (i < APPS_COUNT && apps[i]) {
-        apps[i]->show();
         gui_status_set_tl("GentleOS > %s", apps[i]->name);
+        gui_run_app(apps[i]);
     }
 }
 
@@ -157,7 +157,6 @@ show_app(void)
         initialized = 1;
     }
 
-    gui_wm_add_window(&window);
     gui_window_draw(&window);
     draw_all_cells();
 
