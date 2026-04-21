@@ -5,7 +5,7 @@
 # File: mkbuild.pl - Script for creating build output directories
 #
 
-my @SOURCE_DIRS = ("apps", "data", "kernel", "lib", "gui");
+my @SOURCE_DIRS = ("apps", "boot", "boot2", "data", "kernel", "lib", "gui");
 
 foreach my $d ("build", map { "build/$_" } @SOURCE_DIRS) {
     next if -d $d;

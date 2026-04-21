@@ -5,13 +5,14 @@
 # File: genmake.pl - Script for genereating Makefile and linker scripts
 #
 
-my @SOURCE_DIRS = ("apps", "data", "kernel", "lib", "gui");
+my @KERNEL_SOURCE_DIRS = ("apps", "data", "kernel", "lib", "gui");
+my @BOOT2_SOURCE_DIRS = ("boot2");
 
 my $MAKEFILE_TPL = <<'EOT';
 all: disks .SYMBOLIC
     @echo All done!
 
-disks: build/kernel.com build/boot.bin .SYMBOLIC
+disks: build/kernel.com build/boot/boot.bin build/boot2/boot2.com .SYMBOLIC
     perl tools/mkdisks.pl
 
 run: all .SYMBOLIC
@@ -23,17 +24,23 @@ boot: all .SYMBOLIC
 clean: .SYMBOLIC
     perl tools/clean.pl
 
-OBJS = &
-<OBJS>
+KERNEL_OBJS = &
+<KERNEL_OBJS>
+
+BOOT2_OBJS = &
+<BOOT2_OBJS>
 
 INCLUDES = &
 <INCLUDES>
 
-build/boot.bin: boot/boot.s
-    nasm -o build/boot.bin boot/boot.s
+build/boot/boot.bin: boot/boot.s
+    nasm -o build/boot/boot.bin boot/boot.s
 
-build\kernel.com: $(OBJS)
+build\kernel.com: $(KERNEL_OBJS)
 	wlink @build/kernel.lnk
+
+build\boot2\boot2.com: $(BOOT2_OBJS)
+    wlink @boot2/boot2.lnk
 
 <OBJECT_RULES>
 EOT
@@ -70,10 +77,10 @@ sub splitext {
     return ($p, "");
 }
 
-sub collect_sources {
+sub collect_kernel_sources {
     my @sources;
 
-    foreach my $d (@SOURCE_DIRS) {
+    foreach my $d (@KERNEL_SOURCE_DIRS) {
         push @sources, glob("$d/*.c");
         push @sources, glob("$d/*.s");
     }
@@ -81,6 +88,21 @@ sub collect_sources {
     @sources = sort @sources;
     @sources = grep { $_ ne "kernel/start.s" } @sources;
     unshift @sources, "kernel/start.s";
+
+    return @sources;
+}
+
+sub collect_boot2_sources {
+    my @sources;
+
+    foreach my $d (@BOOT2_SOURCE_DIRS) {
+        push @sources, glob("$d/*.c");
+        push @sources, glob("$d/*.s");
+    }
+
+    @sources = sort @sources;
+    @sources = grep { $_ ne "boot2/start.s" } @sources;
+    unshift @sources, "boot2/start.s";
 
     return @sources;
 }
@@ -108,20 +130,29 @@ sub make_object_rule {
     return $tpl;
 }
 
-sub generate_makefile {
-    my ($sources_ref, $includes_ref) = @_;
+sub make_obj_lines {
+    my ($sources_ref) = @_;
 
     my $objs = join("\n", map {
         my ($b, $e) = splitext($_);
         "\tbuild/" . $b . ".obj &"
     } @$sources_ref);
 
-    my $incs = join("\n", map { "\t" . $_ . " &" } @$includes_ref);
+    return $objs;
+}
 
-    my $rules = join("\n\n", map { make_object_rule($_) } @$sources_ref);
+sub generate_makefile {
+    my ($kernel_sources_ref, $boot2_sources_ref, $includes_ref) = @_;
+
+    my @all_sources = (@$kernel_sources_ref, @$boot2_sources_ref);
+    my $kernel_objs = make_obj_lines($kernel_sources_ref);
+    my $boot2_objs = make_obj_lines($boot2_sources_ref);
+    my $incs = join("\n", map { "\t" . $_ . " &" } @$includes_ref);
+    my $rules = join("\n\n", map { make_object_rule($_) } @all_sources);
 
     my $content = $MAKEFILE_TPL;
-    $content =~ s/<OBJS>/$objs/;
+    $content =~ s/<KERNEL_OBJS>/$kernel_objs/;
+    $content =~ s/<BOOT2_OBJS>/$boot2_objs/;
     $content =~ s/<INCLUDES>/$incs/;
     $content =~ s/<OBJECT_RULES>/$rules/;
 
@@ -159,10 +190,11 @@ sub generate_kernel_lnk {
 }
 
 sub main {
-    my @sources = collect_sources();
+    my @kernel_sources = collect_kernel_sources();
+    my @boot2_sources = collect_boot2_sources();
     my @includes = collect_includes();
-    generate_makefile(\@sources, \@includes);
-    generate_kernel_lnk(\@sources);
+    generate_makefile(\@kernel_sources, \@boot2_sources, \@includes);
+    generate_kernel_lnk(\@kernel_sources);
 }
 
 main();

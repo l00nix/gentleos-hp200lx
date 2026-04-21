@@ -4,15 +4,18 @@
 ;
 
 ;
-; kernel/boot.s - minimal bootloader for USB disks (no error handling)
+; kernel/boot.s - Stage 1 bootloader
 ;
 
 [org 0x7c00]
 [cpu 8086]
 
-TARGET_SEGMENT  equ 0x1000
-SECTOR_COUNT    equ 127
-
+TARGET_SEGMENT      equ 0x2000
+TARGET_OFFSET       equ 0x100
+DISK_NO_OFS         equ 0
+BOOT2_START         equ 3
+BOOT2_SIZE          equ 4
+LOAD_RETRY_COUNT    equ 3
 
     ; Setup segments and stack
     cli
@@ -24,148 +27,47 @@ SECTOR_COUNT    equ 127
     sti
 
     ; Preserve disk number
-    mov [cs:disk], dl
+    mov [ds:DISK_NO_OFS], dl
 
-    ; Print intro text
-    mov word [cs:puts_str], str_intro
-    call puts
+    ; Load stage 2 loader
+    mov di, LOAD_RETRY_COUNT
+.load_stage2:
 
-    ; Retrieve sectors per track
-    push es
-    mov ah, 0x08
-    mov dl, [cs:disk]
-    int 0x13
-    and cl, 0x3f
-    mov [cs:spt], cl
-    pop es
-
-    ; Read data from floppy, one sector at a time, ignoring errors
-    mov si, SECTOR_COUNT
-    xor bx, bx
-    xor ch, ch              ; Cylinder 0
-    mov dl, [cs:disk]       ; Disk number
-    xor dh, dh              ; Head 0
-    mov cl, 1               ; Start sector (1-indexed)
-
-.read_loop:
-    ; Read one sector
-    mov ax, 0x0201
+    ; Reset disk
+    xor ah, ah
     int 0x13
 
-    ; Print progress dot
-    mov word [cs:puts_str], str_dot
-    call puts
+    ; Load from disk
+    mov ah, 0x02
+    mov al, BOOT2_SIZE
+    mov bx, TARGET_OFFSET
+    mov dl, [ds:DISK_NO_OFS]
+    xor dh, dh                  ; Head 0
+    xor ch, ch                  ; Cylinder 0
+    mov cl, BOOT2_START         ; Start sector (1-indexed)
+    int 0x13
 
-    ; Advance target buffer
-    add bx, 512
+    ; Load succeeded
+    jnc .load_success
 
-    ; Advance sector number
-    inc cl
-    cmp cl, [cs:spt]
-    jbe .read_next
+    ; Retry LOAD_RETRY_COUNT times
+    dec di
+    jnz .load_stage2
+    jmp .load_error
 
-    ; Wrap to sector 1 and flip head
-    mov cl, 1
-    xor dh, 1
-
-    ; If head is 0, advance cylinder
-    jnz .read_next
-    inc ch
-
-.read_next:
-    dec si
-    jnz .read_loop
-
-    ; Print outro text
-    mov word [cs:puts_str], str_outro
-    call puts
-
-    ; Move the loaded data back by 0x300 bytes, so that kernel starts at 0x100
-    mov si, 0x0300
-    mov di, 0x0000
-    mov cx, SECTOR_COUNT * (512 / 2)
-    cld
-    rep movsw
-
-    ; Save a known value to the beginning of the segment
-    mov [0], word 0xcafe
-
-    ; Jump to the COM file
+    ; Jump to the stage 2 COM file
+.load_success:
     jmp TARGET_SEGMENT:0x100
 
-
-; Print a string
-puts:
-    call save_regs
-
-    mov si, [cs:puts_str]
-
-.puts_loop:
-    mov al, [cs:si]
-    or al, al
-    jz .puts_done
-
+    ; All retries failed
+.load_error:
     mov ah, 0x0e
+    mov al, 'E'
     xor bx, bx
     int 0x10
-
-    inc si
-    jmp .puts_loop
-.puts_done:
-
-    call restore_regs
-    ret
-
-; String to print
-puts_str:
-    dw 0
-
-; Save preserved registers
-save_regs:
-    mov [cs:saved_regs + 0], ax
-    mov [cs:saved_regs + 2], bx
-    mov [cs:saved_regs + 4], cx
-    mov [cs:saved_regs + 6], dx
-    mov [cs:saved_regs + 8], bp
-    mov [cs:saved_regs + 10], si
-    mov [cs:saved_regs + 12], di
-    ret
-
-; Restore preserved registers
-restore_regs:
-    mov ax, [cs:saved_regs + 0]
-    mov bx, [cs:saved_regs + 2]
-    mov cx, [cs:saved_regs + 4]
-    mov dx, [cs:saved_regs + 6]
-    mov bp, [cs:saved_regs + 8]
-    mov si, [cs:saved_regs + 10]
-    mov di, [cs:saved_regs + 12]
-    ret
-
-; Preserved registers
-saved_regs:
-    dw 0 ; AX
-    dw 0 ; BX
-    dw 0 ; CX
-    dw 0 ; DX
-    dw 0 ; BP
-    dw 0 ; SI
-    dw 0 ; DI
-
-; Sectors per track (default 18, auto-detected at boot)
-spt: db 18
-
-; Disk number
-disk: db 0
-
-; Intro text
-str_intro: db 0x0d, 0x0a, "Booting GentleOS [github.com/luke8086/gentleos]...", 0
-
-; Progress dot
-str_dot: db '.', 0
-
-; Outro text
-str_outro: db "ok", 0
+.halt:
+    hlt
+    jmp .halt
 
 ; MBR partition table with a single bootable partition
 times 0x1be - ($ - $$) db 0

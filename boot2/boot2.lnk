@@ -1,0 +1,7 @@
+system dos com
+name build/boot2/boot2.com
+option nodefaultlibs
+option quiet
+option map=build/boot2/boot2.map
+file build/boot2/start.obj
+file build/boot2/main.obj

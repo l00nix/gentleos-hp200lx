@@ -15,20 +15,28 @@ sub slurp {
     return $data;
 }
 
+sub pad {
+    my ($data, $size) = @_;
+    my $data_size = length($data);
+
+    die "Data exceeds padded size ($data_size > $size)\n" if $data_size > $size;
+
+    return $data . "\0" x ($size - $data_size);
+}
+
 sub make_disk {
     my ($path, $size) = @_;
-    my $boot = slurp("build/boot.bin");
+    my $boot = pad(slurp("build/boot/boot.bin"), 512);
+    my $boot2 = pad(slurp("build/boot2/boot2.com"), 2048);
     my $kernel = slurp("build/kernel.com");
+    my $image = pad($boot . $boot . $boot2 . $kernel, $size);
 
     print "Creating $path... ";
 
     unlink $path;
     open(my $out, ">$path") or die "Cannot write $path\n";
     binmode $out;
-    print $out $boot;
-    print $out $boot;
-    print $out $kernel;
-    print $out "\0" x ($size - length($boot) * 2 - length($kernel));
+    print $out $image;
     close $out or die "Write error\n";
 
     print "Done\n";
