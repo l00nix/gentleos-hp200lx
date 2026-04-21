@@ -136,5 +136,6 @@ show_app(void)
 global app_st app_about = {
     "About",
     &icon_about,
+    &window,
     show_app,
 };

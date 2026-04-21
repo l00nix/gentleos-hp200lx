@@ -344,5 +344,6 @@ show_app(void)
 global app_st app_blackjack = {
     "Blackjack",
     &icon_bjack,
+    &window,
     show_app,
 };

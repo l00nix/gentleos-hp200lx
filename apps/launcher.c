@@ -167,5 +167,6 @@ show_app(void)
 global app_st app_launcher = {
     "Launcher",
 	0,
+    &window,
     show_app,
 };

@@ -191,5 +191,6 @@ show_app(void)
 global app_st app_fonts = {
     "Fonts",
     &icon_fonts,
+    &window,
     show_app,
 };

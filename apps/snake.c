@@ -265,5 +265,6 @@ show_app(void)
 global app_st app_snake = {
     "Snake",
     &icon_snake,
+    &window,
     show_app,
 };

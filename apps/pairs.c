@@ -299,5 +299,6 @@ show_app(void)
 global app_st app_pairs = {
     "Pairs",
     &icon_pairs,
+    &window,
     show_app,
 };

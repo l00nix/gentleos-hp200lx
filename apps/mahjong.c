@@ -437,5 +437,6 @@ show_app(void)
 global app_st app_mahjong = {
     "Mahjong",
     &glyph_mn_east_icn,
+    &window,
     show_app,
 };

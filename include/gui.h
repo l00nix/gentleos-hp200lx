@@ -107,6 +107,7 @@ typedef struct {
 typedef struct {
     const char *name;
     bitmap_st *icon;
+    window_st *window;
     void (*show)(void);
 } app_st;
 

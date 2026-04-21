@@ -243,5 +243,6 @@ show_app(void)
 global app_st app_sounds = {
     "Sounds",
     &icon_sounds,
+    &window,
     show_app,
 };

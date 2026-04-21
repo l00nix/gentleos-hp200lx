@@ -272,5 +272,6 @@ show_app(void)
 global app_st app_calendar = {
     "Calendar",
     &icon_calendar,
+    &window,
     show_app,
 };

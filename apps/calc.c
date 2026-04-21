@@ -321,5 +321,6 @@ show_app(void)
 global app_st app_calc = {
     "Calculator",
     &icon_calc,
+    &window,
     show_app,
 };
