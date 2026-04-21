@@ -26,8 +26,9 @@ sub make_disk {
     open(my $out, ">$path") or die "Cannot write $path\n";
     binmode $out;
     print $out $boot;
+    print $out $boot;
     print $out $kernel;
-    print $out "\0" x ($size - length($boot) - length($kernel));
+    print $out "\0" x ($size - length($boot) * 2 - length($kernel));
     close $out or die "Write error\n";
 
     print "Done\n";

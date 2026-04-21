@@ -46,7 +46,7 @@ SECTOR_COUNT    equ 127
     xor ch, ch              ; Cylinder 0
     mov dl, [cs:disk]       ; Disk number
     xor dh, dh              ; Head 0
-    mov cl, 2               ; Start sector (1-indexed)
+    mov cl, 3               ; Start sector (1-indexed)
 
 .read_loop:
     ; Read one sector
