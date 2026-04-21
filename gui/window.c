@@ -113,6 +113,14 @@ gui_window_on_key_up(window_st *window, const event_st *event)
 }
 
 global void
+gui_window_on_uart_rx(window_st *window, const event_st *event)
+{
+    if (window->on_uart_rx) {
+        window->on_uart_rx(window, event);
+    }
+}
+
+global void
 gui_window_on_tick(window_st *window)
 {
     if (window->on_tick) {

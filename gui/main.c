@@ -37,6 +37,8 @@ gui_main(void)
             gui_window_on_key_down(w, &event);
         } else if (event.type == EVENT_KEY_UP && w) {
             gui_window_on_key_up(w, &event);
+        } else if (event.type == EVENT_UART_RX && w) {
+            gui_window_on_uart_rx(w, &event);
         }
 
         if (krn_event_count() == 0) {

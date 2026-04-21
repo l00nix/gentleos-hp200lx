@@ -54,6 +54,7 @@ extern int gui_window_add_widget(window_st *window, widget_st *widget);
 extern void gui_window_on_close(window_st *window);
 extern void gui_window_on_key_down(window_st *window, const event_st *event);
 extern void gui_window_on_key_up(window_st *window, const event_st *event);
+extern void gui_window_on_uart_rx(window_st *window, const event_st *event);
 extern void gui_window_on_tick(window_st *window);
 /* gui/wm.c */
 extern rect_st gui_wm_container;

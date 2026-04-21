@@ -85,6 +85,7 @@ struct window {
 
     void (*on_key_down)(window_st *, const event_st *);
     void (*on_key_up)(window_st *, const event_st *);
+    void (*on_uart_rx)(window_st *, const event_st *);
     void (*on_focus_changed)(window_st *);
     void (*on_close)(window_st *);
     void (*on_tick)(window_st *);
