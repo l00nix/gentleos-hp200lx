@@ -26,7 +26,7 @@ gui_run_app(app_st *app)
 
     gui_current_app = app;
     gui_current_app->window->visible = 1;
-    gui_current_app->show();
+    gui_current_app->on_show();
 }
 
 global void

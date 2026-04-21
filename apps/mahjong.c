@@ -419,7 +419,7 @@ init_window(void)
 }
 
 static void
-show_app(void)
+on_show(void)
 {
     static int initialized = 0;
 
@@ -437,5 +437,5 @@ global app_st app_mahjong = {
     "Mahjong",
     &glyph_mn_east_icn,
     &window,
-    show_app,
+    on_show,
 };

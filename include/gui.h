@@ -108,7 +108,7 @@ typedef struct {
     const char *name;
     bitmap_st *icon;
     window_st *window;
-    void (*show)(void);
+    void (*on_show)(void);
 } app_st;
 
 enum {
