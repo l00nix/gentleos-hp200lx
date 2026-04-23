@@ -36,7 +36,7 @@ static void
 update_status(void)
 {
     int n = current_row * grid.cols + current_col;
-    gui_status_set("hex:%02x dec:%03d", n, n);
+    gui_status_set("Hex:%02x  Dec:%03d", n, n);
 }
 
 static void
@@ -98,8 +98,11 @@ draw_font_label(void)
 static void
 set_prev_font(void)
 {
-    current_font = (current_font - 1) % FONT_COUNT;
+    if (current_font == 0) {
+        return;
+    }
 
+    --current_font;
     draw_font_label();
     draw_all_cells();
 }
@@ -107,8 +110,11 @@ set_prev_font(void)
 static void
 set_next_font(void)
 {
-    current_font = (current_font + 1) % FONT_COUNT;
+    if (current_font >= (FONT_COUNT - 1)) {
+        return;
+    }
 
+    ++current_font;
     draw_font_label();
     draw_all_cells();
 }
