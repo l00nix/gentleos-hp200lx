@@ -7,6 +7,18 @@
 
 #include <lib.h>
 
+static uint8_t
+to_bcd(uint8_t v)
+{
+    return ((v / 10) << 4) | (v % 10);
+}
+
+static unsigned
+from_bcd(uint16_t v)
+{
+    return ((v >> 4) & 0x0F) * 10 + (v & 0x0F);
+}
+
 global void
 bios_putc(char c)
 {
@@ -51,9 +63,23 @@ bios_get_time(time_st *t)
 
     intr(0x1a, &regs);
 
-    t->hour = ((regs.h.ch >> 4) & 0x0F) * 10 + (regs.h.ch & 0x0F);
-    t->minute = ((regs.h.cl >> 4) & 0x0F) * 10 + (regs.h.cl & 0x0F);
-    t->second = ((regs.h.dh >> 4) & 0x0F) * 10 + (regs.h.dh & 0x0F);
+    t->hour = from_bcd(regs.h.ch);
+    t->minute = from_bcd(regs.h.cl);
+    t->second = from_bcd(regs.h.dh);
+}
+
+global void
+bios_set_time(uint8_t hour, uint8_t minute, uint8_t second)
+{
+    regs_st regs;
+
+    regs.h.ah = 0x03;
+    regs.h.ch = to_bcd(hour);
+    regs.h.cl = to_bcd(minute);
+    regs.h.dh = to_bcd(second);
+    regs.h.dl = 0;
+
+    intr(0x1a, &regs);
 }
 
 global void
@@ -65,10 +91,21 @@ bios_get_date(date_st *d)
 
     intr(0x1a, &regs);
 
-    d->year = ((regs.h.ch >> 4) & 0x0F) * 1000
-        + (regs.h.ch & 0x0F) * 100
-        + ((regs.h.cl >> 4) & 0x0F) * 10
-        + (regs.h.cl & 0x0F);
-    d->month = ((regs.h.dh >> 4) & 0x0F) * 10 + (regs.h.dh & 0x0F);
-    d->day = ((regs.h.dl >> 4) & 0x0F) * 10 + (regs.h.dl & 0x0F);
+    d->year = from_bcd(regs.h.ch) * 100 + from_bcd(regs.h.cl);
+    d->month = from_bcd(regs.h.dh);
+    d->day = from_bcd(regs.h.dl);
+}
+
+global void
+bios_set_date(uint16_t year, uint8_t month, uint8_t day)
+{
+    regs_st regs;
+
+    regs.h.ah = 0x05;
+    regs.h.ch = to_bcd(year / 100);
+    regs.h.cl = to_bcd(year % 100);
+    regs.h.dh = to_bcd(month);
+    regs.h.dl = to_bcd(day);
+
+    intr(0x1a, &regs);
 }

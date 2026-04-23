@@ -3,7 +3,9 @@ extern void bios_putc(char c);
 extern void bios_puts(const char *s);
 extern uint16_t bios_getc(void);
 extern void bios_get_time(time_st *t);
+extern void bios_set_time(uint8_t hour, uint8_t minute, uint8_t second);
 extern void bios_get_date(date_st *d);
+extern void bios_set_date(uint16_t year, uint8_t month, uint8_t day);
 /* lib/math.c */
 extern int udiv32(uint32_t *out, uint32_t dividend, uint32_t divisor);
 extern int umod32(uint32_t *out, uint32_t dividend, uint32_t divisor);
