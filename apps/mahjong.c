@@ -97,6 +97,7 @@ static int sel_row;
 static int sel_layer;
 
 static int remaining_pairs;
+static int valid_moves;
 static int state;
 
 static window_st window;
@@ -105,11 +106,11 @@ static void
 update_status(void)
 {
     if (state == STATE_WON) {
-        gui_status_set("You Won! Press r to play again");
-    } else if (state == STATE_STUCK) {
-        gui_status_set("No moves! [S]huffle or [R]estart");
+        gui_status_set("You Won! Press R to play again");
+        gui_status_set_br("");
     } else {
-        gui_status_set("Pairs: %d  [S]huffle [R]estart", remaining_pairs);
+        gui_status_set("Pairs: %d  Moves: %d", remaining_pairs, valid_moves);
+        gui_status_set_br("[S]huffle  [R]estart");
     }
 }
 
@@ -147,11 +148,12 @@ is_tile_free(int layer, int col, int row)
 }
 
 static int
-has_valid_moves(void)
+count_valid_moves(void)
 {
     uint8_t free_counts[TILE_TYPE_COUNT + 1];
     int layer, col, row;
     uint8_t type;
+    int total = 0;
 
     memset(free_counts, 0, sizeof(free_counts));
 
@@ -160,15 +162,17 @@ has_valid_moves(void)
             for (col = 0; col < BOARD_COLS; ++col) {
                 if (is_tile_free(layer, col, row)) {
                     type = board[layer][row][col];
-                    if (++free_counts[type] >= 2) {
-                        return 1;
-                    }
+                    ++free_counts[type];
                 }
             }
         }
     }
 
-    return 0;
+    for (type = 1; type <= TILE_TYPE_COUNT; ++type) {
+        total += free_counts[type] / 2;
+    }
+
+    return total;
 }
 
 static void
@@ -411,7 +415,8 @@ shuffle_tiles(void)
     }
 
     sel_col = -1;
-    state = has_valid_moves() ? STATE_DEFAULT : STATE_STUCK;
+    valid_moves = count_valid_moves();
+    state = valid_moves > 0 ? STATE_DEFAULT : STATE_STUCK;
 
     redraw_board();
     update_status();
@@ -496,9 +501,11 @@ select_tile(void)
     remove_tile(layer, cur_col, cur_row);
     remove_tile(prev_layer, prev_col, prev_row);
 
+    valid_moves = count_valid_moves();
+
     if (remaining_pairs == 0) {
         state = STATE_WON;
-    } else if (!has_valid_moves()) {
+    } else if (valid_moves == 0) {
         state = STATE_STUCK;
     }
 
@@ -562,12 +569,12 @@ on_key_down(const event_st *event)
         return;
     }
 
-    if (key_ch == 's' && state != STATE_WON) {
-        shuffle_tiles();
+    if (state == STATE_WON) {
         return;
     }
 
-    if (state != STATE_DEFAULT) {
+    if (key_ch == 's') {
+        shuffle_tiles();
         return;
     }
 
