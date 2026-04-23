@@ -56,8 +56,8 @@ static int dealer_hand_count;
 
 static const char *status_msg = "";
 static int game_state;
-static int wins;
-static int losses;
+static int wins = 0;
+static int losses = 0;
 
 static void
 shuffle_deck(void)
@@ -198,12 +198,12 @@ update_status(void)
     int dealer_score = hand_score(dealer_hand, dealer_hand_count);
 
     if (game_state == STATE_PLAYING) {
-        gui_status_set("D: ?  U:%2d  |  [H]it or [S]tand?  |  W:%d  L:%d",
-        player_score, wins, losses);
+        gui_status_set("D: ?  U:%2d  |  [H]it or [S]tand?", player_score);
     } else {
-        gui_status_set("D:%2d  U:%2d  |  %s  |  W:%d  L:%d",
-            dealer_score, player_score, status_msg, wins, losses);
+        gui_status_set("D:%2d  U:%2d  |  %s", dealer_score, player_score, status_msg);
     }
+
+    gui_status_set_br("W:%d  L:%d", wins, losses);
 }
 
 static void
