@@ -102,9 +102,10 @@ krn_keyboard_handle_intr(void)
 
     if (ev.payload.key.key_code == 0x53 && ctrl && alt && ev.type == EVENT_KEY_DOWN) {
         outb(0xFE, PS2_PORT_CMD);
-    } else {
-        (void)krn_event_ipush(&ev);
+        bios_reboot();
     }
+
+    (void)krn_event_ipush(&ev);
 
     krn_keyboard_finish_handling();
 }

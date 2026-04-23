@@ -109,3 +109,14 @@ bios_set_date(uint16_t year, uint8_t month, uint8_t day)
 
     intr(0x1a, &regs);
 }
+
+global void
+bios_reboot(void)
+{
+    void (far *reset)(void) = MK_FP(0xFFFF, 0);
+    uint8_t far *bda = MK_FP(0x40, 0);
+
+    *(uint16_t far *)(bda + 0x72) = 0x1234; /* Prefer warm boot */
+
+    reset();
+}
