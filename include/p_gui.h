@@ -32,6 +32,7 @@ extern void gui_status_init(void);
 extern void gui_surface_init(void);
 extern void gui_surface_mark_dirty(const point_st *origin, const rect_st *rect);
 extern void gui_surface_flush(void);
+extern void gui_surface_draw_pixel(const point_st *origin, int x, int y, uint8_t color);
 extern void gui_surface_draw_h_seg(const point_st *origin, int x, int y, int w, uint8_t color);
 extern void gui_surface_draw_v_seg(const point_st *origin, int x, int y, int h, uint8_t color);
 extern void gui_surface_draw_border(const point_st *origin, const rect_st *r, uint8_t color);

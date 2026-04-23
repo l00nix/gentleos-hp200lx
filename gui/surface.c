@@ -63,11 +63,11 @@ gui_surface_flush(void)
     gui_rect_init(&gui_surface_dirty_rect, 0, 0, 0, 0);
 }
 
-static void
-gui_surface_draw_pixel(int x, int y, uint8_t color)
+global void
+gui_surface_draw_pixel(const point_st *origin, int x, int y, uint8_t color)
 {
-    int byte_idx = y * GUI_FB_PITCH + x / 4;
-    int shift = (3 - (x & 3)) * 2;
+    int byte_idx = (origin->y + y) * GUI_FB_PITCH + (origin->x + x) / 4;
+    int shift = (3 - ((origin->x + x) & 3)) * 2;
     uint8_t mask = 0x03 << shift;
     uint8_t val = (color & 1) ? mask : 0;
 
@@ -86,11 +86,9 @@ global void
 gui_surface_draw_v_seg(const point_st *origin, int x, int y, int h, uint8_t color)
 {
     int i;
-    int sx = origin->x + x;
-    int sy = origin->y + y;
 
     for (i = 0; i < h; i++) {
-        gui_surface_draw_pixel(sx, sy + i, color);
+        gui_surface_draw_pixel(origin, x, y + i, color);
     }
 }
 
@@ -180,7 +178,6 @@ gui_surface_draw_char(const point_st *origin, uint16_t x, uint16_t y,
     const uint8_t *glyph;
     uint8_t fg_bit, bg_bit;
     uint8_t glyph_byte, target_byte;
-    int target_x, target_y;
     int i, j, bit;
 
     if (!font) {
@@ -213,12 +210,9 @@ gui_surface_draw_char(const point_st *origin, uint16_t x, uint16_t y,
             target_byte = 0x00;
         }
 
-        target_x = origin->x + x;
-        target_y = origin->y + y + j;
-
         for (i = 0; i < font->size.width; ++i) {
             bit = (target_byte >> (7 - i)) & 1;
-            gui_surface_draw_pixel(target_x + i, target_y, bit);
+            gui_surface_draw_pixel(origin, x + i, y + j, bit);
         }
     }
 }
@@ -261,7 +255,6 @@ gui_surface_draw_bitmap(const point_st *origin, const size_st *bounds, int dst_x
     bitmap_st *bitmap, uint8_t fill)
 {
     rect_st src_rect;
-    int target_x, target_y;
     uint8_t fill_bit;
     uint16_t i, j;
 
@@ -277,8 +270,6 @@ gui_surface_draw_bitmap(const point_st *origin, const size_st *bounds, int dst_x
         src_rect.height = src_rect.height < 0 ? 0 : src_rect.height;
     }
 
-    target_x = origin->x + dst_x;
-    target_y = origin->y + dst_y;
     fill_bit = fill & 1;
 
     for (i = 0; i < src_rect.height; i++) {
@@ -291,7 +282,7 @@ gui_surface_draw_bitmap(const point_st *origin, const size_st *bounds, int dst_x
                 continue;
             }
 
-            gui_surface_draw_pixel(target_x + j, target_y + i, fill_bit);
+            gui_surface_draw_pixel(origin, dst_x + j, dst_y + i, fill_bit);
         }
     }
 }
