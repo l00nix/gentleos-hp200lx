@@ -13,7 +13,7 @@ enum {
     GRID_CELL_WIDTH = 13,
     GRID_CELL_HEIGHT = 13,
     GRID_ROWS = 10,
-    GRID_COLS = 10,
+    GRID_COLS = 16,
     GRID_CELL_COUNT = GRID_ROWS * GRID_COLS,
     GRID_WIDTH = GRID_WIDTH_SPACED(GRID_CELL_WIDTH, GRID_COLS),
     GRID_HEIGHT = GRID_HEIGHT_SPACED(GRID_CELL_HEIGHT, GRID_ROWS),
@@ -23,7 +23,7 @@ enum {
     WINDOW_WIDTH = GRID_X + GRID_WIDTH + 1,
     WINDOW_HEIGHT = GRID_Y + GRID_HEIGHT + 1,
 
-    MINE_COUNT = 18,
+    MINE_COUNT = 24,
 };
 
 static window_st window;
@@ -228,15 +228,19 @@ update_status(void)
     int state = get_game_state();
 
     if (state == GAME_STATE_LOST) {
-        gui_status_set("Game Over! Press r to restart");
+        gui_status_set("Game Over! Press R to play again");
+        gui_status_set_br("");
     } else if (state == GAME_STATE_WON) {
-        gui_status_set("You Win! Press r to restart");
+        gui_status_set("You Won! Press R to play again");
+        gui_status_set_br("");
     } else {
         size_t flagged_count = count_cells_by_state(CELL_STATE_FLAGGED);
         size_t remaining = MINE_COUNT > flagged_count ? MINE_COUNT - flagged_count : 0;
 
         gui_status_set("Remaining mines: %u", remaining);
+        gui_status_set_br("F: Flag   Spc: Reveal");
     }
+
 }
 
 static void
