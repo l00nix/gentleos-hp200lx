@@ -60,6 +60,30 @@ cell_rect_init(rect_st *out, int col, int row)
     out->height = APP_BUTTON_HEIGHT;
 }
 
+static app_st *
+get_current_app(void)
+{
+    int i = current_row * GRID_COLS + current_col;
+
+    return apps[i];
+}
+
+static void
+launch_current_app(void)
+{
+    app_st *app = get_current_app();
+
+    gui_status_set_tl("GentleOS > %s", app->name);
+    gui_run_app(app);
+}
+
+static void
+update_status_bl(void)
+{
+    app_st *app = get_current_app();
+    gui_status_set("Launch %s", app->name);
+}
+
 static void
 draw_cell(int col, int row)
 {
@@ -77,7 +101,7 @@ draw_cell(int col, int row)
 
     if (col == current_col && row == current_row) {
         gui_rect_copy(&cur_rect, &rect);
-        gui_rect_shrink(&cur_rect, 1);
+        gui_rect_shrink(&cur_rect, 2);
         gui_surface_draw_border(&window.origin, &cur_rect, COLOR_FG);
     }
 
@@ -102,22 +126,20 @@ update_current_cell(int dx, int dy)
     int prev_col = current_col;
     int prev_row = current_row;
 
-    current_col = MAX(0, MIN(GRID_COLS - 1, current_col + dx));
-    current_row = MAX(0, MIN(GRID_ROWS - 1, current_row + dy));
+    int new_col = MAX(0, MIN(GRID_COLS - 1, current_col + dx));
+    int new_row = MAX(0, MIN(GRID_ROWS - 1, current_row + dy));
+
+    if ((new_row * GRID_COLS + new_col) >= APPS_COUNT) {
+        return;
+    }
+
+    current_col = new_col;
+    current_row = new_row;
 
     draw_cell(prev_col, prev_row);
     draw_cell(current_col, current_row);
-}
 
-static void
-launch_current_app(void)
-{
-    int i = current_row * GRID_COLS + current_col;
-
-    if (i < APPS_COUNT && apps[i]) {
-        gui_status_set_tl("GentleOS > %s", apps[i]->name);
-        gui_run_app(apps[i]);
-    }
+    update_status_bl();
 }
 
 static void
@@ -152,6 +174,7 @@ on_show(void)
     draw_all_cells();
 
     gui_status_set_tl("GentleOS");
+    update_status_bl();
 }
 
 global app_st app_launcher = {
