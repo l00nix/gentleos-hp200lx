@@ -186,11 +186,11 @@ set_next_month(void)
 static void
 on_key_up(const event_st *event)
 {
-    int ch = event->payload.key.key_char;
+    int key_code = event->payload.key.key_code;
 
-    switch (ch) {
-    case 'n': set_next_month(); break;
-    case 'p': set_prev_month(); break;
+    switch (key_code) {
+    case KEY_PGUP: set_next_month(); break;
+    case KEY_PGDN: set_prev_month(); break;
     }
 }
 
@@ -258,7 +258,7 @@ on_show(void)
 
     draw_week_bar();
     draw_selected_month();
-    gui_status_set("p:prev month  n:next month");
+    gui_status_set_br("PgUp/PgDn: Select month");
 }
 
 
