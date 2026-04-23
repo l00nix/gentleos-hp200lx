@@ -134,7 +134,7 @@ static void
 update_status(void)
 {
     if (matched_count == PAIR_COUNT) {
-        gui_status_set("You won after %d tries! Press r to play again", tries);
+        gui_status_set("You won after %d tries! Press R to play again", tries);
     } else {
         gui_status_set("Tries: %d", tries);
     }
