@@ -87,6 +87,7 @@ static const uint8_t board_layout[BOARD_LAYERS][BOARD_ROWS][BOARD_COLS] = {
 };
 
 static uint8_t board[BOARD_LAYERS][BOARD_ROWS][BOARD_COLS];
+static uint8_t dirty[BOARD_LAYERS][BOARD_ROWS][BOARD_COLS];
 
 static int cur_col;
 static int cur_row;
@@ -252,30 +253,121 @@ draw_empty_cursor(int col, int row, uint8_t color)
 }
 
 static void
-draw_board(void)
+draw_dirty_tiles(void)
+{
+    int layer, row, col;
+
+    /* Clear empty tiles */
+    for (layer = 0; layer < BOARD_LAYERS; ++layer) {
+        for (row = 0; row < BOARD_ROWS; ++row) {
+            for (col = 0; col < BOARD_COLS; ++col) {
+                if (!dirty[layer][row][col] || board[layer][row][col] != TILE_EMPTY) {
+                    continue;
+                }
+
+                draw_tile(layer, col, row);
+                dirty[layer][row][col] = 0;
+            }
+        }
+    }
+
+    /* Draw present tiles */
+    for (layer = 0; layer < BOARD_LAYERS; ++layer) {
+        for (row = 0; row < BOARD_ROWS; ++row) {
+            for (col = 0; col < BOARD_COLS; ++col) {
+                if (!dirty[layer][row][col]) {
+                    continue;
+                }
+
+                draw_tile(layer, col, row);
+                dirty[layer][row][col] = 0;
+            }
+        }
+    }
+}
+
+static void
+mark_tile_dirty(int layer, int col, int row)
+{
+    static const int8_t dc[3] = {1, 0, 1};
+    static const int8_t dr[3] = {0, 1, 1};
+    int i, nl, nc, nr;
+
+    if (col >= BOARD_COLS || row >= BOARD_ROWS || board[layer][row][col] == TILE_EMPTY) {
+        return;
+    }
+
+    dirty[layer][row][col] = 1;
+
+    /*
+     * Recursively mark as dirty the bottom, right and bottom-right tiles
+     * in higher layers, since they're drawn over the original cell
+     */
+    for (i = 0; i < 3; ++i) {
+        nc = col + dc[i];
+        nr = row + dr[i];
+
+        if (nc >= BOARD_COLS || nr >= BOARD_ROWS) {
+            continue;
+        }
+
+        for (nl = layer + 1; nl < BOARD_LAYERS; ++nl) {
+            mark_tile_dirty(nl, nc, nr);
+        }
+    }
+}
+
+static void
+redraw_board(void)
 {
     int layer, row, col;
     rect_st rect;
 
     gui_rect_init(&rect, 0, 0, window.size.width, window.size.height);
     gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
+    gui_surface_mark_dirty(&window.origin, &rect);
 
     for (layer = 0; layer < BOARD_LAYERS; ++layer) {
         for (row = 0; row < BOARD_ROWS; ++row) {
             for (col = 0; col < BOARD_COLS; ++col) {
-                if (board[layer][row][col] != TILE_EMPTY) {
-                    draw_tile(layer, col, row);
-                }
+                dirty[layer][row][col] = (board[layer][row][col] != TILE_EMPTY);
             }
         }
     }
 
+    draw_dirty_tiles();
+
     if (topmost_layer_at(cur_col, cur_row) < 0) {
         draw_empty_cursor(cur_col, cur_row, COLOR_FG);
     }
+}
 
-    gui_rect_init(&rect, 0, 0, window.size.width, window.size.height);
-    gui_surface_mark_dirty(&window.origin, &rect);
+static void
+remove_tile(int layer, int col, int row)
+{
+    int nl, nc, nr;
+
+    board[layer][row][col] = TILE_EMPTY;
+    dirty[layer][row][col] = 1;
+
+    /* All adjacent tiles need to be redrawn */
+    for (nl = 0; nl < BOARD_LAYERS; ++nl) {
+        for (nr = row - 1; nr <= row + 1; ++nr) {
+            for (nc = col - 1; nc <= col + 1; ++nc) {
+                if (nc < 0 || nc >= BOARD_COLS || nr < 0 || nr >= BOARD_ROWS) {
+                    continue;
+                }
+
+                mark_tile_dirty(nl, nc, nr);
+            }
+        }
+    }
+
+    draw_dirty_tiles();
+
+    if (cur_col == col && cur_row == row && topmost_layer_at(col, row) < 0) {
+        draw_empty_cursor(col, row, COLOR_FG);
+    }
 }
 
 static void
@@ -321,7 +413,7 @@ shuffle_tiles(void)
     sel_col = -1;
     state = has_valid_moves() ? STATE_DEFAULT : STATE_STUCK;
 
-    draw_board();
+    redraw_board();
     update_status();
 }
 
@@ -350,6 +442,7 @@ static void
 select_tile(void)
 {
     int layer;
+    int prev_col, prev_row, prev_layer;
 
     if (state != STATE_DEFAULT) {
         return;
@@ -364,7 +457,8 @@ select_tile(void)
     /* Selecting already selected tile */
     if (sel_col == cur_col && sel_row == cur_row && sel_layer == layer) {
         sel_col = -1;
-        draw_board();
+        mark_tile_dirty(layer, cur_col, cur_row);
+        draw_dirty_tiles();
         update_status();
         return;
     }
@@ -374,24 +468,33 @@ select_tile(void)
         sel_col = cur_col;
         sel_row = cur_row;
         sel_layer = layer;
-        draw_board();
+        mark_tile_dirty(layer, cur_col, cur_row);
+        draw_dirty_tiles();
         update_status();
         return;
     }
 
     /* Second pick - no match */
     if (board[layer][cur_row][cur_col] != board[sel_layer][sel_row][sel_col]) {
+        prev_col = sel_col;
+        prev_row = sel_row;
+        prev_layer = sel_layer;
         sel_col = -1;
-        draw_board();
+        mark_tile_dirty(prev_layer, prev_col, prev_row);
+        draw_dirty_tiles();
         gui_status_set("No match");
         return;
     }
 
     /* Second pick - match */
-    board[layer][cur_row][cur_col] = TILE_EMPTY;
-    board[sel_layer][sel_row][sel_col] = TILE_EMPTY;
+    prev_col = sel_col;
+    prev_row = sel_row;
+    prev_layer = sel_layer;
     sel_col = -1;
     --remaining_pairs;
+
+    remove_tile(layer, cur_col, cur_row);
+    remove_tile(prev_layer, prev_col, prev_row);
 
     if (remaining_pairs == 0) {
         state = STATE_WON;
@@ -399,17 +502,41 @@ select_tile(void)
         state = STATE_STUCK;
     }
 
-    draw_board();
     update_status();
 }
 
 static void
 update_cursor(int dx, int dy)
 {
+    int old_col = cur_col;
+    int old_row = cur_row;
+    int old_layer = topmost_layer_at(old_col, old_row);
+    int new_layer;
+
     cur_col = MAX(0, MIN(BOARD_COLS - 1, cur_col + dx));
     cur_row = MAX(0, MIN(BOARD_ROWS - 1, cur_row + dy));
 
-    draw_board();
+    if (old_col == cur_col && old_row == cur_row) {
+        return;
+    }
+
+    new_layer = topmost_layer_at(cur_col, cur_row);
+
+    if (old_layer >= 0) {
+        mark_tile_dirty(old_layer, old_col, old_row);
+    } else {
+        draw_empty_cursor(old_col, old_row, COLOR_BG);
+    }
+
+    if (new_layer >= 0) {
+        mark_tile_dirty(new_layer, cur_col, cur_row);
+    } else {
+        draw_empty_cursor(cur_col, cur_row, COLOR_FG);
+    }
+
+    if (old_layer >= 0 || new_layer >= 0) {
+        draw_dirty_tiles();
+    }
 }
 
 static void
