@@ -93,7 +93,7 @@ draw_cell(int col, int row)
 {
     int idx = row * GRID_COLS + col;
     uint8_t state = cell_states[idx];
-    rect_st rect;
+    rect_st rect, cur_rect;
 
     gui_grid_cell_rect(&grid, col, row, &rect);
     gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
@@ -104,7 +104,9 @@ draw_cell(int col, int row)
     }
 
     if (col == current_col && row == current_row) {
-        gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
+        gui_rect_copy(&cur_rect, &rect);
+        gui_rect_shrink(&cur_rect, 1);
+        gui_surface_draw_border(&window.origin, &cur_rect, COLOR_FG);
     }
 
     gui_surface_mark_dirty(&window.origin, &rect);
