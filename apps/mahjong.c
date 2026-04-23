@@ -213,6 +213,20 @@ draw_tile(int layer, int col, int row)
 }
 
 static void
+draw_empty_cursor(int col, int row, uint8_t color)
+{
+    /* At this size it won't draw over adjacent tiles up to 4th layer */
+    int size = 4;
+    int x = col * (TILE_W - 1) + (TILE_W - size) / 2;
+    int y = row * (TILE_H - 1) + (TILE_H - size) / 2;
+    rect_st rect;
+
+    gui_rect_init(&rect, x, y, size, size);
+    gui_surface_draw_rect(&window.origin, &rect, color);
+    gui_surface_mark_dirty(&window.origin, &rect);
+}
+
+static void
 draw_board(void)
 {
     int layer, row, col;
@@ -231,11 +245,8 @@ draw_board(void)
         }
     }
 
-    /* Cursor on empty position */
     if (topmost_layer_at(cur_col, cur_row) < 0) {
-        gui_rect_init(&rect, cur_col * (TILE_W - 1),
-            cur_row * (TILE_H - 1), TILE_W, TILE_H);
-        gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
+        draw_empty_cursor(cur_col, cur_row, COLOR_FG);
     }
 
     gui_rect_init(&rect, 0, 0, window.size.width, window.size.height);
