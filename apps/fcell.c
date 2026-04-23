@@ -107,6 +107,22 @@ col_x(int col)
     return col * (CARD_WIDTH + GAP_X);
 }
 
+static int
+col_step(int col)
+{
+    int step, max_step;
+    int count = column_counts[col];
+
+    step = COLUMN_CARDS_STEP;
+    if (count > 1) {
+        max_step = (COLUMNS_H - CARD_HEIGHT) / (count - 1);
+        step = MIN(step, max_step);
+        step = MAX(step, 1);
+    }
+
+    return step;
+}
+
 static void
 deal_cards(void)
 {
@@ -211,7 +227,7 @@ draw_cell(int pile, int idx)
 static void
 draw_column(int col)
 {
-    int x, count, i, step, max_step, is_sel;
+    int x, count, i, step, is_sel;
     rect_st r;
 
     x = col_x(col);
@@ -223,12 +239,7 @@ draw_column(int col)
     if (count == 0) {
         draw_card(x, COLUMNS_Y, CARD_EMPTY, 0);
     } else {
-        step = COLUMN_CARDS_STEP;
-        if (count > 1) {
-            max_step = (COLUMNS_H - CARD_HEIGHT) / (count - 1);
-            step = MIN(step, max_step);
-            step = MAX(step, 1);
-        }
+        step = col_step(col);
 
         for (i = 0; i < count; i++) {
             is_sel = (sel_pile == PILE_COLUMNS && sel_idx == col && i == count - 1);
