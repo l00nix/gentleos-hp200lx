@@ -35,7 +35,7 @@ static unsigned current_row;
 static void
 update_status(void)
 {
-    int n = current_row * grid.rows + current_col;
+    int n = current_row * grid.cols + current_col;
     gui_status_set("hex:%02x dec:%03d", n, n);
 }
 
