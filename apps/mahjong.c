@@ -182,23 +182,33 @@ draw_tile(int layer, int col, int row)
     uint8_t face_color = is_selected ? COLOR_FG : COLOR_BG;
     uint8_t glyph_color = is_selected ? COLOR_BG : COLOR_FG;
     rect_st rect, inner;
-    int i;
+    point_st *origin = &window.origin;
+    int has_right = (col < BOARD_COLS - 1 && board[layer][row][col + 1] != TILE_EMPTY);
+    int has_bottom = (row < BOARD_ROWS - 1 && board[layer][row + 1][col] != TILE_EMPTY);
+    int has_diag = (col < BOARD_COLS - 1 && row < BOARD_ROWS - 1 && board[layer][row + 1][col + 1] != TILE_EMPTY);
 
-    for (i = 1; i <= TILE_D; ++i) {
-        gui_rect_init(&rect, x + i, y + i, TILE_W, TILE_H);
-        gui_surface_draw_rect(&window.origin, &rect, COLOR_FG);
+    if (!has_right) {
+        gui_rect_init(&rect, x + TILE_W, y + 2, 2, has_diag ? TILE_H - 2 : TILE_H);
+        gui_surface_draw_rect(origin, &rect, COLOR_FG);
+        gui_surface_draw_pixel(origin, x + TILE_W, y + 1, COLOR_FG);
+    }
+
+    if (!has_bottom) {
+        gui_rect_init(&rect, x + 2, y + TILE_H, has_diag ? TILE_W - 2 : TILE_W, 2);
+        gui_surface_draw_rect(origin, &rect, COLOR_FG);
+        gui_surface_draw_pixel(origin, x + 1, y + TILE_H, COLOR_FG);
     }
 
     gui_rect_init(&rect, x, y, TILE_W, TILE_H);
-    gui_surface_draw_rect(&window.origin, &rect, face_color);
-    gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
+    gui_surface_draw_rect(origin, &rect, face_color);
+    gui_surface_draw_border(origin, &rect, COLOR_FG);
     gui_rect_init(&inner, x + 1, y + 1, TILE_W - 2, TILE_H - 2);
-    gui_surface_draw_bitmap_centered(&window.origin, &window.size,
+    gui_surface_draw_bitmap_centered(origin, &window.size,
         &inner, tile_bitmaps[type], glyph_color);
 
     if (is_cursor) {
         gui_rect_init(&inner, x + 2, y + 2, TILE_W - 4, TILE_H - 4);
-        gui_surface_draw_border(&window.origin, &inner, glyph_color);
+        gui_surface_draw_border(origin, &inner, glyph_color);
     }
 }
 
