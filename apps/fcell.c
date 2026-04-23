@@ -313,7 +313,7 @@ update_status(void)
     if (state == STATE_WON) {
         gui_status_set("You Won! Press R to restart");
     } else {
-        gui_status_set("[H]elp");
+        gui_status_set_br("H: Show help");
     }
 }
 
