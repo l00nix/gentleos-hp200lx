@@ -8,11 +8,11 @@
 #include <gui.h>
 
 enum {
-    KEY_W_WIDTH = 15,
+    KEY_W_WIDTH = 17,
     KEY_W_HEIGHT = 80,
     KEY_W_COUNT = 15,
 
-    KEY_B_WIDTH = 9,
+    KEY_B_WIDTH = 11,
     KEY_B_HEIGHT = 50,
     KEY_B_COUNT = 10,
 
