@@ -5,12 +5,64 @@
  * File: vga.c - Driver for CGA/VGA cards
  */
 
+#include "lib.h"
 #include <kernel.h>
+
+static const vga_theme_st themes[] = {
+    { 0xcccccc, 0x000000, "gray on black" },
+    { 0x00cc00, 0x000000, "green on black" },
+};
+
+#define THEME_COUNT (sizeof(themes) / sizeof(themes[0]))
+
+static void
+krn_vga_set_color(uint8_t idx, uint32_t rgb)
+{
+    uint8_t dac_index;
+    regs_st regs;
+	uint16_t *rgb_words = (uint16_t *)&rgb;
+	uint16_t rgb_hi = rgb_words[1];
+	uint16_t rgb_lo = rgb_words[0];
+    uint8_t r6 = (uint8_t)((rgb_hi >> 2) & 0x3F);
+    uint8_t g6 = (uint8_t)((rgb_lo >> 10) & 0x3F);
+    uint8_t b6 = (uint8_t)((rgb_lo >> 2) & 0x3F);
+
+    regs.h.ah = 0x10;
+    regs.h.al = 0x07;
+    regs.h.bl = idx;
+    intr(0x10, &regs);
+    dac_index = regs.h.bh;
+
+    regs.h.ah = 0x10;
+    regs.h.al = 0x10;
+    regs.x.bx = dac_index;
+    regs.h.dh = r6;
+    regs.h.ch = g6;
+    regs.h.cl = b6;
+
+    intr(0x10, &regs);
+}
+
+global void
+krn_vga_set_theme(int n)
+{
+    uint32_t fg, bg;
+
+    if (n < 0 || n >= THEME_COUNT) {
+        return;
+    }
+
+    krn_debug_printf("Setting color theme... ");
+
+    krn_vga_set_color(0, themes[n].bg_color);
+    krn_vga_set_color(3, themes[n].fg_color);
+
+    krn_debug_printf("ok\n");
+}
 
 global void
 krn_vga_init(void)
 {
-    uint8_t dac_index;
     regs_st regs;
 
     krn_debug_printf("Initializing video... ");
@@ -21,20 +73,8 @@ krn_vga_init(void)
     regs.h.al = 0x04;
     intr(0x10, &regs);
 
+    krn_vga_set_theme(DEFAULT_VGA_THEME);
 #if GUI_COLOR_OVERRIDE
-    regs.h.ah = 0x10;
-    regs.h.al = 0x07;
-    regs.h.bl = 0x03;
-    intr(0x10, &regs);
-    dac_index = regs.h.bh;
-
-    regs.h.ah = 0x10;
-    regs.h.al = 0x10;
-    regs.x.bx = dac_index;
-    regs.h.dh = (GUI_COLOR_OVERRIDE >> 18) & 0x3F;
-    regs.h.ch = (GUI_COLOR_OVERRIDE >> 10) & 0x3F;
-    regs.h.cl = (GUI_COLOR_OVERRIDE >> 2) & 0x3F;
-    intr(0x10, &regs);
 #endif
 
     krn_debug_printf("ok\n");

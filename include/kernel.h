@@ -40,6 +40,12 @@ typedef struct {
     } payload;
 } event_st;
 
+typedef struct {
+    uint32_t fg_color;
+    uint32_t bg_color;
+    const char *name;
+} vga_theme_st;
+
 extern void *krn_link_start;
 extern void *krn_link_end;
 extern uint16_t krn_data_seg;

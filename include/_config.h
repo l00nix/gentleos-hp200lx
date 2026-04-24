@@ -1,8 +1,8 @@
 /*
- * Override foreground color with specified RGB value
+ * Use custom color theme, see kernel/vga.c for the list
  * Only works on EGA/VGA cards, but not real CGA
  */
-#define GUI_COLOR_OVERRIDE 0xbbbbbbUL
+#define DEFAULT_VGA_THEME 0
 
 /*
  * Run test suite on startup

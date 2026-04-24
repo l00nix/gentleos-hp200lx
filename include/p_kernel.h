@@ -42,5 +42,6 @@ extern void krn_uart_handle_intr(void);
 extern void krn_uart_init(void);
 extern void krn_uart_deinit(void);
 /* kernel/vga.c */
+extern void krn_vga_set_theme(int n);
 extern void krn_vga_init(void);
 extern void krn_vga_deinit(void);
