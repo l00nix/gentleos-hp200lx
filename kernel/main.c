@@ -11,29 +11,34 @@
 
 extern uint32_t krn_marker_data_end;
 
-global isr_st far *krn_ivt;
+global isr_st far *krn_ivt = MK_FP(0, 0);
 
 
 #if ENABLE_TESTS
 extern void tests_run(void);
 #endif
 
+static void
+krn_check_load(void)
+{
+    krn_debug_printf("Checking kernel load... ");
+
+    if (krn_marker_data_end != 0xf0cacc1a) {
+        krn_debug_printf("fail\n");
+        halt();
+        /* UNREACHABLE */
+    }
+
+    krn_debug_printf("ok\n");
+}
+
 global void
 krn_main(void)
 {
-    krn_uart_init();
-
     krn_debug_printf("\n");
-    krn_ivt = MK_FP(0, 0);
 
-    if (krn_marker_data_end != 0xf0cacc1a) {
-        krn_debug_printf("Kernel loading failed\n");
-        #pragma disable_message(111)
-        while (1);
-        #pragma enable_message(111)
-    }
-
-    krn_debug_printf("Kernel loaded successfully\n");
+    krn_uart_init();
+    krn_check_load();
 
 #if ENABLE_TESTS
     tests_run();
@@ -47,9 +52,8 @@ krn_main(void)
 
     gui_main();
 
-    while (1) {
-        /* UNREACHABLE */
-    };
+    halt();
+    /* UNREACHABLE */
 }
 
 global void

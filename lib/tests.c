@@ -18,7 +18,7 @@ start_test_case(const char *name)
 {
     tests_failed = 0;
     tests_ok = 0;
-    krn_debug_printf("- Testing %s: ", name);
+    krn_debug_printf("- Checking %s... ", name);
 }
 
 static void
@@ -175,6 +175,7 @@ tests_run(void)
 
     krn_debug_printf("Tests done. Press enter to continue...");
     (void)bios_getc();
+    krn_debug_printf("\n");
 }
 
 #endif

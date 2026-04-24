@@ -76,6 +76,8 @@ krn_uart_handle_intr(void)
 global void
 krn_uart_init(void)
 {
+    krn_debug_printf("Initializing UART... ");
+
     /* Disable interrupts */
     outb(0x00, UART_BASE + UART_IER);
 
@@ -105,6 +107,8 @@ krn_uart_init(void)
 
     /* Enable interrupts */
     outb(0x01, UART_BASE + UART_IER);
+
+    krn_debug_printf("ok\n");
 }
 
 global void

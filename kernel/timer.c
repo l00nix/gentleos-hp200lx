@@ -78,6 +78,8 @@ krn_timer_init(void)
 {
     uint16_t div = 1193180 / TIMER_HZ;
 
+    krn_debug_printf("Initializing timer... ");
+
     /* Set Counter 0, write both LSB and MSB, use mode 3, binary counter */
     outb(0x36, PIT_CWR);
 
@@ -87,6 +89,8 @@ krn_timer_init(void)
 
     krn_get_isr(0x1c, &saved_isr_handler);
     krn_set_isr(0x1c, krn_data_seg, (uint16_t)(uint32_t)&krn_isr_timer);
+
+    krn_debug_printf("ok\n");
 }
 
 global void

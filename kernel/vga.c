@@ -13,6 +13,8 @@ krn_vga_init(void)
     uint8_t dac_index;
     regs_st regs;
 
+    krn_debug_printf("Initializing video... ");
+
     krn_debug_text_mode_enabled = 0;
 
     regs.h.ah = 0x00;
@@ -34,6 +36,8 @@ krn_vga_init(void)
     regs.h.cl = (GUI_COLOR_OVERRIDE >> 2) & 0x3F;
     intr(0x10, &regs);
 #endif
+
+    krn_debug_printf("ok\n");
 }
 
 global void

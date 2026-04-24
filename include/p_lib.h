@@ -23,6 +23,7 @@ extern void rand_init(void);
 extern uint16_t rand(void);
 /* lib/sleep.c */
 extern void sleep(uint32_t msecs);
+extern void halt(void);
 /* lib/string.c */
 extern void * memcpy(void *dest, const void *src, size_t n);
 extern void far * memcpy_far(void far *dest, const void far *src, size_t n);
