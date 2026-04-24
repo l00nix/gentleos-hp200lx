@@ -12,11 +12,13 @@ enum {
     FONT_HEIGHT = 8,
 
     ROW_HEIGHT = FONT_HEIGHT + 5,
+    ROW_COUNT = 3,
+
     PADDING_Y = 10,
     PADDING_X = 15,
 
     WINDOW_WIDTH = 160,
-    WINDOW_HEIGHT = PADDING_Y + ROW_HEIGHT * 2 + PADDING_Y,
+    WINDOW_HEIGHT = PADDING_Y + ROW_HEIGHT * ROW_COUNT + PADDING_Y,
 
     CONTENT_X = PADDING_X,
     CONTENT_Y = PADDING_Y,
@@ -29,14 +31,16 @@ enum {
     FIELD_HOUR,
     FIELD_MINUTE,
     FIELD_SECOND,
+    FIELD_COLORS,
 };
 
 static window_st window;
 static int cursor = 0;
 
 /*
- * Row 0: "Date:  YYYY-MM-DD"
- * Row 1: "Time:  HH:MM:SS"
+ * Row 0: "Date:    YYYY-MM-DD"
+ * Row 1: "Time:    HH:MM:SS"
+ * Row 2: "Colors:  SSSSSSSSSS"
  */
 
  static struct {
@@ -47,12 +51,13 @@ static int cursor = 0;
     int max;
     int val;
 } fields[] = {
-    { 0,  7, 4, 2000, 2099 },
-    { 0, 12, 2,    1,   12 },
-    { 0, 15, 2,    1,   31 },
-    { 1,  7, 2,    0,   23 },
-    { 1, 10, 2,    0,   59 },
+    { 0, 10, 4, 2000, 2099 },
+    { 0, 15, 2,    1,   12 },
+    { 0, 18, 2,    1,   31 },
+    { 1, 10, 2,    0,   23 },
     { 1, 13, 2,    0,   59 },
+    { 1, 16, 2,    0,   59 },
+    { 2, 10, 16,   0,   KRN_VGA_THEME_COUNT - 1 },
 };
 
 static const struct {
@@ -61,11 +66,12 @@ static const struct {
     const char *text;
 } labels[] = {
     { 0,  0, "Date:" },
-    { 0, 11, "-" },
     { 0, 14, "-" },
+    { 0, 17, "-" },
     { 1,  0, "Time:" },
-    { 1,  9, ":" },
     { 1, 12, ":" },
+    { 1, 15, ":" },
+    { 2,  0, "Colors:" },
 };
 
 #define FIELD_COUNT (sizeof(fields) / sizeof(fields[0]))
@@ -75,7 +81,7 @@ static void
 draw_field(int n)
 {
     rect_st rect;
-    char buf[8];
+    char buf[32];
 
     int val = fields[n].val;
     int is_current = (n == cursor);
@@ -90,6 +96,8 @@ draw_field(int n)
 
     if (n == FIELD_YEAR) {
         snprintf(buf, sizeof(buf), "%04d", val);
+    } else if (n == FIELD_COLORS) {
+        snprintf(buf, 16, "%s", krn_vga_themes[val].name);
     } else {
         snprintf(buf, sizeof(buf), "%02d", val);
     }
@@ -176,6 +184,7 @@ load_fields(void)
     fields[FIELD_HOUR].val = time.hour;
     fields[FIELD_MINUTE].val = time.minute;
     fields[FIELD_SECOND].val = time.second;
+    fields[FIELD_COLORS].val = krn_vga_theme_current;
 }
 
 static void
@@ -192,6 +201,8 @@ save_fields(void)
         fields[FIELD_MINUTE].val,
         fields[FIELD_SECOND].val
     );
+
+    krn_vga_set_theme(fields[FIELD_COLORS].val);
 
     gui_status_set("Settings saved");
 }

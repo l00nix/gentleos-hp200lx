@@ -8,12 +8,12 @@
 #include "lib.h"
 #include <kernel.h>
 
-static const vga_theme_st themes[] = {
-    { 0xcccccc, 0x000000, "gray on black" },
-    { 0x00cc00, 0x000000, "green on black" },
-};
+global int krn_vga_theme_current = DEFAULT_VGA_THEME;
 
-#define THEME_COUNT (sizeof(themes) / sizeof(themes[0]))
+global const vga_theme_st krn_vga_themes[KRN_VGA_THEME_COUNT] = {
+    { 0xcccccc, 0x000000, "gray / black" },
+    { 0x00cc00, 0x000000, "green / black" },
+};
 
 static void
 krn_vga_set_color(uint8_t idx, uint32_t rgb)
@@ -48,14 +48,15 @@ krn_vga_set_theme(int n)
 {
     uint32_t fg, bg;
 
-    if (n < 0 || n >= THEME_COUNT) {
+    if (n < 0 || n >= KRN_VGA_THEME_COUNT) {
         return;
     }
 
     krn_debug_printf("Setting color theme... ");
 
-    krn_vga_set_color(0, themes[n].bg_color);
-    krn_vga_set_color(3, themes[n].fg_color);
+    krn_vga_set_color(0, krn_vga_themes[n].bg_color);
+    krn_vga_set_color(3, krn_vga_themes[n].fg_color);
+    krn_vga_theme_current = n;
 
     krn_debug_printf("ok\n");
 }
@@ -73,9 +74,7 @@ krn_vga_init(void)
     regs.h.al = 0x04;
     intr(0x10, &regs);
 
-    krn_vga_set_theme(DEFAULT_VGA_THEME);
-#if GUI_COLOR_OVERRIDE
-#endif
+    krn_vga_set_theme(krn_vga_theme_current);
 
     krn_debug_printf("ok\n");
 }
