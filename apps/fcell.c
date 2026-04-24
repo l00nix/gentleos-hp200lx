@@ -23,7 +23,7 @@ enum {
     COLUMN_CARDS_MAX = 21,
     CARD_EMPTY = 0xFF,
 
-    WINDOW_WIDTH = COLUMN_COUNT * CARD_WIDTH + (COLUMN_COUNT - 1) * GAP_X,
+    WINDOW_WIDTH = COLUMN_COUNT * CARD_WIDTH + (COLUMN_COUNT + 1) * GAP_X,
     WINDOW_HEIGHT = GUI_HEIGHT - 2 * STATUS_HEIGHT,
 
     HOLDS_Y = GAP_Y,
@@ -104,7 +104,7 @@ card_color(uint8_t card)
 static int
 col_x(int col)
 {
-    return col * (CARD_WIDTH + GAP_X);
+    return col * (CARD_WIDTH + GAP_X) + GAP_X;
 }
 
 static int
@@ -121,6 +121,55 @@ col_step(int col)
     }
 
     return step;
+}
+
+static int
+pile_x(int pile, int idx)
+{
+    switch (pile) {
+    case PILE_COLUMNS: return col_x(idx);
+    case PILE_HOLDS: return col_x(idx) - GAP_X;
+    case PILE_FOUNDS: return col_x(idx + HOLD_COUNT) + GAP_X;
+    default: return 0;
+    }
+}
+
+static uint8_t
+pile_top_card(int pile, int idx)
+{
+    int col_count = column_counts[idx];
+
+    switch (pile) {
+    case PILE_COLUMNS: return col_count > 0 ? columns[idx][col_count - 1] : CARD_EMPTY;
+    case PILE_HOLDS: return holds[idx];
+    case PILE_FOUNDS: return founds[idx];
+    default: return CARD_EMPTY;
+    }
+}
+
+static int
+pile_top_card_y(int pile, int idx)
+{
+    int col_count = column_counts[idx];
+
+    switch (pile) {
+    case PILE_COLUMNS: return COLUMNS_Y + (col_count > 0 ? (col_count - 1) * col_step(idx) : 0);
+    case PILE_HOLDS:
+    case PILE_FOUNDS: return HOLDS_Y;
+    default: return 0;
+    }
+}
+
+static int
+pile_is_sel(int pile, int idx)
+{
+    return sel_pile == pile && sel_idx == idx;
+}
+
+static uint8_t
+selected_card(void)
+{
+    return pile_top_card(sel_pile, sel_idx);
 }
 
 static void
@@ -170,18 +219,16 @@ deal_cards(void)
 static void
 draw_card(int x, int y, uint8_t card, int is_sel)
 {
+    uint8_t fg = is_sel ? COLOR_BG : COLOR_FG;
+    uint8_t bg = is_sel ? COLOR_FG : COLOR_BG;
+    int rank = card_rank(card);
+    int suit = card_suit(card);
     rect_st r;
-    int rank, suit;
-    uint8_t fg, bg;
-
-    fg = is_sel ? COLOR_BG : COLOR_FG;
-    bg = is_sel ? COLOR_FG : COLOR_BG;
-    rank = card_rank(card);
-    suit = card_suit(card);
 
     gui_rect_init(&r, x, y, CARD_WIDTH, CARD_HEIGHT);
     gui_surface_draw_rect(&window.origin, &r, bg);
     gui_surface_draw_border(&window.origin, &r, COLOR_FG);
+    gui_surface_mark_dirty(&window.origin, &r);
 
     if (card == CARD_EMPTY) {
         return;
@@ -195,77 +242,82 @@ draw_card(int x, int y, uint8_t card, int is_sel)
 static void
 draw_card_stub(int x, int y, int height, uint8_t card)
 {
+    int rank = card_rank(card);
+    int suit = card_suit(card);
     rect_st r;
-    int rank, suit;
-
-    rank = card_rank(card);
-    suit = card_suit(card);
 
     gui_rect_init(&r, x, y, CARD_WIDTH, height);
     gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
     gui_surface_draw_border(&window.origin, &r, COLOR_FG);
 
-    gui_surface_draw_str(&window.origin, x + 3, y + 3, &fonts[2], rank_str[rank], COLOR_FG, COLOR_BG);
+    gui_surface_draw_str(&window.origin, x + 3, y + 3, &fonts[2],
+        rank_str[rank], COLOR_FG, COLOR_BG);
     gui_surface_draw_bitmap(&window.origin, &window.size,
         x + CARD_WIDTH - 8, y + 3, suit_bmp[suit], COLOR_FG);
+
+    gui_surface_mark_dirty(&window.origin, &r);
+}
+
+static void
+draw_cursor(int visible)
+{
+    int x = pile_x(cur_pile, cur_idx);
+    int y = pile_top_card_y(cur_pile, cur_idx);
+    int is_sel = pile_is_sel(cur_pile, cur_idx);
+    uint8_t color = (visible ^ is_sel) ? COLOR_FG : COLOR_BG;
+    rect_st r;
+
+    gui_rect_init(&r, x + 1, y + 1, CARD_WIDTH - 2, CARD_HEIGHT - 2);
+    gui_surface_draw_border(&window.origin, &r, color);
+    gui_surface_mark_dirty(&window.origin, &r);
 }
 
 static void
 draw_cell(int pile, int idx)
 {
-    int x, y;
+    int x = pile_x(pile, idx);
+    int y = HOLDS_Y;
+    int is_sel = pile_is_sel(pile, idx);
+    uint8_t card = pile_top_card(pile, idx);
     rect_st r;
-    uint8_t card;
-    int is_sel;
 
-    if (pile == PILE_HOLDS) {
-        x = col_x(idx) - GAP_X;
-        card = holds[idx];
-    } else {
-        x = col_x(idx + HOLD_COUNT) + GAP_X;
-        card = founds[idx];
+    draw_card(x, y, card, is_sel);
+
+    if (cur_pile == pile && cur_idx == idx) {
+        draw_cursor(1);
     }
-
-    y = HOLDS_Y;
 
     gui_rect_init(&r, x, y, CARD_WIDTH, CARD_HEIGHT);
-    gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
-
-    is_sel = (sel_pile == pile && sel_idx == idx);
-
-    if (card == CARD_EMPTY) {
-        gui_surface_draw_border(&window.origin, &r, COLOR_FG);
-    } else {
-        draw_card(x, y, card, is_sel);
-    }
-
     gui_surface_mark_dirty(&window.origin, &r);
 }
 
 static void
 draw_column(int col)
 {
-    int x, y, count, i, step, is_sel;
-    rect_st r;
+    int x = col_x(col);
+    int count = column_counts[col];
+    uint8_t top_card = pile_top_card(PILE_COLUMNS, col);
+    int top_card_y = pile_top_card_y(PILE_COLUMNS, col);
+    int is_sel = top_card != CARD_EMPTY && pile_is_sel(PILE_COLUMNS, col);
 
-    x = col_x(col);
-    count = column_counts[col];
+    int i, step;
+    rect_st r;
 
     gui_rect_init(&r, x, COLUMNS_Y, CARD_WIDTH, COLUMNS_H);
     gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
 
-    if (count == 0) {
-        draw_card(x, COLUMNS_Y, CARD_EMPTY, 0);
-    } else {
+    if (count > 0) {
         step = col_step(col);
 
         for (i = 0; i < count - 1; i++) {
             draw_card_stub(x, COLUMNS_Y + i * step, step + 1, columns[col][i]);
         }
+    }
 
-        y = COLUMNS_Y + (count - 1) * step;
-        is_sel = (sel_pile == PILE_COLUMNS && sel_idx == col);
-        draw_card(x, y, columns[col][count - 1], is_sel);
+    draw_card(x, top_card_y, top_card, is_sel);
+
+    if (cur_pile == PILE_COLUMNS && cur_idx == col) {
+        draw_cursor(1);
     }
 
     gui_surface_mark_dirty(&window.origin, &r);
@@ -287,34 +339,6 @@ draw_piles(void)
     for (i = 0; i < FOUND_COUNT; i++) {
         draw_cell(PILE_FOUNDS, i);
     }
-}
-
-static void
-draw_cursor(int visible)
-{
-    int x, y;
-    rect_st r;
-    bitmap_st *b = &sprite_arr_up;
-
-    x = (CARD_WIDTH - b->size.width) / 2;
-
-    if (cur_pile == PILE_HOLDS) {
-        x += col_x(cur_idx) - GAP_X;
-        y = HOLDS_Y + CARD_HEIGHT + 2;
-    } else {
-        x += col_x(cur_idx);
-        y = WINDOW_HEIGHT - b->size.height - 2;
-    }
-
-    gui_rect_init(&r, x, y, b->size.width, b->size.height);
-
-    if (visible) {
-        gui_surface_draw_bitmap(&window.origin, &window.size, x, y, b, COLOR_FG);
-    } else {
-        gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
-    }
-
-    gui_surface_mark_dirty(&window.origin, &r);
 }
 
 static void
@@ -382,10 +406,9 @@ select_card(void)
 static void
 deselect_card(void)
 {
-    int old_pile, old_idx;
+    int old_pile = sel_pile;
+    int old_idx = sel_idx;
 
-    old_pile = sel_pile;
-    old_idx = sel_idx;
     sel_pile = PILE_NONE;
 
     if (old_pile == PILE_HOLDS) {
@@ -402,18 +425,6 @@ show_error(const char *msg)
 {
     deselect_card();
     gui_status_set("%s", msg);
-}
-
-static uint8_t
-selected_card(void)
-{
-    if (sel_pile == PILE_HOLDS) {
-        return holds[sel_idx];
-    } else if (sel_pile == PILE_COLUMNS) {
-        return columns[sel_idx][column_counts[sel_idx] - 1];
-    } else {
-        return CARD_EMPTY;
-    }
 }
 
 static uint8_t
@@ -740,7 +751,6 @@ close_help(void)
 static void
 restart_game(void)
 {
-    draw_cursor(0);
     deal_cards();
     draw_piles();
     draw_cursor(1);
