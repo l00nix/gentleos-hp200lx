@@ -85,9 +85,20 @@ update_status_bl(void)
 }
 
 static void
+draw_cursor(int col, int row, uint8_t color)
+{
+    rect_st rect;
+
+    cell_rect_init(&rect, col, row);
+    gui_rect_shrink(&rect, 2);
+    gui_surface_draw_border(&window.origin, &rect, color);
+    gui_surface_mark_dirty(&window.origin, &rect);
+}
+
+static void
 draw_cell(int col, int row)
 {
-    rect_st rect, cur_rect;
+    rect_st rect;
     int i = row * GRID_COLS + col;
 
     cell_rect_init(&rect, col, row);
@@ -100,9 +111,7 @@ draw_cell(int col, int row)
     }
 
     if (col == current_col && row == current_row) {
-        gui_rect_copy(&cur_rect, &rect);
-        gui_rect_shrink(&cur_rect, 2);
-        gui_surface_draw_border(&window.origin, &cur_rect, COLOR_FG);
+        draw_cursor(col, row, COLOR_FG);
     }
 
     gui_surface_mark_dirty(&window.origin, &rect);
@@ -121,7 +130,7 @@ draw_all_cells(void)
 }
 
 static void
-update_current_cell(int dx, int dy)
+move_cursor(int dx, int dy)
 {
     int prev_col = current_col;
     int prev_row = current_row;
@@ -136,8 +145,8 @@ update_current_cell(int dx, int dy)
     current_col = new_col;
     current_row = new_row;
 
-    draw_cell(prev_col, prev_row);
-    draw_cell(current_col, current_row);
+    draw_cursor(prev_col, prev_row, COLOR_BG);
+    draw_cursor(current_col, current_row, COLOR_FG);
 
     update_status_bl();
 }
@@ -148,10 +157,10 @@ on_key_down(const event_st *event)
     int key_code = event->payload.key.key_code;
 
     switch (key_code) {
-        case KEY_LEFT: update_current_cell(-1, 0); return;
-        case KEY_RIGHT: update_current_cell(1, 0); return;
-        case KEY_UP: update_current_cell(0, -1); return;
-        case KEY_DOWN: update_current_cell(0, 1); return;
+        case KEY_LEFT: move_cursor(-1, 0); return;
+        case KEY_RIGHT: move_cursor(1, 0); return;
+        case KEY_UP: move_cursor(0, -1); return;
+        case KEY_DOWN: move_cursor(0, 1); return;
         case KEY_SPACE:
         case KEY_ENTER: launch_current_app(); return;
     }
