@@ -89,11 +89,22 @@ shuffle_icons(void)
 }
 
 static void
+draw_cursor(int col, int row, uint8_t color)
+{
+    rect_st rect;
+
+    gui_grid_cell_rect(&grid, col, row, &rect);
+    gui_rect_shrink(&rect, 1);
+    gui_surface_draw_border(&window.origin, &rect, color);
+    gui_surface_mark_dirty(&window.origin, &rect);
+}
+
+static void
 draw_cell(int col, int row)
 {
     int idx = row * GRID_COLS + col;
     uint8_t state = cell_states[idx];
-    rect_st rect, cur_rect;
+    rect_st rect;
 
     gui_grid_cell_rect(&grid, col, row, &rect);
     gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
@@ -104,9 +115,7 @@ draw_cell(int col, int row)
     }
 
     if (col == current_col && row == current_row) {
-        gui_rect_copy(&cur_rect, &rect);
-        gui_rect_shrink(&cur_rect, 1);
-        gui_surface_draw_border(&window.origin, &cur_rect, COLOR_FG);
+        draw_cursor(col, row, COLOR_FG);
     }
 
     gui_surface_mark_dirty(&window.origin, &rect);
@@ -186,7 +195,7 @@ on_tick(void)
 }
 
 static void
-update_current_cell(int dx, int dy)
+move_cursor(int dx, int dy)
 {
     int prev_col = current_col;
     int prev_row = current_row;
@@ -194,8 +203,8 @@ update_current_cell(int dx, int dy)
     current_col = MAX(0, MIN(GRID_COLS - 1, current_col + dx));
     current_row = MAX(0, MIN(GRID_ROWS - 1, current_row + dy));
 
-    draw_cell(prev_col, prev_row);
-    draw_cell(current_col, current_row);
+    draw_cursor(prev_col, prev_row, COLOR_BG);
+    draw_cursor(current_col, current_row, COLOR_FG);
 }
 
 static void
@@ -240,10 +249,10 @@ on_key_down(const event_st *event)
     int key_code = event->payload.key.key_code;
 
     switch (key_code) {
-        case KEY_LEFT: update_current_cell(-1, 0); return;
-        case KEY_RIGHT: update_current_cell(1, 0); return;
-        case KEY_UP: update_current_cell(0, -1); return;
-        case KEY_DOWN: update_current_cell(0, 1); return;
+        case KEY_LEFT: move_cursor(-1, 0); return;
+        case KEY_RIGHT: move_cursor(1, 0); return;
+        case KEY_UP: move_cursor(0, -1); return;
+        case KEY_DOWN: move_cursor(0, 1); return;
         case KEY_SPACE:
         case KEY_ENTER: on_enter(); return;
     }
