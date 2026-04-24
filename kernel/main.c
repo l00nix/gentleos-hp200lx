@@ -32,6 +32,25 @@ krn_check_load(void)
     krn_debug_printf("ok\n");
 }
 
+static void
+krn_fix_clock(void)
+{
+    date_st date;
+
+    bios_get_date(&date);
+
+    if (date.year >= 2000) {
+        return;
+    }
+
+    krn_debug_printf("Clock not set, setting default date/time... ");
+
+    bios_set_date(DEFAULT_YEAR, DEFAULT_MONTH, DEFAULT_DAY);
+    bios_set_time(DEFAULT_HOUR, DEFAULT_MINUTE, 0);
+
+    krn_debug_printf("ok\n");
+}
+
 global void
 krn_main(void)
 {
@@ -47,6 +66,7 @@ krn_main(void)
     krn_heap_init();
     krn_keyboard_init();
     krn_timer_init();
+    krn_fix_clock();
     rand_init();
     krn_vga_init();
 
