@@ -193,6 +193,24 @@ draw_card(int x, int y, uint8_t card, int is_sel)
 }
 
 static void
+draw_card_stub(int x, int y, int height, uint8_t card)
+{
+    rect_st r;
+    int rank, suit;
+
+    rank = card_rank(card);
+    suit = card_suit(card);
+
+    gui_rect_init(&r, x, y, CARD_WIDTH, height);
+    gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
+    gui_surface_draw_border(&window.origin, &r, COLOR_FG);
+
+    gui_surface_draw_str(&window.origin, x + 3, y + 3, &fonts[2], rank_str[rank], COLOR_FG, COLOR_BG);
+    gui_surface_draw_bitmap(&window.origin, &window.size,
+        x + CARD_WIDTH - 8, y + 3, suit_bmp[suit], COLOR_FG);
+}
+
+static void
 draw_cell(int pile, int idx)
 {
     int x, y;
@@ -227,7 +245,7 @@ draw_cell(int pile, int idx)
 static void
 draw_column(int col)
 {
-    int x, count, i, step, is_sel;
+    int x, y, count, i, step, is_sel;
     rect_st r;
 
     x = col_x(col);
@@ -241,10 +259,13 @@ draw_column(int col)
     } else {
         step = col_step(col);
 
-        for (i = 0; i < count; i++) {
-            is_sel = (sel_pile == PILE_COLUMNS && sel_idx == col && i == count - 1);
-            draw_card(x, COLUMNS_Y + i * step, columns[col][i], is_sel);
+        for (i = 0; i < count - 1; i++) {
+            draw_card_stub(x, COLUMNS_Y + i * step, step + 1, columns[col][i]);
         }
+
+        y = COLUMNS_Y + (count - 1) * step;
+        is_sel = (sel_pile == PILE_COLUMNS && sel_idx == col);
+        draw_card(x, y, columns[col][count - 1], is_sel);
     }
 
     gui_surface_mark_dirty(&window.origin, &r);
