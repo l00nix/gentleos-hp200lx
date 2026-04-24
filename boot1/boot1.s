@@ -4,7 +4,7 @@
 ;
 
 ;
-; kernel/boot.s - Stage 1 bootloader
+; boot1/boot1.s - Stage 1 bootloader
 ;
 
 [org 0x7c00]

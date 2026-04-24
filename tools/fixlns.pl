@@ -7,7 +7,7 @@
 
 my @GLOBS = (
     "apps/*",
-    "boot/*",
+    "boot1/*",
     "boot2/*",
     "data/*",
     "gui/*",

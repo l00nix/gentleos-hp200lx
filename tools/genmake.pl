@@ -12,7 +12,7 @@ my $MAKEFILE_TPL = <<'EOT';
 all: disks .SYMBOLIC
     @echo All done!
 
-disks: build/kernel.com build/boot/boot.bin build/boot2/boot2.com .SYMBOLIC
+disks: build/kernel.com build/boot1/boot1.bin build/boot2/boot2.com .SYMBOLIC
     perl tools/mkdisks.pl
 
 run: all .SYMBOLIC
@@ -33,8 +33,8 @@ BOOT2_OBJS = &
 INCLUDES = &
 <INCLUDES>
 
-build/boot/boot.bin: boot/boot.s
-    nasm -o build/boot/boot.bin boot/boot.s
+build/boot1/boot1.bin: boot1/boot1.s
+    nasm -o build/boot1/boot1.bin boot1/boot1.s
 
 build\kernel.com: $(KERNEL_OBJS)
 	wlink @build/kernel.lnk
