@@ -172,6 +172,23 @@ selected_card(void)
     return pile_top_card(sel_pile, sel_idx);
 }
 
+static int
+remaining_cards(void)
+{
+    int i;
+    int ret = 0;
+
+    for (i = 0; i < COLUMN_COUNT; ++i) {
+        ret += column_counts[i];
+    }
+
+    for (i = 0; i < HOLD_COUNT; ++i) {
+        ret += holds[i] == CARD_EMPTY ? 0 : 1;
+    }
+
+    return ret;
+}
+
 static void
 deal_cards(void)
 {
@@ -366,10 +383,13 @@ move_cursor(int dx, int dy)
 static void
 update_status(void)
 {
+    int remaining = remaining_cards();
+
     if (state == STATE_WON) {
         gui_status_set("You Won! Press R to restart");
     } else {
-        gui_status_set_br("H: Show help");
+        gui_status_set("Remaining cards: %d", remaining);
+        gui_status_set_br("H: Show keys");
     }
 }
 
