@@ -144,10 +144,12 @@ hide_icon(int idx)
 static void
 update_status(void)
 {
+    int remaining = PAIR_COUNT - matched_count;
+
     if (matched_count == PAIR_COUNT) {
         gui_status_set("You won after %d tries! Press R to play again", tries);
     } else {
-        gui_status_set("Tries: %d", tries);
+        gui_status_set("Remaining pairs: %d  Tries: %d", remaining, tries);
     }
 }
 
@@ -298,6 +300,7 @@ on_show(void)
     }
 
     gui_window_draw(&window, COLOR_FG, 1);
+    gui_status_set_br("Spc: Reveal");
     restart_game();
 }
 
