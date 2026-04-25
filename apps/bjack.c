@@ -200,7 +200,7 @@ update_status(void)
     if (game_state == STATE_PLAYING) {
         gui_status_set("D: ?  U:%2d  |  [H]it or [S]tand?", player_score);
     } else {
-        gui_status_set("D:%2d  U:%2d  |  %s", dealer_score, player_score, status_msg);
+        gui_status_set("D:%2d  U:%2d  |  %s  |  [D]eal", dealer_score, player_score, status_msg);
     }
 
     gui_status_set_br("W:%d  L:%d", wins, losses);
@@ -302,11 +302,11 @@ player_hit(void)
 }
 
 static void
-on_key_up(const event_st *event)
+on_key_down(const event_st *event)
 {
     int ch = event->payload.key.key_char;
 
-    if (game_state == STATE_OVER) {
+    if (ch == 'd' && game_state == STATE_OVER) {
         restart_game();
     } else if (ch == 'h' && game_state == STATE_PLAYING) {
         player_hit();
@@ -323,7 +323,7 @@ on_show(void)
     if (!initialized) {
         gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
-        app_blackjack.on_key_up = on_key_up;
+        app_blackjack.on_key_down = on_key_down;
 
         initialized = 1;
     }
