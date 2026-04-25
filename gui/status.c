@@ -31,6 +31,7 @@ enum {
 
 static uint16_t status_text_len[4];
 static char status_text_buf[TEXT_MAX_LEN + 1];
+static const char *github_link = "luke8086/gentleos";
 
 static void
 gui_status_set_text(int corner, const char *text)
@@ -132,10 +133,10 @@ gui_status_init(void)
     gui_surface_draw_h_seg(&origin, 0, STATUS_HEIGHT - 1, STATUS_WIDTH, COLOR_FG);
     gui_surface_draw_h_seg(&origin, 0, GUI_HEIGHT - STATUS_HEIGHT, STATUS_WIDTH, COLOR_FG);
     gui_surface_draw_bitmap(&origin, &size,
-        STATUS_WIDTH - 2 * TEXT_X - 19 * FONT_WIDTH - sprite_github.size.width,
+        STATUS_WIDTH - 2 * TEXT_X - (int)strlen(github_link) * FONT_WIDTH - sprite_github.size.width,
         1, &sprite_github, COLOR_FG);
 
     gui_status_set("");
     gui_status_set_tl("");
-    gui_status_set_tr("luke8086/gentleos16");
+    gui_status_set_tr(github_link);
 }
