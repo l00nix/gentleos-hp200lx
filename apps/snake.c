@@ -55,11 +55,21 @@ static enum {
 
 static int score = 0;
 static int best_score = 0;
+static int game_over = 0;
+static int game_paused = 0;
 
 static void
 update_status(void)
 {
-    gui_status_set("Score: %d  Best: %d", score, best_score);
+    const char *msg = "";
+
+    if (game_over) {
+        msg = "Game Over!  |  ";
+    } else if (game_paused) {
+        msg = "Paused  |  ";
+    }
+
+    gui_status_set("%sScore: %d  Best: %d", msg, score, best_score);
 }
 
 static void
@@ -140,13 +150,23 @@ move_snake(coords_st next_head)
 }
 
 static void
-restart_game(void)
+end_game(void)
 {
+    game_over = 1;
+
     if (score > best_score) {
         best_score = score;
     }
 
+    update_status();
+}
+
+static void
+restart_game(void)
+{
     score = 0;
+    game_over = 0;
+    game_paused = 0;
 
     body.coords[0].x = GRID_COLS / 2;
     body.coords[0].y = GRID_ROWS / 2;
@@ -167,18 +187,22 @@ on_timeout(void)
     coords_st next_head;
     uint8_t next_block;
 
+    if (game_over || game_paused) {
+        return;
+    }
+
     next_head = move_head(*body.head);
 
     if (next_head.x < 0 || next_head.x >= GRID_COLS ||
         next_head.y < 0 || next_head.y >= GRID_ROWS) {
-        restart_game();
+        end_game();
         return;
     }
 
     next_block = cells[next_head.x][next_head.y];
 
     if (next_block != CELL_FRUIT && next_block != CELL_FLOOR) {
-        restart_game();
+        end_game();
         return;
     }
 
@@ -213,12 +237,28 @@ on_tick(void)
 static void
 on_key_down(const event_st *event)
 {
-    int key = event->payload.key.key_code;
+    int key_char = event->payload.key.key_char;
+    int key_code = event->payload.key.key_code;
 
-    if (key == KEY_UP && prev_dir != DIR_DOWN) next_dir = DIR_UP;
-    else if (key == KEY_DOWN && prev_dir != DIR_UP) next_dir = DIR_DOWN;
-    else if (key == KEY_LEFT && prev_dir != DIR_RIGHT) next_dir = DIR_LEFT;
-    else if (key == KEY_RIGHT && prev_dir != DIR_LEFT) next_dir = DIR_RIGHT;
+    if (game_over) {
+        restart_game();
+        return;
+    }
+
+    if (key_char == 'p') {
+        game_paused = !game_paused;
+        update_status();
+        return;
+    }
+
+    if (game_paused) {
+        return;
+    }
+
+    if (key_code == KEY_UP && prev_dir != DIR_DOWN) next_dir = DIR_UP;
+    else if (key_code == KEY_DOWN && prev_dir != DIR_UP) next_dir = DIR_DOWN;
+    else if (key_code == KEY_LEFT && prev_dir != DIR_RIGHT) next_dir = DIR_LEFT;
+    else if (key_code == KEY_RIGHT && prev_dir != DIR_LEFT) next_dir = DIR_RIGHT;
 }
 
 static void
@@ -249,6 +289,7 @@ on_show(void)
     }
 
     gui_window_draw(&window, COLOR_BG, 1);
+    gui_status_set_br("P: Pause/Resume");
     restart_game();
 }
 
