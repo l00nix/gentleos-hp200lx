@@ -93,6 +93,12 @@ krn_keyboard_handle_intr(void)
     ev.payload.key.key_char = shift ? krn_keyboard_map_shift[scan] : krn_keyboard_map_default[scan];
 
     if (ev.payload.key.key_code == 0x2a || ev.payload.key.key_code == 0x36) {
+        /* Workaround for some devices which keep generating Shift up events in a loop */
+        if (shift == (ev.type == EVENT_KEY_DOWN)) {
+            krn_keyboard_finish_handling();
+            return;
+        }
+
         shift = (ev.type == EVENT_KEY_DOWN);
     } else if (ev.payload.key.key_code == 0x1d) {
         ctrl = (ev.type == EVENT_KEY_DOWN);
