@@ -15,6 +15,11 @@
 #define DEBUG_TO_UART 0
 
 /*
+ * Wait for key press before starting GUI
+ */
+#define MANUAL_START 0
+
+/*
  * Default date & time to use if we detect clock is not set,
  * by checking if current year < 2000. This is useful for
  * hardware with dead RTC battery

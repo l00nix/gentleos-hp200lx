@@ -27,6 +27,10 @@ end_test_case()
     int total = tests_ok + tests_failed;
 
     krn_debug_printf("%d/%d ok\n", tests_ok, total);
+
+    if (tests_failed) {
+        krn_debug_beep();
+    }
 }
 
 static void
@@ -173,9 +177,7 @@ tests_run(void)
     test_div32();
     test_append32();
 
-    krn_debug_printf("Tests done. Press enter to continue...");
-    (void)bios_getc();
-    krn_debug_printf("\n");
+    krn_debug_printf("Tests done.\n");
 }
 
 #endif
