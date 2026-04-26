@@ -361,7 +361,7 @@ draw_piles(void)
 static void
 move_cursor(int dx, int dy)
 {
-    int *idx, max_idx;
+    int max_idx;
 
     draw_cursor(0);
 
