@@ -191,7 +191,7 @@ cmain(void)
 {
     uint8_t *drive_ptr = 0;
 
-    puts("\r\nBooting GentleOS [github.com/luke8086/gentleos]");
+    puts("\r\nLoading GentleOS [github.com/luke8086/gentleos]");
 
     drive = *drive_ptr;
     reset_drive();
