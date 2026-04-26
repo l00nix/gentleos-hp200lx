@@ -53,6 +53,20 @@ krn_event_format(event_st *ev)
     return buf;
 }
 
+global void
+krn_event_wait(event_st *out)
+{
+    while (1) {
+        if (krn_event_count() > 0 && krn_event_pop(out) == 0) {
+            break;
+        }
+
+        krn_timer_is_cpu_idle = 1;
+        cpu_hlt();
+        krn_timer_is_cpu_idle = 0;
+    }
+}
+
 global int
 krn_event_ipush(event_st *event)
 {

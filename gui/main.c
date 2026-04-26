@@ -43,16 +43,7 @@ gui_main(void)
     gui_surface_flush();
 
     while (1) {
-        if (krn_event_count() == 0) {
-            krn_timer_is_cpu_idle = 1;
-            cpu_hlt();
-            krn_timer_is_cpu_idle = 0;
-            continue;
-        }
-
-        if (krn_event_pop(&event) != 0) {
-            continue;
-        }
+        krn_event_wait(&event);
 
         app = gui_current_app;
 

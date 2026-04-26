@@ -37,8 +37,22 @@ static const unsigned char krn_keyboard_map_shift[] = {
 static isr_st saved_isr_handler;
 extern void *krn_isr_keyboard;
 
+global uint8_t
+krn_keyboard_getc(void)
+{
+    event_st event;
+
+    while (1) {
+        krn_event_wait(&event);
+
+        if (event.type == EVENT_KEY_DOWN) {
+            return event.payload.key.key_char;
+        }
+    }
+}
+
 static void
-krn_keyboard_finish_handling()
+krn_keyboard_finish_handling(void)
 {
     uint8_t p61 = inb(0x61);
     outb(p61 | 0x80, 0x61);
