@@ -46,8 +46,6 @@ typedef struct {
     const char *name;
 } vga_theme_st;
 
-#define KRN_VGA_THEME_COUNT 2
-
 extern void *krn_link_start;
 extern void *krn_link_end;
 extern uint16_t krn_data_seg;

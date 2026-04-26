@@ -2,7 +2,7 @@
  * Use custom color theme, see kernel/vga.c for the list
  * Only works on EGA/VGA cards, but not real CGA
  */
-#define DEFAULT_VGA_THEME 0
+#define VGA_THEME 0
 
 /*
  * Run test suite on startup
