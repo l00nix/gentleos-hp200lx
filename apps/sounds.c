@@ -235,7 +235,7 @@ on_show(void)
         keys_w[i].draw(&keys_w[i]);
     }
 
-    gui_status_set("Control: letters and digits");
+    gui_status_set("Z-,: Wh/Lo  S-J: Bl/Lo  W-O: Wh/Hi  3-8: Bl/Hi");
 }
 
 global app_st app_sounds = {
