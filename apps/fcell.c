@@ -389,7 +389,7 @@ update_status(void)
         gui_status_set("You Won! Press R to restart");
     } else {
         gui_status_set("Remaining cards: %d", remaining);
-        gui_status_set_br("H: Show keys");
+        gui_status_set_br("H: Show controls");
     }
 }
 

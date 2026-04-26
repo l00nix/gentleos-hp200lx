@@ -110,7 +110,7 @@ update_status(void)
         gui_status_set_br("");
     } else {
         gui_status_set("Pairs: %d  Moves: %d", remaining_pairs, valid_moves);
-        gui_status_set_br("[S]huffle  [R]estart");
+        gui_status_set_br("S: Shuffle  R: Restart");
     }
 }
 
