@@ -81,7 +81,34 @@ static void
 update_status_bl(void)
 {
     app_st *app = get_current_app();
-    gui_status_set("Launch %s", app->name);
+    gui_status_set("Launch: %s", app->name);
+}
+
+static void
+update_status_br(void)
+{
+    time_st time;
+    date_st date;
+
+    bios_get_time(&time);
+    bios_get_date(&date);
+
+    gui_status_set_br("%04u-%02u-%02u %02u:%02u",
+        date.year, date.month, date.day,
+        time.hour, time.minute);
+}
+
+static void
+on_tick(void)
+{
+    static unsigned count = 0;
+
+    ++count;
+
+    if (count >= 30) {
+        update_status_br();
+        count = 0;
+    }
 }
 
 static void
@@ -175,6 +202,7 @@ on_show(void)
         gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         app_launcher.on_key_down = on_key_down;
+        app_launcher.on_tick = on_tick;
 
         initialized = 1;
     }
@@ -184,6 +212,8 @@ on_show(void)
 
     gui_status_set_tl("GentleOS");
     update_status_bl();
+
+    update_status_br();
 }
 
 global app_st app_launcher = {
