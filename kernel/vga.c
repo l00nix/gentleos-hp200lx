@@ -46,8 +46,6 @@ krn_vga_set_color(uint8_t idx, uint32_t rgb)
 global void
 krn_vga_set_theme(int n)
 {
-    uint32_t fg, bg;
-
     if (n < 0 || n >= VGA_THEME_COUNT) {
         return;
     }
