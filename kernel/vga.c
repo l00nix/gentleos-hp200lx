@@ -74,9 +74,9 @@ krn_vga_init(void)
     regs.h.al = 0x04;
     intr(0x10, &regs);
 
-    krn_vga_set_theme(krn_vga_theme_current);
-
     krn_debug_printf("ok\n");
+
+    krn_vga_set_theme(krn_vga_theme_current);
 }
 
 global void
