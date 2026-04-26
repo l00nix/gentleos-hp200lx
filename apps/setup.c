@@ -234,7 +234,8 @@ on_show(void)
     load_fields();
     draw_all();
 
-    gui_status_set("\x18\x19: Select field  PgUp/PgDn: Edit  S: Save");
+    gui_status_set("\x18\x19: Select field  PgUp/PgDn: Edit");
+    gui_status_set_br("S: Save");
 }
 
 global app_st app_setup = {
