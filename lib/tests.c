@@ -7,7 +7,7 @@
 
 #include <kernel.h>
 
-#if ENABLE_TESTS && __TURBOC__
+#if ENABLE_TESTS
 
 typedef int (*math32_fn)(int32_t *out, int32_t a, int32_t b);
 static int tests_failed = 0;
