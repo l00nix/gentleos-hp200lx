@@ -108,6 +108,7 @@ static key_st keys[] = {
 #define KEY_COUNT (sizeof(keys) / sizeof(keys[0]))
 
 static window_st window;
+static int last_key_code = 0;
 
 static void
 init_keys(void)
@@ -220,7 +221,16 @@ update_key(uint16_t code, int escaped, int pressed)
 static void
 on_key_down(const event_st *event)
 {
+    int key_code = event->payload.key.key_code;
+    int key_char = event->payload.key.key_char;
+    int key_escaped = event->payload.key.key_escaped;
+
     update_key(event->payload.key.key_code, event->payload.key.key_escaped, 1);
+
+    if (key_code != last_key_code) {
+        gui_status_set("Last Code:%02X  Char:%02X (%c)  Escaped:%d",
+            key_code, key_char, key_char ? key_char : ' ', key_escaped);
+    }
 }
 
 static void
