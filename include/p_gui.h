@@ -7,12 +7,15 @@ extern void gui_grid_draw_background(grid_st *grid, window_st *window, uint8_t c
 /* gui/main.c */
 extern rect_st gui_app_rect;
 extern app_st *gui_current_app;
+extern int gui_colors_inverted;
 extern uint8_t gui_color_bg;
 extern uint8_t gui_color_fg;
+extern void gui_set_colors_inverted(int inverted);
 extern void gui_run_app(app_st *app);
 extern void gui_main(void);
 /* gui/rect.c */
 extern const point_st GUI_POINT_ZERO;
+extern const rect_st GUI_RECT_SCREEN;
 extern void gui_rect_copy(rect_st *dst, const rect_st *src);
 extern void gui_point_copy(point_st *dst, const point_st *src);
 extern void gui_size_copy(size_st *dst, const size_st *src);
@@ -32,6 +35,8 @@ extern void gui_status_set_br(const char *fmt, ...);
 extern void gui_status_init(void);
 /* gui/surface.c */
 extern void gui_surface_init(void);
+extern void gui_surface_clear(void);
+extern void gui_surface_invert(void);
 extern void gui_surface_mark_dirty(const point_st *origin, const rect_st *rect);
 extern void gui_surface_flush(void);
 extern void gui_surface_draw_pixel(const point_st *origin, int x, int y, uint8_t color);

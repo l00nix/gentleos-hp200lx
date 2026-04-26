@@ -14,7 +14,27 @@ global void
 gui_surface_init(void)
 {
     gui_surface_pixels = krn_heap_alloc(GUI_FB_PLANE_SIZE);
-    gui_rect_init(&gui_surface_dirty_rect, 0, 0, 0, 0);
+}
+
+global void
+gui_surface_clear(void)
+{
+    memset_far(gui_surface_pixels, (gui_color_bg << 4) | gui_color_bg, GUI_FB_PLANE_SIZE);
+    gui_rect_init(&gui_surface_dirty_rect, 0, 0, GUI_WIDTH, GUI_HEIGHT);
+}
+
+global void
+gui_surface_invert(void)
+{
+    uint16_t far *words = (uint16_t far *)gui_surface_pixels;
+    uint16_t count = GUI_FB_PLANE_SIZE / 2;
+    size_t i;
+
+    for (i = 0; i < count; ++i) {
+        words[i] = ~words[i];
+    }
+
+    gui_surface_mark_dirty(&GUI_POINT_ZERO, &GUI_RECT_SCREEN);
 }
 
 global void

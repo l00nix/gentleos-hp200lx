@@ -10,8 +10,23 @@
 global rect_st gui_app_rect;
 global app_st *gui_current_app;
 
-global uint8_t gui_color_bg = 0x00;
-global uint8_t gui_color_fg = 0x0f;
+global int gui_colors_inverted;
+global uint8_t gui_color_bg;
+global uint8_t gui_color_fg;
+
+global void
+gui_set_colors_inverted(int inverted)
+{
+    gui_color_bg = inverted ? 0x0f : 0x00;
+    gui_color_fg = inverted ? 0x00 : 0x0f;
+
+    if (inverted == gui_colors_inverted) {
+        return;
+    }
+
+    gui_colors_inverted = inverted;
+    gui_surface_invert();
+}
 
 global void
 gui_run_app(app_st *app)
@@ -41,6 +56,9 @@ gui_main(void)
     gui_app_rect.height = GUI_HEIGHT - STATUS_HEIGHT * 2;
 
     gui_surface_init();
+    gui_colors_inverted = DEFAULT_COLORS_INVERTED;
+    gui_set_colors_inverted(DEFAULT_COLORS_INVERTED);
+    gui_surface_clear();
     gui_status_init();
     gui_run_app(&app_launcher);
     gui_surface_flush();

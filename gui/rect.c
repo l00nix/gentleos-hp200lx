@@ -8,6 +8,7 @@
 #include <gui.h>
 
 global const point_st GUI_POINT_ZERO = { 0, 0 };
+global const rect_st GUI_RECT_SCREEN = { 0, 0, GUI_WIDTH, GUI_HEIGHT };
 
 global void
 gui_rect_copy(rect_st *dst, const rect_st *src)

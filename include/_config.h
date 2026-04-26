@@ -5,6 +5,11 @@
 #define VGA_THEME 0
 
 /*
+ * Invert colors by default
+ */
+#define DEFAULT_COLORS_INVERTED 0
+
+/*
  * Run test suite on startup
  */
 #define ENABLE_TESTS 0

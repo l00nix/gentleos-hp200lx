@@ -12,7 +12,7 @@ enum {
     FONT_HEIGHT = 8,
 
     ROW_HEIGHT = FONT_HEIGHT + 5,
-    ROW_COUNT = 2,
+    ROW_COUNT = 3,
 
     PADDING_Y = 10,
     PADDING_X = 15,
@@ -31,6 +31,7 @@ enum {
     FIELD_HOUR,
     FIELD_MINUTE,
     FIELD_SECOND,
+    FIELD_COLORS,
 };
 
 static window_st window;
@@ -49,12 +50,13 @@ static int cursor = 0;
     int max;
     int val;
 } fields[] = {
-    { 0,  7, 4, 2000, 2099 },
-    { 0, 12, 2,    1,   12 },
-    { 0, 15, 2,    1,   31 },
-    { 1,  7, 2,    0,   23 },
-    { 1, 10, 2,    0,   59 },
-    { 1, 13, 2,    0,   59 },
+    { 0,  9,  4, 2000, 2099 },
+    { 0, 14,  2,    1,   12 },
+    { 0, 17,  2,    1,   31 },
+    { 1,  9,  2,    0,   23 },
+    { 1, 12,  2,    0,   59 },
+    { 1, 15,  2,    0,   59 },
+    { 2,  9, 10,    0,    1 },
 };
 
 static const struct {
@@ -63,11 +65,12 @@ static const struct {
     const char *text;
 } labels[] = {
     { 0,  0, "Date:" },
-    { 0, 11, "-" },
-    { 0, 14, "-" },
+    { 0, 13, "-" },
+    { 0, 16, "-" },
     { 1,  0, "Time:" },
-    { 1,  9, ":" },
-    { 1, 12, ":" },
+    { 1, 11, ":" },
+    { 1, 14, ":" },
+    { 2,  0, "Colors:" },
 };
 
 #define FIELD_COUNT (sizeof(fields) / sizeof(fields[0]))
@@ -77,7 +80,7 @@ static void
 draw_field(int n)
 {
     rect_st rect;
-    char buf[8];
+    char buf[16];
 
     int val = fields[n].val;
     int is_current = (n == cursor);
@@ -90,7 +93,9 @@ draw_field(int n)
     rect.width = fields[n].len * FONT_WIDTH;
     rect.height = FONT_HEIGHT + 1;
 
-    if (n == FIELD_YEAR) {
+    if (n == FIELD_COLORS) {
+        snprintf(buf, sizeof(buf), val == 1 ? "inverted" : "normal");
+    } else if (n == FIELD_YEAR) {
         snprintf(buf, sizeof(buf), "%04d", val);
     } else {
         snprintf(buf, sizeof(buf), "%02d", val);
@@ -178,6 +183,7 @@ load_fields(void)
     fields[FIELD_HOUR].val = time.hour;
     fields[FIELD_MINUTE].val = time.minute;
     fields[FIELD_SECOND].val = time.second;
+    fields[FIELD_COLORS].val = gui_colors_inverted;
 }
 
 static void
@@ -195,6 +201,7 @@ save_fields(void)
         fields[FIELD_SECOND].val
     );
 
+    gui_set_colors_inverted(fields[FIELD_COLORS].val);
     gui_status_set("Settings saved");
 }
 
