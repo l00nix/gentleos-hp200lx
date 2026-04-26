@@ -7,6 +7,12 @@ extern void bios_set_time(uint8_t hour, uint8_t minute, uint8_t second);
 extern void bios_get_date(date_st *d);
 extern void bios_set_date(uint16_t year, uint8_t month, uint8_t day);
 extern void bios_reboot(void);
+/* lib/cal.c */
+extern const char *CAL_MONTH_NAMES_SHORT[];
+extern const char *CAL_DAY_NAMES_SHORT[];
+extern const char *CAL_DAY_NAMES_LONG[];
+extern int cal_get_day_of_week(int day, int month, int year);
+extern int cal_get_days_in_month(int month, int year);
 /* lib/math.c */
 extern int udiv32(uint32_t *out, uint32_t dividend, uint32_t divisor);
 extern int umod32(uint32_t *out, uint32_t dividend, uint32_t divisor);

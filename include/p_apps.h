@@ -1,5 +1,3 @@
-/* apps/about.c */
-extern app_st app_about;
 /* apps/bjack.c */
 extern app_st app_blackjack;
 /* apps/calc.c */

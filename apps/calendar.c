@@ -46,35 +46,10 @@ static int selected_year = 0;
 
 static grid_st grid;
 
-static int
-get_day_of_week(int day, int month, int year)
-{
-    static int t[] = { 0, 3, 2, 5, 0, 3, 5, 1, 4, 6, 2, 4 };
-
-    if (month < 3) {
-        --year;
-    }
-
-    return (year + year / 4 - year / 100 + year / 400 + t[month - 1] + day) % 7;
-}
-
-static int
-get_num_days_in_month(int month, int year)
-{
-    static int days_in_month[] = { 0, 31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 };
-    int is_leap = (year % 400 == 0) || ((year % 4 == 0) && (year % 100 != 0));
-
-    return (is_leap && month == 2) ? 29 : days_in_month[month];
-}
-
 static void
 draw_month_label(void)
 {
-    static const char *month_names[] = {
-        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-    };
-
+    const char *month_name = CAL_MONTH_NAMES_SHORT[selected_month - 1];
     char buf[16];
     rect_st rect;
 
@@ -83,7 +58,7 @@ draw_month_label(void)
     rect.width = WINDOW_WIDTH;
     rect.height = TOOL_BAR_HEIGHT;
 
-    snprintf(buf, sizeof(buf), "%s %d", month_names[selected_month - 1], selected_year);
+    snprintf(buf, sizeof(buf), "%s %d", month_name, selected_year);
 
     gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
     gui_surface_draw_str_centered(&window.origin, &rect, NULL, buf,
@@ -95,7 +70,7 @@ static void
 draw_day_button(widget_st *widget)
 {
     int day = widget->tag1;
-    int num_days = get_num_days_in_month(selected_month, selected_year);
+    int num_days = cal_get_days_in_month(selected_month, selected_year);
     int is_in_month = day >= 0 && day < num_days;
     int is_current = (day == current_day - 1 && selected_month == current_month
         && selected_year == current_year);
@@ -123,7 +98,7 @@ draw_day_button(widget_st *widget)
 static void
 draw_selected_month(void)
 {
-    int day_of_week = get_day_of_week(1, selected_month, selected_year);
+    int day_of_week = cal_get_day_of_week(1, selected_month, selected_year);
     size_t i;
 
     for (i = 0; i < GRID_CELLS_COUNT; ++i) {
@@ -137,7 +112,6 @@ draw_selected_month(void)
 static void
 draw_week_bar(void)
 {
-    static const char *day_names[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
     int y;
     rect_st rect;
 
@@ -149,7 +123,7 @@ draw_week_bar(void)
 
         gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
         gui_surface_draw_str_centered(&window.origin, &rect, NULL,
-            day_names[y], COLOR_FG, COLOR_BG);
+            CAL_DAY_NAMES_SHORT[y], COLOR_FG, COLOR_BG);
     }
 }
 

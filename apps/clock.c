@@ -25,7 +25,8 @@ static window_st window;
 
 static grid_st grid;
 
-static time_st last_time;
+static int last_second;
+static int last_day;
 
 static void
 draw_cell(int x, int y, int active)
@@ -56,27 +57,54 @@ draw_digit(int x, int y, int digit)
 static void
 draw_time(void)
 {
-    time_st t;
+    time_st time;
 
-    bios_get_time(&t);
+    bios_get_time(&time);
 
-    if (t.hour == last_time.hour && t.minute == last_time.minute &&
-        t.second == last_time.second) {
+    if (time.second == last_second) {
         return;
     }
 
-    memcpy(&last_time, &t, sizeof(last_time));
+    last_second = time.second;
 
-    draw_digit(0, 0, t.hour / 10);
-    draw_digit(4, 0, t.hour % 10);
+    draw_digit(0, 0, time.hour / 10);
+    draw_digit(4, 0, time.hour % 10);
     draw_cell(8, 1, 1);
     draw_cell(8, 3, 1);
-    draw_digit(10, 0, t.minute / 10);
-    draw_digit(14, 0, t.minute % 10);
+    draw_digit(10, 0, time.minute / 10);
+    draw_digit(14, 0, time.minute % 10);
     draw_cell(18, 1, 1);
     draw_cell(18, 3, 1);
-    draw_digit(20, 0, t.second / 10);
-    draw_digit(24, 0, t.second % 10);
+    draw_digit(20, 0, time.second / 10);
+    draw_digit(24, 0, time.second % 10);
+}
+
+static void
+update_status(void)
+{
+    date_st date;
+    int day_of_week;
+
+    bios_get_date(&date);
+
+    if (date.day == last_day) {
+        return;
+    }
+
+    last_day = date.day;
+    day_of_week = cal_get_day_of_week(date.day, date.month, date.year);
+
+    gui_status_set_br("%04d-%02d-%02d (%s)",
+        date.year, date.month, date.day,
+        CAL_DAY_NAMES_LONG[day_of_week]
+    );
+}
+
+static void
+on_timeout(void)
+{
+    draw_time();
+    update_status();
 }
 
 static void
@@ -88,7 +116,7 @@ on_tick(void)
 
     if (count >= 10) {
         count = 0;
-        draw_time();
+        on_timeout();
     }
 }
 
@@ -118,7 +146,11 @@ on_show(void)
         initialized = 1;
     }
 
+    last_day = 0xff;
+    last_second = 0xff;
+
     draw_time();
+    update_status();
 }
 
 global app_st app_clock = {
