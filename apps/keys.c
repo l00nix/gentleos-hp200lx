@@ -13,6 +13,7 @@ typedef struct {
     const char *label;
     int x;
     int y;
+    int pressed;
 } key_st;
 
 enum {
@@ -119,6 +120,7 @@ init_keys(void)
     for (i = 0; i < KEY_COUNT; ++i) {
         keys[i].x = 0;
         keys[i].y = 0;
+        keys[i].pressed = 0;
     }
 
     keys[1].x = 27;
@@ -155,7 +157,7 @@ init_keys(void)
 }
 
 static void
-draw_key(const key_st *key, int pressed)
+draw_key(key_st *key, int pressed)
 {
     rect_st rect;
     uint8_t fg = pressed ? gui_color_bg : gui_color_fg;
@@ -182,7 +184,7 @@ draw_keyboard(void)
     }
 }
 
-static const key_st *
+static key_st *
 find_key(uint16_t code)
 {
     int i;
@@ -199,7 +201,7 @@ find_key(uint16_t code)
 static void
 update_key(uint16_t code, int escaped, int pressed)
 {
-    const key_st *key = NULL;
+    key_st *key = NULL;
 
     if (escaped) {
         key = find_key(code | 0xe000);
@@ -209,8 +211,9 @@ update_key(uint16_t code, int escaped, int pressed)
         key = find_key(code);
     }
 
-    if (key) {
+    if (key && key->pressed != pressed) {
         draw_key(key, pressed);
+        key->pressed = pressed;
     }
 }
 
