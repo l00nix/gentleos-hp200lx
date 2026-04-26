@@ -60,9 +60,9 @@ draw_month_label(void)
 
     snprintf(buf, sizeof(buf), "%s %d", month_name, selected_year);
 
-    gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
+    gui_surface_draw_border(&window.origin, &rect, gui_color_fg);
     gui_surface_draw_str_centered(&window.origin, &rect, NULL, buf,
-        COLOR_FG, COLOR_BG);
+        gui_color_fg, gui_color_bg);
     gui_surface_mark_dirty(&window.origin, &rect);
 }
 
@@ -78,13 +78,13 @@ draw_day_button(widget_st *widget)
     char buf[3];
 
     if (!is_in_month) {
-        gui_surface_draw_rect(widget->origin, &widget->rect, COLOR_BG);
+        gui_surface_draw_rect(widget->origin, &widget->rect, gui_color_bg);
         gui_surface_mark_dirty(widget->origin, &widget->rect);
         return;
     }
 
-    fg = is_current ? COLOR_BG : COLOR_FG;
-    bg = is_current ? COLOR_FG : COLOR_BG;
+    fg = is_current ? gui_color_bg : gui_color_fg;
+    bg = is_current ? gui_color_fg : gui_color_bg;
 
     gui_surface_draw_rect(widget->origin, &widget->rect, bg);
 
@@ -121,9 +121,9 @@ draw_week_bar(void)
         rect.width = GRID_CELL_WIDTH + 2;
         rect.height = WEEK_BAR_HEIGHT;
 
-        gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
+        gui_surface_draw_border(&window.origin, &rect, gui_color_fg);
         gui_surface_draw_str_centered(&window.origin, &rect, NULL,
-            CAL_DAY_NAMES_SHORT[y], COLOR_FG, COLOR_BG);
+            CAL_DAY_NAMES_SHORT[y], gui_color_fg, gui_color_bg);
     }
 }
 
@@ -224,7 +224,7 @@ on_show(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window, COLOR_BG, 1);
+    gui_window_draw(&window, gui_color_bg, 1);
 
     for (i = 0; i < GRID_CELLS_COUNT; ++i) {
         day_buttons[i].draw(&day_buttons[i]);

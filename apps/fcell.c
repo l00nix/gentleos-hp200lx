@@ -236,15 +236,15 @@ deal_cards(void)
 static void
 draw_card(int x, int y, uint8_t card, int is_sel)
 {
-    uint8_t fg = is_sel ? COLOR_BG : COLOR_FG;
-    uint8_t bg = is_sel ? COLOR_FG : COLOR_BG;
+    uint8_t fg = is_sel ? gui_color_bg : gui_color_fg;
+    uint8_t bg = is_sel ? gui_color_fg : gui_color_bg;
     int rank = card_rank(card);
     int suit = card_suit(card);
     rect_st r;
 
     gui_rect_init(&r, x, y, CARD_WIDTH, CARD_HEIGHT);
     gui_surface_draw_rect(&window.origin, &r, bg);
-    gui_surface_draw_border(&window.origin, &r, COLOR_FG);
+    gui_surface_draw_border(&window.origin, &r, gui_color_fg);
     gui_surface_mark_dirty(&window.origin, &r);
 
     if (card == CARD_EMPTY) {
@@ -264,13 +264,13 @@ draw_card_stub(int x, int y, int height, uint8_t card)
     rect_st r;
 
     gui_rect_init(&r, x, y, CARD_WIDTH, height);
-    gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
-    gui_surface_draw_border(&window.origin, &r, COLOR_FG);
+    gui_surface_draw_rect(&window.origin, &r, gui_color_bg);
+    gui_surface_draw_border(&window.origin, &r, gui_color_fg);
 
     gui_surface_draw_str(&window.origin, x + 3, y + 3, &fonts[2],
-        rank_str[rank], COLOR_FG, COLOR_BG);
+        rank_str[rank], gui_color_fg, gui_color_bg);
     gui_surface_draw_bitmap(&window.origin, &window.size,
-        x + CARD_WIDTH - 8, y + 3, suit_bmp[suit], COLOR_FG);
+        x + CARD_WIDTH - 8, y + 3, suit_bmp[suit], gui_color_fg);
 
     gui_surface_mark_dirty(&window.origin, &r);
 }
@@ -281,7 +281,7 @@ draw_cursor(int visible)
     int x = pile_x(cur_pile, cur_idx);
     int y = pile_top_card_y(cur_pile, cur_idx);
     int is_sel = pile_is_sel(cur_pile, cur_idx);
-    uint8_t color = (visible ^ is_sel) ? COLOR_FG : COLOR_BG;
+    uint8_t color = (visible ^ is_sel) ? gui_color_fg : gui_color_bg;
     rect_st r;
 
     gui_rect_init(&r, x + 1, y + 1, CARD_WIDTH - 2, CARD_HEIGHT - 2);
@@ -321,7 +321,7 @@ draw_column(int col)
     rect_st r;
 
     gui_rect_init(&r, x, COLUMNS_Y, CARD_WIDTH, COLUMNS_H);
-    gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
+    gui_surface_draw_rect(&window.origin, &r, gui_color_bg);
 
     if (count > 0) {
         step = col_step(col);
@@ -737,13 +737,13 @@ show_help(void)
     int i, y;
 
     gui_rect_init(&r, HELP_X, HELP_Y, HELP_WIDTH, HELP_HEIGHT);
-    gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
-    gui_surface_draw_border(&window.origin, &r, COLOR_FG);
+    gui_surface_draw_rect(&window.origin, &r, gui_color_bg);
+    gui_surface_draw_border(&window.origin, &r, gui_color_fg);
 
     y = HELP_Y + HELP_PADDING;
     for (i = 0; i < HELP_LINE_COUNT; ++i) {
         gui_surface_draw_str(&window.origin, HELP_X + HELP_PADDING, y,
-            NULL, help_lines[i], COLOR_FG, COLOR_BG);
+            NULL, help_lines[i], gui_color_fg, gui_color_bg);
         y += HELP_LINE_HEIGHT;
     }
 
@@ -758,7 +758,7 @@ close_help(void)
     rect_st r;
 
     gui_rect_init(&r, HELP_X, HELP_Y, HELP_WIDTH, HELP_HEIGHT);
-    gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
+    gui_surface_draw_rect(&window.origin, &r, gui_color_bg);
 
     draw_piles();
     draw_cursor(1);

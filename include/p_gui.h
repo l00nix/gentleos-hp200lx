@@ -7,6 +7,8 @@ extern void gui_grid_draw_background(grid_st *grid, window_st *window, uint8_t c
 /* gui/main.c */
 extern rect_st gui_app_rect;
 extern app_st *gui_current_app;
+extern uint8_t gui_color_bg;
+extern uint8_t gui_color_fg;
 extern void gui_run_app(app_st *app);
 extern void gui_main(void);
 /* gui/rect.c */

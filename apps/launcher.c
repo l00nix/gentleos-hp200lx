@@ -129,16 +129,16 @@ draw_cell(int col, int row)
     int i = row * GRID_COLS + col;
 
     cell_rect_init(&rect, col, row);
-    gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
-    gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
+    gui_surface_draw_rect(&window.origin, &rect, gui_color_bg);
+    gui_surface_draw_border(&window.origin, &rect, gui_color_fg);
 
     if (i < APPS_COUNT && apps[i] && apps[i]->icon) {
         gui_surface_draw_bitmap_centered(&window.origin, &window.size, &rect,
-            apps[i]->icon, COLOR_FG);
+            apps[i]->icon, gui_color_fg);
     }
 
     if (col == current_col && row == current_row) {
-        draw_cursor(col, row, COLOR_FG);
+        draw_cursor(col, row, gui_color_fg);
     }
 
     gui_surface_mark_dirty(&window.origin, &rect);
@@ -172,8 +172,8 @@ move_cursor(int dx, int dy)
     current_col = new_col;
     current_row = new_row;
 
-    draw_cursor(prev_col, prev_row, COLOR_BG);
-    draw_cursor(current_col, current_row, COLOR_FG);
+    draw_cursor(prev_col, prev_row, gui_color_bg);
+    draw_cursor(current_col, current_row, gui_color_fg);
 
     update_status_bl();
 }
@@ -207,7 +207,7 @@ on_show(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window, COLOR_BG, 0);
+    gui_window_draw(&window, gui_color_bg, 0);
     draw_all_cells();
 
     gui_status_set_tl("GentleOS");

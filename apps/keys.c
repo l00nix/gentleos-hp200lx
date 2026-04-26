@@ -158,14 +158,14 @@ static void
 draw_key(const key_st *key, int pressed)
 {
     rect_st rect;
-    uint8_t fg = pressed ? COLOR_BG : COLOR_FG;
-    uint8_t bg = pressed ? COLOR_FG : COLOR_BG;
+    uint8_t fg = pressed ? gui_color_bg : gui_color_fg;
+    uint8_t bg = pressed ? gui_color_fg : gui_color_bg;
 
     gui_rect_init(&rect, key->x, key->y, key->width + 1, KEY_H + 1);
     gui_surface_draw_rect(&window.origin, &rect, bg);
 
     if (!pressed) {
-        gui_surface_draw_border(&window.origin, &rect, COLOR_FG);
+        gui_surface_draw_border(&window.origin, &rect, gui_color_fg);
     }
 
     gui_surface_draw_str_centered(&window.origin, &rect, &fonts[1], key->label, fg, bg);

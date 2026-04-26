@@ -141,23 +141,23 @@ draw_card(int x, int y, uint8_t card, int face_up)
     gui_rect_init(&r, x, y, CARD_WIDTH, CARD_HEIGHT);
 
     if (!face_up) {
-        gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
-        gui_surface_draw_border(&window.origin, &r, COLOR_FG);
+        gui_surface_draw_rect(&window.origin, &r, gui_color_bg);
+        gui_surface_draw_border(&window.origin, &r, gui_color_fg);
         gui_surface_draw_str_centered(&window.origin, &r, NULL,
-            "?", COLOR_FG, COLOR_BG);
+            "?", gui_color_fg, gui_color_bg);
         return;
     }
 
     rank = card_rank(card);
     suit = card_suit(card);
-    fg = COLOR_FG;
-    bg = COLOR_BG;
+    fg = gui_color_fg;
+    bg = gui_color_bg;
 
     gui_surface_draw_rect(&window.origin, &r, bg);
-    gui_surface_draw_border(&window.origin, &r, COLOR_FG);
+    gui_surface_draw_border(&window.origin, &r, gui_color_fg);
     gui_surface_draw_str(&window.origin, x + 3, y + 2, NULL, rank_str[rank], fg, bg);
     gui_surface_draw_bitmap_centered(&window.origin, &window.size, &r,
-        suit_bmp[suit], COLOR_FG);
+        suit_bmp[suit], gui_color_fg);
     gui_surface_draw_str(&window.origin,
         x + CARD_WIDTH - strlen(rank_str[rank]) * 8 - 3,
         y + CARD_HEIGHT - 10,
@@ -175,7 +175,7 @@ draw_hand(uint8_t *hand)
     rect_st r;
 
     gui_rect_init(&r, CARDS_X, y, CARDS_WIDTH, CARD_HEIGHT);
-    gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
+    gui_surface_draw_rect(&window.origin, &r, gui_color_bg);
 
     step = CARD_WIDTH + CARD_SPACING;
     if (count > 1) {
@@ -328,8 +328,8 @@ on_show(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window, COLOR_BG, 1);
-    gui_surface_draw_h_seg(&window.origin, 1, DIVIDER_Y, WINDOW_WIDTH - 2, COLOR_FG);
+    gui_window_draw(&window, gui_color_bg, 1);
+    gui_surface_draw_h_seg(&window.origin, 1, DIVIDER_Y, WINDOW_WIDTH - 2, gui_color_fg);
 
     restart_game();
 }

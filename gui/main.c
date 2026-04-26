@@ -10,6 +10,9 @@
 global rect_st gui_app_rect;
 global app_st *gui_current_app;
 
+global uint8_t gui_color_bg = 0x00;
+global uint8_t gui_color_fg = 0x0f;
+
 global void
 gui_run_app(app_st *app)
 {
@@ -17,7 +20,7 @@ gui_run_app(app_st *app)
         gui_current_app = NULL;
     }
 
-    gui_surface_draw_rect(&GUI_POINT_ZERO, &gui_app_rect, COLOR_BG);
+    gui_surface_draw_rect(&GUI_POINT_ZERO, &gui_app_rect, gui_color_bg);
     gui_surface_mark_dirty(&GUI_POINT_ZERO, &gui_app_rect);
     gui_status_set("");
     gui_status_set_br("");

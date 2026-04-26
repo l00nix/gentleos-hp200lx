@@ -107,15 +107,15 @@ draw_cell(int col, int row)
     rect_st rect;
 
     gui_grid_cell_rect(&grid, col, row, &rect);
-    gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
+    gui_surface_draw_rect(&window.origin, &rect, gui_color_bg);
 
     if (state == CELL_STATE_REVEALED || state == CELL_STATE_MATCHED) {
         gui_surface_draw_bitmap_centered(&window.origin, &window.size, &rect,
-            icons[cell_icons[idx]], COLOR_FG);
+            icons[cell_icons[idx]], gui_color_fg);
     }
 
     if (col == current_col && row == current_row) {
-        draw_cursor(col, row, COLOR_FG);
+        draw_cursor(col, row, gui_color_fg);
     }
 
     gui_surface_mark_dirty(&window.origin, &rect);
@@ -205,8 +205,8 @@ move_cursor(int dx, int dy)
     current_col = MAX(0, MIN(GRID_COLS - 1, current_col + dx));
     current_row = MAX(0, MIN(GRID_ROWS - 1, current_row + dy));
 
-    draw_cursor(prev_col, prev_row, COLOR_BG);
-    draw_cursor(current_col, current_row, COLOR_FG);
+    draw_cursor(prev_col, prev_row, gui_color_bg);
+    draw_cursor(current_col, current_row, gui_color_fg);
 }
 
 static void
@@ -299,7 +299,7 @@ on_show(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window, COLOR_FG, 1);
+    gui_window_draw(&window, gui_color_fg, 1);
     gui_status_set_br("Spc: Reveal");
     restart_game();
 }

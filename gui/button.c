@@ -19,11 +19,11 @@ gui_button_draw(widget_st *widget)
     is_pressed = widget->active;
 
     if (!widget->hide_border) {
-        gui_surface_draw_border(widget->origin, &rect, COLOR_FG);
+        gui_surface_draw_border(widget->origin, &rect, gui_color_fg);
         gui_rect_shrink(&rect, 1);
     }
 
-    gui_surface_draw_rect(widget->origin, &rect, is_pressed ? COLOR_FG : COLOR_BG);
+    gui_surface_draw_rect(widget->origin, &rect, is_pressed ? gui_color_fg : gui_color_bg);
 
     if (widget->label) {
         gui_surface_draw_str_centered(
@@ -31,8 +31,8 @@ gui_button_draw(widget_st *widget)
             &rect,
             NULL,
             widget->label,
-            is_pressed ? COLOR_BG : COLOR_FG,
-            is_pressed ? COLOR_FG : COLOR_BG
+            is_pressed ? gui_color_bg : gui_color_fg,
+            is_pressed ? gui_color_fg : gui_color_bg
         );
     }
 

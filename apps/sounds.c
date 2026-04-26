@@ -36,7 +36,7 @@ static void
 draw_key_w(widget_st *widget)
 {
     rect_st rect_base;
-    uint8_t color = (widget == pressed_widget) ? COLOR_FG : COLOR_BG;
+    uint8_t color = (widget == pressed_widget) ? gui_color_fg : gui_color_bg;
 
     int octave = widget->tag2 / 7;
     int ofs = widget->tag2 % 7;
@@ -68,7 +68,7 @@ draw_key_w(widget_st *widget)
 static void
 draw_key_b(widget_st *widget)
 {
-    uint8_t color = (widget == pressed_widget) ? COLOR_BG : COLOR_FG;
+    uint8_t color = (widget == pressed_widget) ? gui_color_bg : gui_color_fg;
 
     gui_surface_draw_rect(widget->origin, &widget->rect, color);
 
@@ -225,7 +225,7 @@ on_show(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window, COLOR_FG, 1);
+    gui_window_draw(&window, gui_color_fg, 1);
 
     for (i = 0; i < KEY_B_COUNT; ++i) {
         keys_b[i].draw(&keys_b[i]);

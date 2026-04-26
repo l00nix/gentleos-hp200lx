@@ -133,14 +133,14 @@ update_display(void)
 
     gui_rect_init(&rect, DISPLAY_X, DISPLAY_Y, DISPLAY_WIDTH, DISPLAY_HEIGHT);
 
-    gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
+    gui_surface_draw_rect(&window.origin, &rect, gui_color_bg);
 
     font = &fonts[0];
     text_width = (uint16_t)strlen(buf) * font->size.width;
     text_x = rect.x + rect.width - text_width - 10;
     text_y = rect.y + (rect.height - font->size.height) / 2;
     gui_surface_draw_str(&window.origin, text_x, text_y, font,
-        buf, COLOR_FG, COLOR_BG);
+        buf, gui_color_fg, gui_color_bg);
 
     gui_surface_mark_dirty(&window.origin, &rect);
 }
@@ -303,7 +303,7 @@ on_show(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window, COLOR_FG, 1);
+    gui_window_draw(&window, gui_color_fg, 1);
 
     for (i = 0; i < BUTTONS_COUNT; ++i) {
         button_widgets[i].draw(&button_widgets[i]);

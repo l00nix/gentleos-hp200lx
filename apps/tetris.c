@@ -71,7 +71,7 @@ draw_cell(int row, int col, int active)
 {
     rect_st cell;
     gui_grid_cell_rect(&grid, col, row, &cell);
-    gui_surface_draw_rect(&window.origin, &cell, active ? COLOR_FG : COLOR_BG);
+    gui_surface_draw_rect(&window.origin, &cell, active ? gui_color_fg : gui_color_bg);
     gui_surface_mark_dirty(&window.origin, &cell);
 }
 
@@ -340,7 +340,7 @@ on_show(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window, COLOR_BG, 1);
+    gui_window_draw(&window, gui_color_bg, 1);
     gui_status_set_br("P: Pause/Resume");
     restart_game();
 }

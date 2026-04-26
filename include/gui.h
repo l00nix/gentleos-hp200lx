@@ -91,11 +91,6 @@ typedef struct {
 } app_st;
 
 enum {
-    COLOR_BG = 0x00,
-    COLOR_FG = 0x0f,
-};
-
-enum {
     KEY_UP = 0x48,
     KEY_DOWN = 0x50,
     KEY_LEFT = 0x4b,

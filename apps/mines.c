@@ -116,17 +116,17 @@ draw_cell(int col, int row)
     num_str[1] = 0;
 
     gui_grid_cell_rect(&grid, col, row, &rect);
-    gui_surface_draw_rect(&window.origin, &rect, COLOR_BG);
+    gui_surface_draw_rect(&window.origin, &rect, gui_color_bg);
 
     if (state == CELL_STATE_FLAGGED) {
         gui_surface_draw_bitmap_centered(&window.origin, &window.size, &rect, &sprite_flag,
-            COLOR_FG);
+            gui_color_fg);
     } else if (state == CELL_STATE_REVEALED && type == CELL_TYPE_MINE) {
         gui_surface_draw_bitmap_centered(&window.origin, &window.size, &rect, &sprite_mine,
-            COLOR_FG);
+            gui_color_fg);
     } else if (state == CELL_STATE_REVEALED && type == CELL_TYPE_EMPTY) {
         gui_rect_init(&dot_rect, rect.x + rect.width / 2 - 1, rect.y + rect.height / 2, 2, 1);
-        gui_surface_draw_rect(&window.origin, &dot_rect, COLOR_FG);
+        gui_surface_draw_rect(&window.origin, &dot_rect, gui_color_fg);
     } else if (state == CELL_STATE_REVEALED) {
         num_str[0] = '0' + type;
 
@@ -134,11 +134,11 @@ draw_cell(int col, int row)
             rect.width - 1, rect.height - 1);
 
         gui_surface_draw_str_centered(&window.origin, &num_rect, NULL,
-            num_str, COLOR_FG, COLOR_BG);
+            num_str, gui_color_fg, gui_color_bg);
     }
 
     if (row == current_row && col == current_col) {
-        draw_cursor(col, row, COLOR_FG);
+        draw_cursor(col, row, gui_color_fg);
     }
 
     gui_surface_mark_dirty(&window.origin, &rect);
@@ -342,8 +342,8 @@ move_cursor(int dx, int dy)
     current_col = (current_col + dx) % grid.cols;
     current_row = (current_row + dy) % grid.rows;
 
-    draw_cursor(prev_col, prev_row, COLOR_BG);
-    draw_cursor(current_col, current_row, COLOR_FG);
+    draw_cursor(prev_col, prev_row, gui_color_bg);
+    draw_cursor(current_col, current_row, gui_color_fg);
 }
 
 static void
@@ -401,7 +401,7 @@ on_show(void)
     current_row = 0;
     current_col = 0;
 
-    gui_window_draw(&window, COLOR_FG, 1);
+    gui_window_draw(&window, gui_color_fg, 1);
     draw_all_cells();
     restart_game();
 }

@@ -32,7 +32,7 @@ gui_window_draw(window_st *window, uint8_t bg_color, int border)
     gui_surface_draw_rect(&window->origin, &rect, bg_color);
 
     if (border) {
-        gui_surface_draw_border(&window->origin, &rect, COLOR_FG);
+        gui_surface_draw_border(&window->origin, &rect, gui_color_fg);
     }
 
     gui_surface_mark_dirty(&window->origin, &rect);

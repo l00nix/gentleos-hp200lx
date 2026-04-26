@@ -32,7 +32,7 @@ static void
 draw_cell(int x, int y, int active)
 {
     rect_st r;
-    uint8_t color = active ? COLOR_FG : COLOR_BG;
+    uint8_t color = active ? gui_color_fg : gui_color_bg;
     gui_grid_cell_rect(&grid, x, y, &r);
     gui_surface_draw_rect(&window.origin, &r, color);
     gui_surface_mark_dirty(&window.origin, &r);

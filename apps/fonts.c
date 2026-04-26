@@ -51,15 +51,15 @@ draw_cell(int col, int row)
 
     gui_grid_cell_rect(&grid, col, row, &r);
 
-    gui_surface_draw_rect(&window.origin, &r, is_active ? COLOR_FG : COLOR_BG);
+    gui_surface_draw_rect(&window.origin, &r, is_active ? gui_color_fg : gui_color_bg);
 
     gui_surface_draw_str_centered(
         &window.origin,
         &r,
         &fonts[current_font],
         (const char *)str,
-        is_active ? COLOR_BG : COLOR_FG,
-        is_active ? COLOR_FG : COLOR_BG
+        is_active ? gui_color_bg : gui_color_fg,
+        is_active ? gui_color_fg : gui_color_bg
     );
 
     gui_surface_mark_dirty(&window.origin, &r);
@@ -85,12 +85,12 @@ draw_font_label(void)
 
     gui_rect_init(&r, 0, TOOL_BAR_Y, WINDOW_WIDTH, TOOL_BAR_HEIGHT);
 
-    gui_surface_draw_border(&window.origin, &r, COLOR_FG);
+    gui_surface_draw_border(&window.origin, &r, gui_color_fg);
     gui_rect_copy(&shrunken, &r);
     gui_rect_shrink(&shrunken, 1);
-    gui_surface_draw_rect(&window.origin, &shrunken, COLOR_BG);
+    gui_surface_draw_rect(&window.origin, &shrunken, gui_color_bg);
     gui_surface_draw_str_centered(&window.origin, &r, NULL,
-        fonts[current_font].name, COLOR_FG, COLOR_BG);
+        fonts[current_font].name, gui_color_fg, gui_color_bg);
 
     gui_surface_mark_dirty(&window.origin, &r);
 }
@@ -175,7 +175,7 @@ on_show(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window, COLOR_FG, 1);
+    gui_window_draw(&window, gui_color_fg, 1);
 
     current_font = 0;
     current_col = 0;

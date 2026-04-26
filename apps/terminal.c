@@ -42,7 +42,7 @@ static void
 set_cursor_visible(int visible)
 {
     rect_st r;
-    uint8_t color = visible ? COLOR_FG : COLOR_BG;
+    uint8_t color = visible ? gui_color_fg : gui_color_bg;
 
     if (cursor_visible == visible) {
         return;
@@ -64,7 +64,7 @@ draw_char(int col, int row, char c)
     rect_st r;
 
     cell_rect_init(&r, col, row);
-    gui_surface_draw_char(&window.origin, r.x, r.y, CHAR_FONT, c, COLOR_FG, COLOR_BG);
+    gui_surface_draw_char(&window.origin, r.x, r.y, CHAR_FONT, c, gui_color_fg, gui_color_bg);
     gui_surface_mark_dirty(&window.origin, &r);
 }
 
@@ -74,7 +74,7 @@ clear_char(int col, int row)
     rect_st r;
 
     cell_rect_init(&r, col, row);
-    gui_surface_draw_rect(&window.origin, &r, COLOR_BG);
+    gui_surface_draw_rect(&window.origin, &r, gui_color_bg);
     gui_surface_mark_dirty(&window.origin, &r);
 }
 
@@ -88,7 +88,7 @@ scroll_up(void)
 
     gui_rect_init(&bottom_row, MARGIN, MARGIN + (ROWS - 1) * CHAR_H,
         COLS * CHAR_W, CHAR_H);
-    gui_surface_draw_rect(&window.origin, &bottom_row, COLOR_BG);
+    gui_surface_draw_rect(&window.origin, &bottom_row, gui_color_bg);
 }
 
 static void
@@ -203,7 +203,7 @@ on_show(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window, COLOR_BG, 1);
+    gui_window_draw(&window, gui_color_bg, 1);
 
     cursor_col = 0;
     cursor_row = ROWS - 1;

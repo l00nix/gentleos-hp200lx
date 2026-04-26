@@ -82,8 +82,8 @@ draw_field(int n)
     int val = fields[n].val;
     int is_current = (n == cursor);
 
-    uint8_t fg = is_current ? COLOR_BG : COLOR_FG;
-    uint8_t bg = is_current ? COLOR_FG : COLOR_BG;
+    uint8_t fg = is_current ? gui_color_bg : gui_color_fg;
+    uint8_t bg = is_current ? gui_color_fg : gui_color_bg;
 
     rect.x = CONTENT_X + fields[n].col * FONT_WIDTH;
     rect.y = CONTENT_Y + fields[n].row * ROW_HEIGHT + (ROW_HEIGHT - FONT_HEIGHT) / 2 - 1;
@@ -109,7 +109,7 @@ draw_label(int n)
     x = CONTENT_X + labels[n].col * FONT_WIDTH;
     y = CONTENT_Y + labels[n].row * ROW_HEIGHT + (ROW_HEIGHT - FONT_HEIGHT) / 2;
 
-    gui_surface_draw_str(&window.origin, x, y, NULL, labels[n].text, COLOR_FG, COLOR_BG);
+    gui_surface_draw_str(&window.origin, x, y, NULL, labels[n].text, gui_color_fg, gui_color_bg);
 }
 
 static void
@@ -118,7 +118,7 @@ draw_all(void)
     int i;
     rect_st r;
 
-    gui_window_draw(&window, COLOR_BG, 1);
+    gui_window_draw(&window, gui_color_bg, 1);
 
     for (i = 0; i < LABEL_COUNT; ++i) {
         draw_label(i);

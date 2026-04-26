@@ -54,7 +54,7 @@ gui_status_set_text(int corner, const char *text)
         prev_x = STATUS_WIDTH - TEXT_X - prev_width;
     }
 
-    gui_surface_draw_str(&origin, x, TEXT_Y, font, text, COLOR_FG, COLOR_BG);
+    gui_surface_draw_str(&origin, x, TEXT_Y, font, text, gui_color_fg, gui_color_bg);
 
     /* If the new text is shorter than previous, clear the remaining space */
     if (len < status_text_len[corner]) {
@@ -65,7 +65,7 @@ gui_status_set_text(int corner, const char *text)
             font->size.height
         );
 
-        gui_surface_draw_rect(&origin, &clear_rect, COLOR_BG);
+        gui_surface_draw_rect(&origin, &clear_rect, gui_color_bg);
     }
 
     gui_rect_init(&text_rect, TEXT_X, 0, STATUS_WIDTH - TEXT_X * 2, STATUS_HEIGHT);
@@ -130,11 +130,11 @@ gui_status_init(void)
     memset(status_text_len, 0, sizeof(status_text_len));
     memset(status_text_buf, 0, sizeof(status_text_buf));
 
-    gui_surface_draw_h_seg(&origin, 0, STATUS_HEIGHT - 1, STATUS_WIDTH, COLOR_FG);
-    gui_surface_draw_h_seg(&origin, 0, GUI_HEIGHT - STATUS_HEIGHT, STATUS_WIDTH, COLOR_FG);
+    gui_surface_draw_h_seg(&origin, 0, STATUS_HEIGHT - 1, STATUS_WIDTH, gui_color_fg);
+    gui_surface_draw_h_seg(&origin, 0, GUI_HEIGHT - STATUS_HEIGHT, STATUS_WIDTH, gui_color_fg);
     gui_surface_draw_bitmap(&origin, &size,
         STATUS_WIDTH - 2 * TEXT_X - (int)strlen(github_link) * FONT_WIDTH - sprite_github.size.width,
-        1, &sprite_github, COLOR_FG);
+        1, &sprite_github, gui_color_fg);
 
     gui_status_set("");
     gui_status_set_tl("");

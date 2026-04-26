@@ -34,7 +34,7 @@ enum {
     CELL_FRUIT = 3,
 };
 
-static uint8_t cell_colors[4] = { COLOR_BG, COLOR_FG, COLOR_FG, COLOR_FG };
+static uint8_t cell_colors[4];
 
 static uint8_t cells[GRID_COLS][GRID_ROWS];
 
@@ -288,7 +288,12 @@ on_show(void)
         initialized = 1;
     }
 
-    gui_window_draw(&window, COLOR_BG, 1);
+    cell_colors[CELL_FLOOR] = gui_color_bg;
+    cell_colors[CELL_WALL] = gui_color_fg;
+    cell_colors[CELL_SNAKE] = gui_color_fg;
+    cell_colors[CELL_FRUIT] = gui_color_fg;
+
+    gui_window_draw(&window, gui_color_bg, 1);
     gui_status_set_br("P: Pause/Resume");
     restart_game();
 }
