@@ -187,7 +187,7 @@ load_kernel(void)
 }
 
 int
-main(void)
+cmain(void)
 {
     uint8_t *drive_ptr = 0;
 

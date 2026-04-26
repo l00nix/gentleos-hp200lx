@@ -7,13 +7,13 @@
 
 [cpu 8086]
 
-extern _main
+extern _cmain
 
 section _TEXT class=CODE
 
 resb 0x100
 ..start:
-    jmp _main
+    jmp _cmain
 
 
 global _intr
