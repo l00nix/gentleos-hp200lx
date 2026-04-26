@@ -41,13 +41,20 @@ static int cur_rot;
 static int cur_col;
 static int cur_row;
 static int game_over;
+static int game_paused;
 static uint16_t score;
 static uint16_t best_score = 0;
 
 static void
 update_status(void)
 {
-    const char *msg = game_over ? "Game Over!  " : "";
+    const char *msg = "";
+
+    if (game_over) {
+        msg = "Game Over!  |  ";
+    } else if (game_paused) {
+        msg = "Paused  |  ";
+    }
 
     gui_status_set("%sScore: %u  Best: %u", msg, score, best_score);
 }
@@ -235,6 +242,7 @@ restart_game(void)
     int row, col;
 
     game_over = 0;
+    game_paused = 0;
     score = 0;
 
     for (row = 0; row < GRID_ROWS; ++row) {
@@ -258,7 +266,7 @@ on_tick(void) {
 
     count = 0;
 
-    if (game_over) {
+    if (game_over || game_paused) {
         return;
     }
 
@@ -277,6 +285,16 @@ on_key_down(const event_st *event)
 
     if (game_over) {
         restart_game();
+        return;
+    }
+
+    if (key_char == 'p') {
+        game_paused = !game_paused;
+        update_status();
+        return;
+    }
+
+    if (game_paused) {
         return;
     }
 
@@ -323,6 +341,7 @@ on_show(void)
     }
 
     gui_window_draw(&window, COLOR_BG, 1);
+    gui_status_set_br("P: Pause/Resume");
     restart_game();
 }
 
