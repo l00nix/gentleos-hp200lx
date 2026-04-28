@@ -50,6 +50,43 @@ Otherwise, if you have GRUB installed, you can point it directly to
 the kernel.elf file (see misc/grub.cfg)
 
 
+## Requirements
+
+- [DOSBox](https://www.dosbox.com/index.php)
+- [QEMU](https://www.qemu.org/)
+
+## Building
+
+Start DOSBox from the source directory and run the following:
+
+```
+Z:\>MOUNT C .
+Z:\>C:
+C:\>ENV
+C:\>REGEN
+C:\>WMAKE
+```
+
+## Running
+
+In QEMU:
+
+```bash
+$ qemu-system-i386 -m 1 -drive format=raw,if=floppy,file=BUILD/FD1440.IMG -serial=stdio
+```
+
+In DOSBox as a standalone OS:
+
+```
+C:\>BOOT BUILD\FD1440.IMG
+```
+
+In DOSBox as COM file under DOS (Shift-Q returns back to DOS):
+
+```
+C:\>BUILD\KERNEL.COM
+```
+
 ## Attributions
 
 - Assets in [vendor/icons8](vendor/icons8) have been sourced from
