@@ -16,6 +16,9 @@ extern const char *CAL_DAY_NAMES_SHORT[];
 extern const char *CAL_DAY_NAMES_LONG[];
 extern int cal_get_day_of_week(int day, int month, int year);
 extern int cal_get_days_in_month(int month, int year);
+/* lib/key.c */
+extern char key_char_for_code(uint8_t code, uint8_t mods);
+extern int key_number_for_code(uint8_t code);
 /* lib/math.c */
 extern int udiv32(uint32_t *out, uint32_t dividend, uint32_t divisor);
 extern int umod32(uint32_t *out, uint32_t dividend, uint32_t divisor);

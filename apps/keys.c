@@ -222,14 +222,15 @@ static void
 on_key_down(const event_st *event)
 {
     int key_code = event->payload.key.key_code;
-    int key_char = event->payload.key.key_char;
-    int escaped = !!(event->payload.key.key_mods & KEY_MOD_ESC);
+    int key_mods = event->payload.key.key_mods;
+    int escaped = !!(key_mods & KEY_MOD_ESC);
+    char key_char = key_char_for_code(key_code, key_mods);
 
     update_key(key_code, escaped, 1);
 
     if (key_code != last_key_code) {
-        gui_status_set("Last Code:%02X  Char:%02X (%c)  Escaped:%d",
-            key_code, key_char, key_char ? key_char : ' ', escaped);
+        gui_status_set("Last key:%02X  Mods:%02X  Char:%02X (%c)",
+            key_code, key_mods, key_char, key_char ? key_char : ' ');
     }
 }
 

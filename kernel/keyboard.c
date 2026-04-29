@@ -12,24 +12,6 @@ enum {
     PS2_PORT_CMD  = 0x64,
 };
 
-static const unsigned char krn_keyboard_map_default[] = {
-    0,  27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b',
-    '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n',
-    0, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', 0, '\\',
-    'z', 'x', 'c', 'v', 'b', 'n', 'm', ',', '.', '/', 0,
-    '*', 0, ' ', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    '-', 0, 0, 0, '+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-};
-
-static const unsigned char krn_keyboard_map_shift[] = {
-    0,  27, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '\b',
-    '\t', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n',
-    0, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', '~', 0, '|',
-    'Z', 'X', 'C', 'V', 'B', 'N', 'M', '<', '>', '?', 0,
-    '*', 0, ' ', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-    '-', 0, 0, 0, '+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-};
-
 static isr_st saved_isr_handler;
 extern void *krn_isr_keyboard;
 
@@ -42,7 +24,7 @@ krn_keyboard_getc(void)
         krn_event_wait(&event);
 
         if (event.type == EVENT_KEY_DOWN) {
-            return event.payload.key.key_char;
+            return event.payload.key.key_code;
         }
     }
 }
@@ -57,9 +39,9 @@ krn_keyboard_handle_scancode(uint8_t scancode)
     static int last_scan_was_e0 = 0;
 
     event_st ev;
-    uint8_t key_code;
-    int is_key_down;
-    int is_key_escaped;
+    uint8_t key_code = scancode & 0x7f;
+    int is_key_down = !(scancode & 0x80);
+    int is_key_escaped = last_scan_was_e0;
     uint8_t *mod;
 
     if (scancode == 0xe0) {
@@ -67,15 +49,7 @@ krn_keyboard_handle_scancode(uint8_t scancode)
         return;
     }
 
-    is_key_escaped = last_scan_was_e0;
     last_scan_was_e0 = 0;
-
-    is_key_down = !(scancode & 0x80);
-    key_code = scancode & 0x7f;
-
-    if (key_code >= sizeof(krn_keyboard_map_default)) {
-        return;
-    }
 
     switch (key_code) {
     case KEY_LSHIFT: mod = &lshift; break;
@@ -96,9 +70,6 @@ krn_keyboard_handle_scancode(uint8_t scancode)
 
     ev.type = is_key_down ? EVENT_KEY_DOWN : EVENT_KEY_UP;
     ev.payload.key.key_code = key_code;
-    ev.payload.key.key_char = (lshift || rshift)
-        ? krn_keyboard_map_shift[key_code]
-        : krn_keyboard_map_default[key_code];
     ev.payload.key.key_mods =
         (KEY_MOD_ESC * is_key_escaped) |
         (KEY_MOD_SHIFT * lshift) |
@@ -107,12 +78,10 @@ krn_keyboard_handle_scancode(uint8_t scancode)
         (KEY_MOD_ALT * alt);
 
 #if DEBUG_KEYBOARD
-    krn_debug_printf("Key %s: mods=%02X code=%02X char=%02X (%c)\n",
+    krn_debug_printf("Key %s: code=%02X mods=%02X\n",
         ev.type == EVENT_KEY_UP ? "up" : "down",
         ev.payload.key.key_mods,
         ev.payload.key.key_code,
-        ev.payload.key.key_char,
-        (ev.payload.key.key_char && ev.payload.key.key_char != '\n') ? ev.payload.key.key_char : ' '
     );
 #endif
 

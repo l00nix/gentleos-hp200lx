@@ -679,18 +679,19 @@ start_move_to_empty_col(void)
 }
 
 static void
-handle_move_count(int key_ch)
+handle_move_count(int key_code)
 {
     int count, max_seq_len, max_movable;
 
     state = STATE_DEFAULT;
 
-    if (key_ch < '0' || key_ch > '9') {
+    count = key_number_for_code(key_code);
+
+    if (count < 0) {
         deselect_card();
         return;
     }
 
-    count = key_ch - '0';
     max_seq_len = get_max_valid_sequence_len(sel_idx);
     max_movable = MIN(max_seq_len, get_max_movable_cards_count(cur_idx));
 
@@ -780,10 +781,7 @@ restart_game(void)
 static void
 on_key_down(const event_st *event)
 {
-    int key_code, key_ch;
-
-    key_code = event->payload.key.key_code;
-    key_ch = event->payload.key.key_char;
+    int key_code = event->payload.key.key_code;
 
     if (state == STATE_HELP) {
         close_help();
@@ -791,7 +789,7 @@ on_key_down(const event_st *event)
     }
 
     if (state == STATE_ENTER_MOVE_COUNT) {
-        handle_move_count(key_ch);
+        handle_move_count(key_code);
         return;
     }
 

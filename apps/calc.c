@@ -234,8 +234,10 @@ on_key_up(const event_st *event)
 static void
 on_key_down(const event_st *event)
 {
+    uint8_t key_code = event->payload.key.key_code;
+    uint8_t key_mods = event->payload.key.key_mods;
     widget_st *prev_pressed_button = pressed_button;
-    widget_st *button = button_for_char(event->payload.key.key_char);
+    widget_st *button = button_for_char(key_char_for_code(key_code, key_mods));
 
     if (!button) {
         return;
