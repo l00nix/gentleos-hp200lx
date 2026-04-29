@@ -36,6 +36,13 @@ enum {
 };
 
 enum {
+    KEY_MOD_ESC     = 1 << 0,
+    KEY_MOD_SHIFT   = 1 << 1,
+    KEY_MOD_CTRL    = 1 << 2,
+    KEY_MOD_ALT     = 1 << 3,
+};
+
+enum {
     EVENT_UNKNOWN = 0,
     EVENT_KEY_DOWN = 5,
     EVENT_KEY_UP = 6,
@@ -48,7 +55,7 @@ typedef struct {
         struct {
             uint8_t key_code;
             uint8_t key_char;
-            uint8_t key_escaped;
+            uint8_t key_mods;
         } key;
         struct {
             uint32_t timer_msecs;

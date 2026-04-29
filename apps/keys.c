@@ -223,20 +223,23 @@ on_key_down(const event_st *event)
 {
     int key_code = event->payload.key.key_code;
     int key_char = event->payload.key.key_char;
-    int key_escaped = event->payload.key.key_escaped;
+    int escaped = !!(event->payload.key.key_mods & KEY_MOD_ESC);
 
-    update_key(event->payload.key.key_code, event->payload.key.key_escaped, 1);
+    update_key(key_code, escaped, 1);
 
     if (key_code != last_key_code) {
         gui_status_set("Last Code:%02X  Char:%02X (%c)  Escaped:%d",
-            key_code, key_char, key_char ? key_char : ' ', key_escaped);
+            key_code, key_char, key_char ? key_char : ' ', escaped);
     }
 }
 
 static void
 on_key_up(const event_st *event)
 {
-    update_key(event->payload.key.key_code, event->payload.key.key_escaped, 0);
+    int key_code = event->payload.key.key_code;
+    int escaped = !!(event->payload.key.key_mods & KEY_MOD_ESC);
+
+    update_key(key_code, escaped, 0);
 }
 
 static void

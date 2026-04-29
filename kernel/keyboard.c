@@ -48,57 +48,68 @@ krn_keyboard_getc(void)
 }
 
 static void
-krn_keyboard_handle_scancode(uint8_t scan)
+krn_keyboard_handle_scancode(uint8_t scancode)
 {
-    static uint8_t shift = 0;
+    static uint8_t lshift = 0;
+    static uint8_t rshift = 0;
     static uint8_t ctrl = 0;
     static uint8_t alt = 0;
-    static int escaped = 0;
+    static int last_scan_was_e0 = 0;
 
     event_st ev;
-    int evtype;
+    uint8_t key_code;
     int is_key_down;
+    int is_key_escaped;
+    uint8_t *mod;
 
-    if (scan == 0xe0) {
-        escaped = 1;
+    if (scancode == 0xe0) {
+        last_scan_was_e0 = 1;
         return;
     }
 
-    ev.payload.key.key_escaped = escaped;
-    escaped = 0;
+    is_key_escaped = last_scan_was_e0;
+    last_scan_was_e0 = 0;
 
-    is_key_down = !(scan & 0x80);
-    scan = scan & 0x7f;
+    is_key_down = !(scancode & 0x80);
+    key_code = scancode & 0x7f;
 
-    if (scan >= sizeof(krn_keyboard_map_default)) {
+    if (key_code >= sizeof(krn_keyboard_map_default)) {
         return;
+    }
+
+    switch (key_code) {
+    case KEY_LSHIFT: mod = &lshift; break;
+    case KEY_RSHIFT: mod = &rshift; break;
+    case KEY_CTRL: mod = &ctrl; break;
+    case KEY_ALT: mod = &alt; break;
+    default: mod = 0;
+    }
+
+    /* Ignore duplicate key presses of modifiers */
+    if (mod && *mod == is_key_down) {
+        return;
+    }
+
+    if (mod) {
+        *mod = is_key_down;
     }
 
     ev.type = is_key_down ? EVENT_KEY_DOWN : EVENT_KEY_UP;
-    ev.payload.key.key_code = scan;
-    ev.payload.key.key_char = shift ? krn_keyboard_map_shift[scan] : krn_keyboard_map_default[scan];
-
-    if (ev.payload.key.key_code == KEY_LSHIFT || ev.payload.key.key_code == KEY_RSHIFT) {
-        if (shift == is_key_down) {
-            return;
-        }
-        shift = is_key_down;
-    } else if (ev.payload.key.key_code == KEY_CTRL) {
-        if (ctrl == is_key_down) {
-            return;
-        }
-        ctrl = is_key_down;
-    } else if (ev.payload.key.key_code == KEY_ALT) {
-        if (alt == is_key_down) {
-            return;
-        }
-        alt = is_key_down;
-    }
+    ev.payload.key.key_code = key_code;
+    ev.payload.key.key_char = (lshift || rshift)
+        ? krn_keyboard_map_shift[key_code]
+        : krn_keyboard_map_default[key_code];
+    ev.payload.key.key_mods =
+        (KEY_MOD_ESC * is_key_escaped) |
+        (KEY_MOD_SHIFT * lshift) |
+        (KEY_MOD_SHIFT * rshift) |
+        (KEY_MOD_CTRL * ctrl) |
+        (KEY_MOD_ALT * alt);
 
 #if DEBUG_KEYBOARD
-    krn_debug_printf("Key %s: esc=%1X code=%02X char=%02X (%c)\n",
+    krn_debug_printf("Key %s: mods=%02X code=%02X char=%02X (%c)\n",
         ev.type == EVENT_KEY_UP ? "up" : "down",
-        ev.payload.key.key_escaped,
+        ev.payload.key.key_mods,
         ev.payload.key.key_code,
         ev.payload.key.key_char,
         (ev.payload.key.key_char && ev.payload.key.key_char != '\n') ? ev.payload.key.key_char : ' '
