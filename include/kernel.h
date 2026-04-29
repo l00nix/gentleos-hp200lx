@@ -20,7 +20,6 @@ enum {
     EVENT_KEY_DOWN = 5,
     EVENT_KEY_UP = 6,
     EVENT_TIMER_TICK = 7,
-    EVENT_UART_RX = 8,
 };
 
 typedef struct {
@@ -34,9 +33,6 @@ typedef struct {
         struct {
             uint32_t timer_msecs;
         } timer;
-        struct {
-            uint8_t byte;
-        } uart;
     } payload;
 } event_st;
 

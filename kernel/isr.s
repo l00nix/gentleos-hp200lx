@@ -9,7 +9,6 @@
 
 extern _krn_timer_handle_intr
 extern _krn_keyboard_handle_intr
-extern _krn_uart_handle_intr
 
 section _TEXT class=CODE
 
@@ -57,34 +56,6 @@ _krn_isr_keyboard:
     pop ds
 
     call _krn_keyboard_handle_intr
-
-    pop es
-    pop ds
-    pop bp
-    pop di
-    pop si
-    pop dx
-    pop cx
-    pop bx
-    pop ax
-    iret
-
-global _krn_isr_uart
-_krn_isr_uart:
-    push ax
-    push bx
-    push cx
-    push dx
-    push si
-    push di
-    push bp
-    push ds
-    push es
-
-    push cs
-    pop ds
-
-    call _krn_uart_handle_intr
 
     pop es
     pop ds

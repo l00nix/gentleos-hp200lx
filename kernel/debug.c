@@ -21,7 +21,7 @@ krn_debug_printf(const char *fmt, ...)
     va_end(args);
 
 #if DEBUG_TO_UART
-    krn_uart_puts(buf);
+    bios_uart_puts(buf);
 #endif
 
     if (krn_debug_text_mode_enabled) {

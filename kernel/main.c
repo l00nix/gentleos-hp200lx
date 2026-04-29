@@ -56,7 +56,6 @@ krn_main(void)
 {
     krn_debug_printf("\n");
 
-    krn_uart_init();
     krn_check_load();
 
 #if ENABLE_TESTS
@@ -96,7 +95,6 @@ krn_exit(void)
     krn_vga_deinit();
     krn_timer_deinit();
     krn_keyboard_deinit();
-    krn_uart_deinit();
 
     intr(0x20, &regs);
 }
