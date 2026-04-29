@@ -16,6 +16,26 @@ typedef struct {
 } isr_st;
 
 enum {
+    KEY_UP = 0x48,
+    KEY_DOWN = 0x50,
+    KEY_LEFT = 0x4b,
+    KEY_RIGHT = 0x4d,
+
+    KEY_ENTER = 0x1c,
+    KEY_SPACE = 0x39,
+    KEY_ESC = 0x01,
+
+    KEY_PGUP = 0x49,
+    KEY_PGDN = 0x51,
+    KEY_DEL = 0x53,
+
+    KEY_LSHIFT = 0x2a,
+    KEY_RSHIFT = 0x36,
+    KEY_CTRL = 0x1d,
+    KEY_ALT = 0x38,
+};
+
+enum {
     EVENT_UNKNOWN = 0,
     EVENT_KEY_DOWN = 5,
     EVENT_KEY_UP = 6,

@@ -57,6 +57,7 @@ krn_keyboard_handle_scancode(uint8_t scan)
 
     event_st ev;
     int evtype;
+    int is_key_down;
 
     if (scan == 0xe0) {
         escaped = 1;
@@ -66,28 +67,32 @@ krn_keyboard_handle_scancode(uint8_t scan)
     ev.payload.key.key_escaped = escaped;
     escaped = 0;
 
-    evtype = scan & 0x80 ? EVENT_KEY_UP : EVENT_KEY_DOWN;
+    is_key_down = !(scan & 0x80);
     scan = scan & 0x7f;
 
     if (scan >= sizeof(krn_keyboard_map_default)) {
         return;
     }
 
-    ev.type = evtype;
+    ev.type = is_key_down ? EVENT_KEY_DOWN : EVENT_KEY_UP;
     ev.payload.key.key_code = scan;
     ev.payload.key.key_char = shift ? krn_keyboard_map_shift[scan] : krn_keyboard_map_default[scan];
 
-    if (ev.payload.key.key_code == 0x2a || ev.payload.key.key_code == 0x36) {
-        /* Workaround for some devices which keep generating Shift up events in a loop */
-        if (shift == (ev.type == EVENT_KEY_DOWN)) {
+    if (ev.payload.key.key_code == KEY_LSHIFT || ev.payload.key.key_code == KEY_RSHIFT) {
+        if (shift == is_key_down) {
             return;
         }
-
-        shift = (ev.type == EVENT_KEY_DOWN);
-    } else if (ev.payload.key.key_code == 0x1d) {
-        ctrl = (ev.type == EVENT_KEY_DOWN);
-    } else if (ev.payload.key.key_code == 0x38) {
-        alt = (ev.type == EVENT_KEY_DOWN);
+        shift = is_key_down;
+    } else if (ev.payload.key.key_code == KEY_CTRL) {
+        if (ctrl == is_key_down) {
+            return;
+        }
+        ctrl = is_key_down;
+    } else if (ev.payload.key.key_code == KEY_ALT) {
+        if (alt == is_key_down) {
+            return;
+        }
+        alt = is_key_down;
     }
 
 #if DEBUG_KEYBOARD
@@ -100,7 +105,7 @@ krn_keyboard_handle_scancode(uint8_t scan)
     );
 #endif
 
-    if (ev.payload.key.key_code == 0x53 && ctrl && alt && ev.type == EVENT_KEY_DOWN) {
+    if (ev.payload.key.key_code == KEY_DEL && ctrl && alt && is_key_down) {
         outb(0xFE, PS2_PORT_CMD);
         bios_reboot();
     }
