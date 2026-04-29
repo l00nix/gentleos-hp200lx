@@ -48,31 +48,17 @@ krn_keyboard_getc(void)
 }
 
 static void
-krn_keyboard_finish_handling(void)
-{
-    uint8_t p61 = inb(0x61);
-    outb(p61 | 0x80, 0x61);
-    outb(p61, 0x61);
-
-    outb(0x20, 0x20);
-}
-
-global void
-krn_keyboard_handle_intr(void)
+krn_keyboard_handle_scancode(uint8_t scan)
 {
     static uint8_t shift = 0;
     static uint8_t ctrl = 0;
     static uint8_t alt = 0;
     static int escaped = 0;
 
-    uint8_t scan;
     event_st ev;
     int evtype;
 
-    scan = inb(PS2_PORT_DATA);
-
     if (scan == 0xe0) {
-        krn_keyboard_finish_handling();
         escaped = 1;
         return;
     }
@@ -84,7 +70,6 @@ krn_keyboard_handle_intr(void)
     scan = scan & 0x7f;
 
     if (scan >= sizeof(krn_keyboard_map_default)) {
-        krn_keyboard_finish_handling();
         return;
     }
 
@@ -95,7 +80,6 @@ krn_keyboard_handle_intr(void)
     if (ev.payload.key.key_code == 0x2a || ev.payload.key.key_code == 0x36) {
         /* Workaround for some devices which keep generating Shift up events in a loop */
         if (shift == (ev.type == EVENT_KEY_DOWN)) {
-            krn_keyboard_finish_handling();
             return;
         }
 
@@ -122,8 +106,21 @@ krn_keyboard_handle_intr(void)
     }
 
     (void)krn_event_ipush(&ev);
+}
 
-    krn_keyboard_finish_handling();
+global void
+krn_keyboard_handle_intr(void)
+{
+    uint8_t ctrl;
+    uint8_t scan = inb(PS2_PORT_DATA);
+
+    krn_keyboard_handle_scancode(scan);
+
+    ctrl = inb(0x61);
+    outb(ctrl | 0x80, 0x61);
+    outb(ctrl, 0x61);
+
+    outb(0x20, 0x20);
 }
 
 global void
