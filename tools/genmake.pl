@@ -81,10 +81,11 @@ sub collect_kernel_sources {
     my @sources;
 
     foreach my $d (@KERNEL_SOURCE_DIRS) {
-        push @sources, glob("$d/*.c");
-        push @sources, glob("$d/*.s");
+        push @sources, glob("$d/*.[cC]");
+        push @sources, glob("$d/*.[sS]");
     }
 
+    @sources = map(lc, @sources);
     @sources = sort @sources;
     @sources = grep { $_ ne "kernel/start.s" } @sources;
     unshift @sources, "kernel/start.s";
@@ -96,10 +97,11 @@ sub collect_boot2_sources {
     my @sources;
 
     foreach my $d (@BOOT2_SOURCE_DIRS) {
-        push @sources, glob("$d/*.c");
-        push @sources, glob("$d/*.s");
+        push @sources, glob("$d/*.[cC]");
+        push @sources, glob("$d/*.[sS]");
     }
 
+    @sources = map(lc, @sources);
     @sources = sort @sources;
     @sources = grep { $_ ne "boot2/start.s" } @sources;
     unshift @sources, "boot2/start.s";
