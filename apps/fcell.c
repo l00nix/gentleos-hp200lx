@@ -796,26 +796,22 @@ on_key_down(const event_st *event)
     }
 
     if (state == STATE_WON) {
-        if (key_ch == 'r') {
+        if (key_code == KEY_R) {
             restart_game();
         }
+
         return;
     }
 
     switch (key_code) {
-        case KEY_LEFT:  move_cursor(-1, 0); return;
+        case KEY_LEFT: move_cursor(-1, 0); return;
         case KEY_RIGHT: move_cursor(1, 0); return;
-        case KEY_UP:    move_cursor(0, -1); return;
-        case KEY_DOWN:  move_cursor(0, 1); return;
+        case KEY_UP: move_cursor(0, -1); return;
+        case KEY_DOWN: move_cursor(0, 1); return;
         case KEY_SPACE: handle_space(); return;
-    }
-
-    if (key_ch == 'f') {
-        move_to_found();
-    } else if (key_ch == 'r') {
-        restart_game();
-    } else if (key_ch == 'h') {
-        show_help();
+        case KEY_F: move_to_found(); return;
+        case KEY_R: restart_game(); return;
+        case KEY_H: show_help(); return;
     }
 }
 

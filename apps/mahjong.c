@@ -562,9 +562,8 @@ static void
 on_key_down(const event_st *event)
 {
     int key_code = event->payload.key.key_code;
-    int key_ch = event->payload.key.key_char;
 
-    if (key_ch == 'r') {
+    if (key_code == KEY_R) {
         restart_game();
         return;
     }
@@ -573,12 +572,8 @@ on_key_down(const event_st *event)
         return;
     }
 
-    if (key_ch == 's') {
-        shuffle_tiles();
-        return;
-    }
-
     switch (key_code) {
+        case KEY_S: shuffle_tiles(); return;
         case KEY_LEFT: update_cursor(-1, 0); return;
         case KEY_RIGHT: update_cursor(1, 0); return;
         case KEY_UP: update_cursor(0, -1); return;

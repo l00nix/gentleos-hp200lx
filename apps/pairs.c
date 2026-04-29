@@ -250,6 +250,15 @@ on_key_down(const event_st *event)
 {
     int key_code = event->payload.key.key_code;
 
+    if (matched_count == PAIR_COUNT) {
+        if (key_code == KEY_R) {
+            restart_game();
+            return;
+        }
+
+        return;
+    }
+
     switch (key_code) {
         case KEY_LEFT: move_cursor(-1, 0); return;
         case KEY_RIGHT: move_cursor(1, 0); return;
@@ -257,17 +266,6 @@ on_key_down(const event_st *event)
         case KEY_DOWN: move_cursor(0, 1); return;
         case KEY_SPACE:
         case KEY_ENTER: on_enter(); return;
-    }
-}
-
-static void
-on_key_up(const event_st *event)
-{
-    int ch = event->payload.key.key_char;
-
-    if (ch == 'r' && matched_count == PAIR_COUNT) {
-        restart_game();
-        return;
     }
 }
 
@@ -294,7 +292,6 @@ on_show(void)
 
         app_pairs.on_tick = on_tick;
         app_pairs.on_key_down = on_key_down;
-        app_pairs.on_key_up = on_key_up;
 
         initialized = 1;
     }

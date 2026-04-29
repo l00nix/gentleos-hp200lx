@@ -75,7 +75,8 @@ gui_main(void)
         } else if (event.type == EVENT_KEY_DOWN) {
             if (event.payload.key.key_code == KEY_ESC) {
                 gui_run_app(&app_launcher);
-            } else if (event.payload.key.key_char == 'Q') {
+            } else if (event.payload.key.key_code == KEY_Q &&
+                event.payload.key.key_mods & KEY_MOD_SHIFT) {
                 krn_exit();
             } else if (app->on_key_down) {
                 app->on_key_down(&event);

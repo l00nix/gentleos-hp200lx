@@ -350,7 +350,6 @@ static void
 on_key_down(const event_st *event)
 {
     int key_code = event->payload.key.key_code;
-    int key_ch = event->payload.key.key_char;
 
     switch (key_code) {
         case KEY_LEFT: move_cursor(-1, 0); return;
@@ -359,15 +358,11 @@ on_key_down(const event_st *event)
         case KEY_DOWN: move_cursor(0, 1); return;
         case KEY_SPACE:
         case KEY_ENTER: reveal_cell(current_col, current_row); return;
+        case KEY_F: flag_cell(current_col, current_row); return;
     }
 
-    if (key_ch == 'r' && get_game_state() != GAME_STATE_PLAYING) {
+    if (key_code == KEY_R && get_game_state() != GAME_STATE_PLAYING) {
         restart_game();
-        return;
-    }
-
-    if (key_ch == 'f') {
-        flag_cell(current_col, current_row);
         return;
     }
 }

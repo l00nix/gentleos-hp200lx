@@ -41,11 +41,11 @@ krn_event_format(event_st *ev)
     size_t n = sizeof(buf);
 
     if (ev->type == EVENT_KEY_DOWN) {
-        snprintf(buf, n, "key_down<%d, %c>", ev->payload.key.key_code, ev->payload.key.key_char);
+        snprintf(buf, n, "key_down<%x>", ev->payload.key.key_code);
     } else if (ev->type == EVENT_KEY_UP) {
-        snprintf(buf, n, "key_up<%d, %c>", ev->payload.key.key_code, ev->payload.key.key_char);
+        snprintf(buf, n, "key_up<%x>", ev->payload.key.key_code);
     } else if (ev->type == EVENT_TIMER_TICK) {
-        snprintf(buf, n, "timer_tick<%u>", ev->payload.timer.timer_msecs);
+        snprintf(buf, n, "timer_tick<%lu>", ev->payload.timer.timer_msecs);
     } else {
         snprintf(buf, n, "unknown<%d>", ev->type);
     }

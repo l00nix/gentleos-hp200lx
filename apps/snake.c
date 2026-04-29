@@ -237,7 +237,6 @@ on_tick(void)
 static void
 on_key_down(const event_st *event)
 {
-    int key_char = event->payload.key.key_char;
     int key_code = event->payload.key.key_code;
 
     if (game_over) {
@@ -245,7 +244,7 @@ on_key_down(const event_st *event)
         return;
     }
 
-    if (key_char == 'p') {
+    if (key_code == KEY_P) {
         game_paused = !game_paused;
         update_status();
         return;

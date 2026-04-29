@@ -5,6 +5,7 @@
  * File: tetris.c - Tetris game
  */
 
+#include "kernel.h"
 #include <gui.h>
 
 enum {
@@ -280,7 +281,6 @@ on_tick(void) {
 static void
 on_key_down(const event_st *event)
 {
-    int key_char = event->payload.key.key_char;
     int key_code = event->payload.key.key_code;
 
     if (game_over) {
@@ -288,7 +288,7 @@ on_key_down(const event_st *event)
         return;
     }
 
-    if (key_char == 'p') {
+    if (key_code == KEY_P) {
         game_paused = !game_paused;
         update_status();
         return;
@@ -298,15 +298,14 @@ on_key_down(const event_st *event)
         return;
     }
 
-    if (key_code == KEY_LEFT) {
-        move_current_piece(0, -1, 0);
-    } else if (key_code == KEY_RIGHT) {
-        move_current_piece(0, 1, 0);
-    } else if (key_code == KEY_DOWN) {
-        move_current_piece(1, 0, 0);
-    } else if (key_code == KEY_UP) {
-        move_current_piece(0, 0, 1);
-    } else if (key_char == ' ') {
+    switch (key_code) {
+    case KEY_LEFT: move_current_piece(0, -1, 0); return;
+    case KEY_RIGHT: move_current_piece(0, 1, 0); return;
+    case KEY_DOWN: move_current_piece(1, 0, 0); return;
+    case KEY_UP: move_current_piece(0, 0, 1); return;
+    }
+
+    if (key_code == KEY_SPACE) {
         while (move_current_piece(1, 0, 0)) {
             /* drop */
         };

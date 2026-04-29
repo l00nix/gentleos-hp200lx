@@ -90,46 +90,37 @@ key_frequency(widget_st *widget)
 }
 
 static widget_st *
-key_for_char(int ch)
+key_for_key_code(int key_code)
 {
     widget_st *w = NULL;
 
-    if (ch >= 'A' && ch <= 'Z') {
-        ch += 32;
-    }
-
-    switch (ch) {
-    case 'z': w = &keys_w[0]; break;
-    case 'x': w = &keys_w[1]; break;
-    case 'c': w = &keys_w[2]; break;
-    case 'v': w = &keys_w[3]; break;
-    case 'b': w = &keys_w[4]; break;
-    case 'n': w = &keys_w[5]; break;
-    case 'm': w = &keys_w[6]; break;
-    case ',': w = &keys_w[7]; break;
-    case 'w': w = &keys_w[7]; break;
-    case 'e': w = &keys_w[8]; break;
-    case 'r': w = &keys_w[9]; break;
-    case 't': w = &keys_w[10]; break;
-    case 'y': w = &keys_w[11]; break;
-    case 'u': w = &keys_w[12]; break;
-    case 'i': w = &keys_w[13]; break;
-    case 'o': w = &keys_w[14]; break;
-    case 's': w = &keys_b[0]; break;
-    case 'd': w = &keys_b[1]; break;
-    case 'g': w = &keys_b[2]; break;
-    case 'h': w = &keys_b[3]; break;
-    case 'j': w = &keys_b[4]; break;
-    case '#':
-    case '3': w = &keys_b[5]; break;
-    case '$':
-    case '4': w = &keys_b[6]; break;
-    case '^':
-    case '6': w = &keys_b[7]; break;
-    case '&':
-    case '7': w = &keys_b[8]; break;
-    case '*':
-    case '8': w = &keys_b[9]; break;
+    switch (key_code) {
+    case KEY_Z: w = &keys_w[0]; break;
+    case KEY_X: w = &keys_w[1]; break;
+    case KEY_C: w = &keys_w[2]; break;
+    case KEY_V: w = &keys_w[3]; break;
+    case KEY_B: w = &keys_w[4]; break;
+    case KEY_N: w = &keys_w[5]; break;
+    case KEY_M: w = &keys_w[6]; break;
+    case KEY_COMMA: w = &keys_w[7]; break;
+    case KEY_W: w = &keys_w[7]; break;
+    case KEY_E: w = &keys_w[8]; break;
+    case KEY_R: w = &keys_w[9]; break;
+    case KEY_T: w = &keys_w[10]; break;
+    case KEY_Y: w = &keys_w[11]; break;
+    case KEY_U: w = &keys_w[12]; break;
+    case KEY_I: w = &keys_w[13]; break;
+    case KEY_O: w = &keys_w[14]; break;
+    case KEY_S: w = &keys_b[0]; break;
+    case KEY_D: w = &keys_b[1]; break;
+    case KEY_G: w = &keys_b[2]; break;
+    case KEY_H: w = &keys_b[3]; break;
+    case KEY_J: w = &keys_b[4]; break;
+    case KEY_3: w = &keys_b[5]; break;
+    case KEY_4: w = &keys_b[6]; break;
+    case KEY_6: w = &keys_b[7]; break;
+    case KEY_7: w = &keys_b[8]; break;
+    case KEY_8: w = &keys_b[9]; break;
     }
 
     return w;
@@ -138,8 +129,7 @@ key_for_char(int ch)
 static void
 on_key_down(const event_st *event)
 {
-    int ch = event->payload.key.key_char;
-    widget_st *widget = key_for_char(ch);
+    widget_st *widget = key_for_key_code(event->payload.key.key_code);
     widget_st *prev_widget;
 
     if (!widget) {
@@ -160,8 +150,7 @@ on_key_down(const event_st *event)
 static void
 on_key_up(const event_st *event)
 {
-    int ch = event->payload.key.key_char;
-    widget_st *widget = key_for_char(ch);
+    widget_st *widget = key_for_key_code(event->payload.key.key_code);
 
     if (!widget || widget != pressed_widget) {
         return;

@@ -209,18 +209,13 @@ static void
 on_key_down(const event_st *event)
 {
     int key_code = event->payload.key.key_code;
-    int key_char = event->payload.key.key_char;
 
     switch (key_code) {
     case KEY_UP: move_cursor(-1); return;
     case KEY_DOWN: move_cursor(1); return;
     case KEY_PGUP: edit_field(1); return;
     case KEY_PGDN: edit_field(-1); return;
-    }
-
-    switch (key_char) {
-    case 's':
-    case 'S': save_fields(); return;
+    case KEY_S: save_fields(); return;
     }
 }
 

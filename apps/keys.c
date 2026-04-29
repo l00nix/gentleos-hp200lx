@@ -17,92 +17,92 @@ typedef struct {
 } key_st;
 
 enum {
-    KEY_H = 15,
-    KEY_W = 15,
+    CELL_H = 15,
+    CELL_W = 15,
 };
 
 static key_st keys[] = {
-    { 0x01, KEY_W, "Esc" },
-    { 0x3B, KEY_W, "F1" },
-    { 0x3C, KEY_W, "F2" },
-    { 0x3D, KEY_W, "F3" },
-    { 0x3E, KEY_W, "F4" },
-    { 0x3F, KEY_W, "F5" },
-    { 0x40, KEY_W, "F6" },
-    { 0x41, KEY_W, "F7" },
-    { 0x42, KEY_W, "F8" },
-    { 0x43, KEY_W, "F9" },
-    { 0x44, KEY_W, "F10" },
-    { 0x57, KEY_W, "F11" },
-    { 0x58, KEY_W, "F12" },
-    { 0x29, KEY_W, "`" },
-    { 0x02, KEY_W, "1" },
-    { 0x03, KEY_W, "2" },
-    { 0x04, KEY_W, "3" },
-    { 0x05, KEY_W, "4" },
-    { 0x06, KEY_W, "5" },
-    { 0x07, KEY_W, "6" },
-    { 0x08, KEY_W, "7" },
-    { 0x09, KEY_W, "8" },
-    { 0x0A, KEY_W, "9" },
-    { 0x0B, KEY_W, "0" },
-    { 0x0C, KEY_W, "-" },
-    { 0x0D, KEY_W, "=" },
+    { 0x01, CELL_W, "Esc" },
+    { 0x3B, CELL_W, "F1" },
+    { 0x3C, CELL_W, "F2" },
+    { 0x3D, CELL_W, "F3" },
+    { 0x3E, CELL_W, "F4" },
+    { 0x3F, CELL_W, "F5" },
+    { 0x40, CELL_W, "F6" },
+    { 0x41, CELL_W, "F7" },
+    { 0x42, CELL_W, "F8" },
+    { 0x43, CELL_W, "F9" },
+    { 0x44, CELL_W, "F10" },
+    { 0x57, CELL_W, "F11" },
+    { 0x58, CELL_W, "F12" },
+    { 0x29, CELL_W, "`" },
+    { 0x02, CELL_W, "1" },
+    { 0x03, CELL_W, "2" },
+    { 0x04, CELL_W, "3" },
+    { 0x05, CELL_W, "4" },
+    { 0x06, CELL_W, "5" },
+    { 0x07, CELL_W, "6" },
+    { 0x08, CELL_W, "7" },
+    { 0x09, CELL_W, "8" },
+    { 0x0A, CELL_W, "9" },
+    { 0x0B, CELL_W, "0" },
+    { 0x0C, CELL_W, "-" },
+    { 0x0D, CELL_W, "=" },
     { 0x0E, 34, "Bksp" },
     { 0x0F, 23, "Tab" },
-    { 0x10, KEY_W, "Q" },
-    { 0x11, KEY_W, "W" },
-    { 0x12, KEY_W, "E" },
-    { 0x13, KEY_W, "R" },
-    { 0x14, KEY_W, "T" },
-    { 0x15, KEY_W, "Y" },
-    { 0x16, KEY_W, "U" },
-    { 0x17, KEY_W, "I" },
-    { 0x18, KEY_W, "O" },
-    { 0x19, KEY_W, "P" },
-    { 0x1A, KEY_W, "[" },
-    { 0x1B, KEY_W, "]" },
+    { 0x10, CELL_W, "Q" },
+    { 0x11, CELL_W, "W" },
+    { 0x12, CELL_W, "E" },
+    { 0x13, CELL_W, "R" },
+    { 0x14, CELL_W, "T" },
+    { 0x15, CELL_W, "Y" },
+    { 0x16, CELL_W, "U" },
+    { 0x17, CELL_W, "I" },
+    { 0x18, CELL_W, "O" },
+    { 0x19, CELL_W, "P" },
+    { 0x1A, CELL_W, "[" },
+    { 0x1B, CELL_W, "]" },
     { 0x2B, 26, "\\" },
     { 0x3A, 27, "Caps" },
-    { 0x1E, KEY_W, "A" },
-    { 0x1F, KEY_W, "S" },
-    { 0x20, KEY_W, "D" },
-    { 0x21, KEY_W, "F" },
-    { 0x22, KEY_W, "G" },
-    { 0x23, KEY_W, "H" },
-    { 0x24, KEY_W, "J" },
-    { 0x25, KEY_W, "K" },
-    { 0x26, KEY_W, "L" },
-    { 0x27, KEY_W, ";" },
-    { 0x28, KEY_W, "'" },
+    { 0x1E, CELL_W, "A" },
+    { 0x1F, CELL_W, "S" },
+    { 0x20, CELL_W, "D" },
+    { 0x21, CELL_W, "F" },
+    { 0x22, CELL_W, "G" },
+    { 0x23, CELL_W, "H" },
+    { 0x24, CELL_W, "J" },
+    { 0x25, CELL_W, "K" },
+    { 0x26, CELL_W, "L" },
+    { 0x27, CELL_W, ";" },
+    { 0x28, CELL_W, "'" },
     { 0x1C, 37, "Enter" },
     { 0x2A, 35, "Shift" },
-    { 0x2C, KEY_W, "Z" },
-    { 0x2D, KEY_W, "X" },
-    { 0x2E, KEY_W, "C" },
-    { 0x2F, KEY_W, "V" },
-    { 0x30, KEY_W, "B" },
-    { 0x31, KEY_W, "N" },
-    { 0x32, KEY_W, "M" },
-    { 0x33, KEY_W, "," },
-    { 0x34, KEY_W, "." },
-    { 0x35, KEY_W, "/" },
+    { 0x2C, CELL_W, "Z" },
+    { 0x2D, CELL_W, "X" },
+    { 0x2E, CELL_W, "C" },
+    { 0x2F, CELL_W, "V" },
+    { 0x30, CELL_W, "B" },
+    { 0x31, CELL_W, "N" },
+    { 0x32, CELL_W, "M" },
+    { 0x33, CELL_W, "," },
+    { 0x34, CELL_W, "." },
+    { 0x35, CELL_W, "/" },
     { 0x36, 44, "Shift" },
     { 0x1D, 25, "Ctrl" },
     { 0x38, 26, "Alt" },
     { 0x39, 127, "Space" },
     { 0xe038, 26, "Alt" },
     { 0xe01d, 25, "Ctrl" },
-    { 0x52, KEY_W, "Ins" },
-    { 0x47, KEY_W, "Hom" },
-    { 0x49, KEY_W, "PgU" },
-    { 0x53, KEY_W, "Del" },
-    { 0x4F, KEY_W, "End" },
-    { 0x51, KEY_W, "PgD" },
-    { 0x48, KEY_W, "^" },
-    { 0x4B, KEY_W, "<" },
-    { 0x50, KEY_W, "v" },
-    { 0x4D, KEY_W, ">" },
+    { 0x52, CELL_W, "Ins" },
+    { 0x47, CELL_W, "Hom" },
+    { 0x49, CELL_W, "PgU" },
+    { 0x53, CELL_W, "Del" },
+    { 0x4F, CELL_W, "End" },
+    { 0x51, CELL_W, "PgD" },
+    { 0x48, CELL_W, "^" },
+    { 0x4B, CELL_W, "<" },
+    { 0x50, CELL_W, "v" },
+    { 0x4D, CELL_W, ">" },
 };
 
 #define KEY_COUNT (sizeof(keys) / sizeof(keys[0]))
@@ -127,19 +127,19 @@ init_keys(void)
     keys[1].x = 27;
     keys[5].x = 98;
     keys[9].x = 169;
-    keys[13].y = KEY_H + 5;
-    keys[27].y = KEY_H * 2 + 5;
-    keys[41].y = KEY_H * 3 + 5;
-    keys[54].y = KEY_H * 4 + 5;
-    keys[66].y = KEY_H * 5 + 5;
+    keys[13].y = CELL_H + 5;
+    keys[27].y = CELL_H * 2 + 5;
+    keys[41].y = CELL_H * 3 + 5;
+    keys[54].y = CELL_H * 4 + 5;
+    keys[66].y = CELL_H * 5 + 5;
     keys[71].x = 240;
-    keys[71].y = KEY_H + 5;
+    keys[71].y = CELL_H + 5;
     keys[74].x = 240;
-    keys[74].y = KEY_H * 2 + 5;
-    keys[77].x = 240 + KEY_W;
-    keys[77].y = KEY_H * 4 + 5;
+    keys[74].y = CELL_H * 2 + 5;
+    keys[77].x = 240 + CELL_W;
+    keys[77].y = CELL_H * 4 + 5;
     keys[78].x = 240;
-    keys[78].y = KEY_H * 5 + 5;
+    keys[78].y = CELL_H * 5 + 5;
 
     for (i = 1; i < KEY_COUNT; ++i) {
         if (!keys[i].x && !keys[i].y) {
@@ -151,8 +151,8 @@ init_keys(void)
             window.size.width = keys[i].x + keys[i].width;
         }
 
-        if (keys[i].y + KEY_H > window.size.height) {
-            window.size.height = keys[i].y + KEY_H;
+        if (keys[i].y + CELL_H > window.size.height) {
+            window.size.height = keys[i].y + CELL_H;
         }
     }
 }
@@ -164,7 +164,7 @@ draw_key(key_st *key, int pressed)
     uint8_t fg = pressed ? gui_color_bg : gui_color_fg;
     uint8_t bg = pressed ? gui_color_fg : gui_color_bg;
 
-    gui_rect_init(&rect, key->x, key->y, key->width + 1, KEY_H + 1);
+    gui_rect_init(&rect, key->x, key->y, key->width + 1, CELL_H + 1);
     gui_surface_draw_rect(&window.origin, &rect, bg);
 
     if (!pressed) {

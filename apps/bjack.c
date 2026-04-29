@@ -304,13 +304,13 @@ player_hit(void)
 static void
 on_key_down(const event_st *event)
 {
-    int ch = event->payload.key.key_char;
+    int key_code = event->payload.key.key_code;
 
-    if (ch == 'd' && game_state == STATE_OVER) {
+    if (key_code == KEY_D && game_state == STATE_OVER) {
         restart_game();
-    } else if (ch == 'h' && game_state == STATE_PLAYING) {
+    } else if (key_code == KEY_H && game_state == STATE_PLAYING) {
         player_hit();
-    } else if (ch == 's' && game_state == STATE_PLAYING) {
+    } else if (key_code == KEY_S && game_state == STATE_PLAYING) {
         player_stand();
     }
 }
