@@ -169,29 +169,6 @@ gui_surface_draw_rect(const point_st *origin, const rect_st *rect, uint8_t color
 }
 
 global void
-gui_surface_scroll_up(const point_st *origin, const rect_st *rect, int dy)
-{
-    rect_st translated;
-    int y, byte_x, byte_count;
-
-    gui_rect_copy(&translated, rect);
-    gui_rect_translate(&translated, origin);
-
-    byte_x = translated.x / 4;
-    byte_count = translated.width / 4;
-
-    for (y = translated.y; y < translated.y + translated.height - dy; ++y) {
-        memcpy_far(
-            gui_surface_pixels + y * GUI_FB_PITCH + byte_x,
-            gui_surface_pixels + (y + dy) * GUI_FB_PITCH + byte_x,
-            byte_count
-        );
-    }
-
-    gui_surface_mark_dirty(origin, rect);
-}
-
-global void
 gui_surface_draw_char(const point_st *origin, uint16_t x, uint16_t y,
     font_st *font, uint8_t ch, uint8_t fg, uint8_t bg)
 {

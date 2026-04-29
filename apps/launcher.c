@@ -34,7 +34,6 @@ static app_st *apps[] = {
     &app_fonts,
     &app_keymap,
     &app_sounds,
-    &app_terminal,
     &app_mines,
     &app_pairs,
     &app_mahjong,
@@ -151,7 +150,9 @@ draw_all_cells(void)
 
     for (row = 0; row < GRID_ROWS; ++row) {
         for (col = 0; col < GRID_COLS; ++col) {
-            draw_cell(col, row);
+            if (row * GRID_COLS + col < APPS_COUNT) {
+                draw_cell(col, row);
+            }
         }
     }
 }
