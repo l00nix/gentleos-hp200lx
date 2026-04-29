@@ -84,10 +84,6 @@ gui_main(void)
             if (app->on_key_up) {
                 app->on_key_up(&event);
             }
-        } else if (event.type == EVENT_UART_RX) {
-            if (app->on_uart_rx) {
-                app->on_uart_rx(&event);
-            }
         }
 
         if (krn_event_count() == 0) {
