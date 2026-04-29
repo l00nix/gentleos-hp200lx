@@ -302,10 +302,8 @@ player_hit(void)
 }
 
 static void
-on_key_down(const event_st *event)
+on_key_down(uint8_t key_code, uint8_t key_mods)
 {
-    int key_code = event->payload.key.key_code;
-
     if (key_code == KEY_D && game_state == STATE_OVER) {
         restart_game();
     } else if (key_code == KEY_H && game_state == STATE_PLAYING) {

@@ -559,10 +559,8 @@ restart_game(void)
 }
 
 static void
-on_key_down(const event_st *event)
+on_key_down(uint8_t key_code, uint8_t key_mods)
 {
-    int key_code = event->payload.key.key_code;
-
     if (key_code == KEY_R) {
         restart_game();
         return;

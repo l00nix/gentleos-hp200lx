@@ -279,10 +279,8 @@ on_tick(void) {
 }
 
 static void
-on_key_down(const event_st *event)
+on_key_down(uint8_t key_code, uint8_t key_mods)
 {
-    int key_code = event->payload.key.key_code;
-
     if (game_over) {
         restart_game();
         return;

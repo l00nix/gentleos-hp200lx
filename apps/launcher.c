@@ -180,10 +180,8 @@ move_cursor(int dx, int dy)
 }
 
 static void
-on_key_down(const event_st *event)
+on_key_down(uint8_t key_code, uint8_t key_mods)
 {
-    int key_code = event->payload.key.key_code;
-
     switch (key_code) {
         case KEY_LEFT: move_cursor(-1, 0); return;
         case KEY_RIGHT: move_cursor(1, 0); return;

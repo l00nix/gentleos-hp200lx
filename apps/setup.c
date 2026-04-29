@@ -206,10 +206,8 @@ save_fields(void)
 }
 
 static void
-on_key_down(const event_st *event)
+on_key_down(uint8_t key_code, uint8_t key_mods)
 {
-    int key_code = event->payload.key.key_code;
-
     switch (key_code) {
     case KEY_UP: move_cursor(-1); return;
     case KEY_DOWN: move_cursor(1); return;

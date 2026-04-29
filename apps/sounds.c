@@ -127,9 +127,9 @@ key_for_key_code(int key_code)
 }
 
 static void
-on_key_down(const event_st *event)
+on_key_down(uint8_t key_code, uint8_t key_mods)
 {
-    widget_st *widget = key_for_key_code(event->payload.key.key_code);
+    widget_st *widget = key_for_key_code(key_code);
     widget_st *prev_widget;
 
     if (!widget) {
@@ -148,9 +148,9 @@ on_key_down(const event_st *event)
 }
 
 static void
-on_key_up(const event_st *event)
+on_key_up(uint8_t key_code, uint8_t key_mods)
 {
-    widget_st *widget = key_for_key_code(event->payload.key.key_code);
+    widget_st *widget = key_for_key_code(key_code);
 
     if (!widget || widget != pressed_widget) {
         return;

@@ -158,10 +158,8 @@ set_next_month(void)
 }
 
 static void
-on_key_up(const event_st *event)
+on_key_up(uint8_t key_code, uint8_t key_mods)
 {
-    int key_code = event->payload.key.key_code;
-
     switch (key_code) {
     case KEY_PGUP: set_next_month(); break;
     case KEY_PGDN: set_prev_month(); break;

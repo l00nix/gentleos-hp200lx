@@ -36,7 +36,7 @@ krn_timer_handle_intr(void)
     }
 
     event.type = EVENT_TIMER_TICK;
-    event.payload.timer.timer_msecs = timer_msecs;
+    event.payload = timer_msecs;
 
     (void)krn_event_ipush(&event);
 }

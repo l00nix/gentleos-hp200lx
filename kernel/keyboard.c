@@ -15,7 +15,7 @@ enum {
 static isr_st saved_isr_handler;
 extern void *krn_isr_keyboard;
 
-global uint8_t
+global uint16_t
 krn_keyboard_getc(void)
 {
     event_st event;
@@ -24,7 +24,7 @@ krn_keyboard_getc(void)
         krn_event_wait(&event);
 
         if (event.type == EVENT_KEY_DOWN) {
-            return event.payload.key.key_code;
+            return event.payload;
         }
     }
 }
@@ -39,10 +39,10 @@ krn_keyboard_handle_scancode(uint8_t scancode)
     static int last_scan_was_e0 = 0;
 
     event_st ev;
-    uint8_t key_code = scancode & 0x7f;
     int is_key_down = !(scancode & 0x80);
     int is_key_escaped = last_scan_was_e0;
-    uint8_t *mod;
+    uint8_t *current_mod;
+    key_st key;
 
     if (scancode == 0xe0) {
         last_scan_was_e0 = 1;
@@ -51,41 +51,41 @@ krn_keyboard_handle_scancode(uint8_t scancode)
 
     last_scan_was_e0 = 0;
 
-    switch (key_code) {
-    case KEY_LSHIFT: mod = &lshift; break;
-    case KEY_RSHIFT: mod = &rshift; break;
-    case KEY_CTRL: mod = &ctrl; break;
-    case KEY_ALT: mod = &alt; break;
-    default: mod = 0;
+    key.p.code = scancode & 0x7f;
+
+    switch (key.p.code) {
+    case KEY_LSHIFT: current_mod = &lshift; break;
+    case KEY_RSHIFT: current_mod = &rshift; break;
+    case KEY_CTRL: current_mod = &ctrl; break;
+    case KEY_ALT: current_mod = &alt; break;
+    default: current_mod = 0;
     }
 
     /* Ignore duplicate key presses of modifiers */
-    if (mod && *mod == is_key_down) {
+    if (current_mod && *current_mod == is_key_down) {
         return;
     }
 
-    if (mod) {
-        *mod = is_key_down;
+    if (current_mod) {
+        *current_mod = is_key_down;
     }
 
-    ev.type = is_key_down ? EVENT_KEY_DOWN : EVENT_KEY_UP;
-    ev.payload.key.key_code = key_code;
-    ev.payload.key.key_mods =
+    key.p.mods =
         (KEY_MOD_ESC * is_key_escaped) |
         (KEY_MOD_SHIFT * lshift) |
         (KEY_MOD_SHIFT * rshift) |
         (KEY_MOD_CTRL * ctrl) |
         (KEY_MOD_ALT * alt);
 
+    ev.type = is_key_down ? EVENT_KEY_DOWN : EVENT_KEY_UP;
+    ev.payload = key.encoded;
+
 #if DEBUG_KEYBOARD
     krn_debug_printf("Key %s: code=%02X mods=%02X\n",
-        ev.type == EVENT_KEY_UP ? "up" : "down",
-        ev.payload.key.key_mods,
-        ev.payload.key.key_code,
-    );
+        is_key_down ? "down" : "up", key.p.code, key.p.mods);
 #endif
 
-    if (ev.payload.key.key_code == KEY_DEL && ctrl && alt && is_key_down) {
+    if (key.p.code == KEY_DEL && ctrl && alt && is_key_down) {
         outb(0xFE, PS2_PORT_CMD);
         bios_reboot();
     }

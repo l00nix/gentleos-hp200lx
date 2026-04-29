@@ -24,15 +24,7 @@ enum {
 
 typedef struct {
     uint8_t type;
-    union {
-        struct {
-            uint8_t key_code;
-            uint8_t key_mods;
-        } key;
-        struct {
-            uint32_t timer_msecs;
-        } timer;
-    } payload;
+    uint32_t payload;
 } event_st;
 
 typedef struct {

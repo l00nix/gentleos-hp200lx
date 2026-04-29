@@ -49,6 +49,7 @@ gui_main(void)
 {
     event_st event;
     app_st *app;
+    key_st key;
 
     gui_app_rect.x = 0;
     gui_app_rect.y = STATUS_HEIGHT;
@@ -73,17 +74,20 @@ gui_main(void)
                 app->on_tick();
             }
         } else if (event.type == EVENT_KEY_DOWN) {
-            if (event.payload.key.key_code == KEY_ESC) {
+            key.encoded = event.payload;
+
+            if (key.p.code == KEY_ESC) {
                 gui_run_app(&app_launcher);
-            } else if (event.payload.key.key_code == KEY_Q &&
-                event.payload.key.key_mods & KEY_MOD_SHIFT) {
+            } else if (key.p.code == KEY_Q && key.p.mods & KEY_MOD_SHIFT) {
                 krn_exit();
             } else if (app->on_key_down) {
-                app->on_key_down(&event);
+                app->on_key_down(key.p.code, key.p.mods);
             }
         } else if (event.type == EVENT_KEY_UP) {
+            key.encoded = event.payload;
+
             if (app->on_key_up) {
-                app->on_key_up(&event);
+                app->on_key_up(key.p.code, key.p.mods);
             }
         }
 

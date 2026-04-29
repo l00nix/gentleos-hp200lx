@@ -14,14 +14,14 @@ typedef struct {
     int x;
     int y;
     int pressed;
-} key_st;
+} cell_st;
 
 enum {
     CELL_H = 15,
     CELL_W = 15,
 };
 
-static key_st keys[] = {
+static cell_st cells[] = {
     { 0x01, CELL_W, "Esc" },
     { 0x3B, CELL_W, "F1" },
     { 0x3C, CELL_W, "F2" },
@@ -105,60 +105,60 @@ static key_st keys[] = {
     { 0x4D, CELL_W, ">" },
 };
 
-#define KEY_COUNT (sizeof(keys) / sizeof(keys[0]))
+#define CELL_COUNT (sizeof(cells) / sizeof(cells[0]))
 
 static window_st window;
 static int last_key_code = 0;
 
 static void
-init_keys(void)
+init_cells(void)
 {
     int i;
 
     window.size.width = 0;
     window.size.height = 0;
 
-    for (i = 0; i < KEY_COUNT; ++i) {
-        keys[i].x = 0;
-        keys[i].y = 0;
-        keys[i].pressed = 0;
+    for (i = 0; i < CELL_COUNT; ++i) {
+        cells[i].x = 0;
+        cells[i].y = 0;
+        cells[i].pressed = 0;
     }
 
-    keys[1].x = 27;
-    keys[5].x = 98;
-    keys[9].x = 169;
-    keys[13].y = CELL_H + 5;
-    keys[27].y = CELL_H * 2 + 5;
-    keys[41].y = CELL_H * 3 + 5;
-    keys[54].y = CELL_H * 4 + 5;
-    keys[66].y = CELL_H * 5 + 5;
-    keys[71].x = 240;
-    keys[71].y = CELL_H + 5;
-    keys[74].x = 240;
-    keys[74].y = CELL_H * 2 + 5;
-    keys[77].x = 240 + CELL_W;
-    keys[77].y = CELL_H * 4 + 5;
-    keys[78].x = 240;
-    keys[78].y = CELL_H * 5 + 5;
+    cells[1].x = 27;
+    cells[5].x = 98;
+    cells[9].x = 169;
+    cells[13].y = CELL_H + 5;
+    cells[27].y = CELL_H * 2 + 5;
+    cells[41].y = CELL_H * 3 + 5;
+    cells[54].y = CELL_H * 4 + 5;
+    cells[66].y = CELL_H * 5 + 5;
+    cells[71].x = 240;
+    cells[71].y = CELL_H + 5;
+    cells[74].x = 240;
+    cells[74].y = CELL_H * 2 + 5;
+    cells[77].x = 240 + CELL_W;
+    cells[77].y = CELL_H * 4 + 5;
+    cells[78].x = 240;
+    cells[78].y = CELL_H * 5 + 5;
 
-    for (i = 1; i < KEY_COUNT; ++i) {
-        if (!keys[i].x && !keys[i].y) {
-            keys[i].x = keys[i - 1].x + keys[i - 1].width;
-            keys[i].y = keys[i - 1].y;
+    for (i = 1; i < CELL_COUNT; ++i) {
+        if (!cells[i].x && !cells[i].y) {
+            cells[i].x = cells[i - 1].x + cells[i - 1].width;
+            cells[i].y = cells[i - 1].y;
         }
 
-        if (keys[i].x + keys[i].width > window.size.width) {
-            window.size.width = keys[i].x + keys[i].width;
+        if (cells[i].x + cells[i].width > window.size.width) {
+            window.size.width = cells[i].x + cells[i].width;
         }
 
-        if (keys[i].y + CELL_H > window.size.height) {
-            window.size.height = keys[i].y + CELL_H;
+        if (cells[i].y + CELL_H > window.size.height) {
+            window.size.height = cells[i].y + CELL_H;
         }
     }
 }
 
 static void
-draw_key(key_st *key, int pressed)
+draw_cell(cell_st *key, int pressed)
 {
     rect_st rect;
     uint8_t fg = pressed ? gui_color_bg : gui_color_fg;
@@ -180,19 +180,19 @@ draw_keyboard(void)
 {
     int i;
 
-    for (i = 0; i < KEY_COUNT; ++i) {
-        draw_key(&keys[i], 0);
+    for (i = 0; i < CELL_COUNT; ++i) {
+        draw_cell(&cells[i], 0);
     }
 }
 
-static key_st *
+static cell_st *
 find_key(uint16_t code)
 {
     int i;
 
-    for (i = 0; i < KEY_COUNT; ++i) {
-        if (keys[i].code == code) {
-            return &keys[i];
+    for (i = 0; i < CELL_COUNT; ++i) {
+        if (cells[i].code == code) {
+            return &cells[i];
         }
     }
 
@@ -200,9 +200,9 @@ find_key(uint16_t code)
 }
 
 static void
-update_key(uint16_t code, int escaped, int pressed)
+update_cell(uint16_t code, int escaped, int pressed)
 {
-    key_st *key = NULL;
+    cell_st *key = NULL;
 
     if (escaped) {
         key = find_key(code | 0xe000);
@@ -213,20 +213,18 @@ update_key(uint16_t code, int escaped, int pressed)
     }
 
     if (key && key->pressed != pressed) {
-        draw_key(key, pressed);
+        draw_cell(key, pressed);
         key->pressed = pressed;
     }
 }
 
 static void
-on_key_down(const event_st *event)
+on_key_down(uint8_t key_code, uint8_t key_mods)
 {
-    int key_code = event->payload.key.key_code;
-    int key_mods = event->payload.key.key_mods;
     int escaped = !!(key_mods & KEY_MOD_ESC);
     char key_char = key_char_for_code(key_code, key_mods);
 
-    update_key(key_code, escaped, 1);
+    update_cell(key_code, escaped, 1);
 
     if (key_code != last_key_code) {
         gui_status_set("Last key:%02X  Mods:%02X  Char:%02X (%c)",
@@ -235,12 +233,11 @@ on_key_down(const event_st *event)
 }
 
 static void
-on_key_up(const event_st *event)
+on_key_up(uint8_t key_code, uint8_t key_mods)
 {
-    int key_code = event->payload.key.key_code;
-    int escaped = !!(event->payload.key.key_mods & KEY_MOD_ESC);
+    int escaped = !!(key_mods & KEY_MOD_ESC);
 
-    update_key(key_code, escaped, 0);
+    update_cell(key_code, escaped, 0);
 }
 
 static void
@@ -249,7 +246,7 @@ on_show(void)
     static int initialized = 0;
 
     if (!initialized) {
-        init_keys();
+        init_cells();
 
         gui_window_init(&window, window.size.width, window.size.height);
 

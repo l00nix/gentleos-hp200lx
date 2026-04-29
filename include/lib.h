@@ -157,6 +157,14 @@ enum {
     KEY_MOD_ALT     = 1 << 3,
 };
 
+typedef union {
+    uint16_t encoded;
+    struct {
+        uint8_t code;
+        uint8_t mods;
+    } p;
+} key_st;
+
 /* lib/cpu.s */
 typedef union {
     struct {

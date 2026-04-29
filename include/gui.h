@@ -83,8 +83,8 @@ typedef struct {
     const char *name;
     bitmap_st *icon;
     void (*on_show)(void);
-    void (*on_key_down)(const event_st *);
-    void (*on_key_up)(const event_st *);
+    void (*on_key_down)(uint8_t, uint8_t);
+    void (*on_key_up)(uint8_t, uint8_t);
     void (*on_close)(void);
     void (*on_tick)(void);
 } app_st;
