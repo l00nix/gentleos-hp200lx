@@ -9,17 +9,32 @@
 
 static uint8_t far *gui_surface_pixels;
 static rect_st gui_surface_dirty_rect = { 0 };
+static uint16_t gui_surface_byte_expansions[256];
 
 global void
 gui_surface_init(void)
 {
+    int i;
+
     gui_surface_pixels = krn_heap_alloc(GUI_FB_PLANE_SIZE);
+
+    for (i = 0; i < 256; ++i) {
+        gui_surface_byte_expansions[i] =
+            (0x00C0 * !!(i & 0x80)) |
+            (0x0030 * !!(i & 0x40)) |
+            (0x000C * !!(i & 0x20)) |
+            (0x0003 * !!(i & 0x10)) |
+            (0xC000 * !!(i & 0x08)) |
+            (0x3000 * !!(i & 0x04)) |
+            (0x0C00 * !!(i & 0x02)) |
+            (0x0300 * !!(i & 0x01));
+    }
 }
 
 global void
 gui_surface_clear(void)
 {
-    memset_far(gui_surface_pixels, (gui_color_bg << 4) | gui_color_bg, GUI_FB_PLANE_SIZE);
+    memset_far(gui_surface_pixels, (gui_color_bg & 1) ? 0xFF : 0x00, GUI_FB_PLANE_SIZE);
     gui_rect_init(&gui_surface_dirty_rect, 0, 0, GUI_WIDTH, GUI_HEIGHT);
 }
 
@@ -58,8 +73,11 @@ global void
 gui_surface_flush(void)
 {
     rect_st rect;
-    int x0, x1, byte_x0, byte_count, y;
+    int x0, x1, src_word_x, src_words, vram_word_x, y, i;
     uint8_t far *vram = MK_FP(0xb800, 0);
+    uint16_t far *src;
+    uint16_t far *dst;
+    uint16_t pair;
 
     gui_rect_copy(&rect, &gui_surface_dirty_rect);
 
@@ -67,17 +85,21 @@ gui_surface_flush(void)
         return;
     }
 
-    x0 = (rect.x / 4) * 4;
-    x1 = ((rect.x + rect.width + 3) / 4) * 4;
-    byte_x0 = x0 / 4;
-    byte_count = (x1 - x0) / 4;
+    x0 = (rect.x / 16) * 16;
+    x1 = ((rect.x + rect.width + 15) / 16) * 16;
+    src_word_x = x0 / 16;
+    src_words = (x1 - x0) / 16;
+    vram_word_x = x0 / 8;
 
-    for (y = rect.y; y < rect.y + rect.height; y += 1) {
-        memcpy_far(
-            vram + (y % 2) * 0x2000 + (y / 2) * GUI_FB_PITCH + byte_x0,
-            gui_surface_pixels + y * GUI_FB_PITCH + byte_x0,
-            byte_count
-        );
+    for (y = rect.y; y < rect.y + rect.height; ++y) {
+        src = (uint16_t far *)(gui_surface_pixels + y * GUI_FB_PITCH) + src_word_x;
+        dst = (uint16_t far *)(vram + (y % 2) * 0x2000 + (y / 2) * GUI_VRAM_PITCH) + vram_word_x;
+
+        for (i = 0; i < src_words; ++i) {
+            pair = src[i];
+            dst[i * 2] = gui_surface_byte_expansions[pair & 0xFF];
+            dst[i * 2 + 1] = gui_surface_byte_expansions[pair >> 8];
+        }
     }
 
     gui_rect_init(&gui_surface_dirty_rect, 0, 0, 0, 0);
@@ -86,9 +108,9 @@ gui_surface_flush(void)
 global void
 gui_surface_draw_pixel(const point_st *origin, int x, int y, uint8_t color)
 {
-    int byte_idx = (origin->y + y) * GUI_FB_PITCH + (origin->x + x) / 4;
-    int shift = (3 - ((origin->x + x) & 3)) * 2;
-    uint8_t mask = 0x03 << shift;
+    int byte_idx = (origin->y + y) * GUI_FB_PITCH + (origin->x + x) / 8;
+    int shift = 7 - ((origin->x + x) & 7);
+    uint8_t mask = 1 << shift;
     uint8_t val = (color & 1) ? mask : 0;
 
     gui_surface_pixels[byte_idx] = (gui_surface_pixels[byte_idx] & ~mask) | val;
@@ -140,11 +162,11 @@ gui_surface_draw_rect(const point_st *origin, const rect_st *rect, uint8_t color
         return;
     }
 
-    l_byte = l_x / 4;
-    r_byte = r_x / 4;
+    l_byte = l_x / 8;
+    r_byte = r_x / 8;
 
-    l_mask = 0xFF >> ((l_x & 3) * 2);
-    r_mask = 0xFF << ((3 - (r_x & 3)) * 2);
+    l_mask = 0xFF >> (l_x & 7);
+    r_mask = 0xFF << (7 - (r_x & 7));
 
     fill = (color & 1) ? 0xFF : 0x00;
     dst_plane = gui_surface_pixels;

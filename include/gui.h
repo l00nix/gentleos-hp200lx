@@ -108,8 +108,9 @@ enum {
 enum {
     GUI_WIDTH = 320,
     GUI_HEIGHT = 200,
-    GUI_FB_PITCH = GUI_WIDTH / 4,
+    GUI_FB_PITCH = GUI_WIDTH / 8,
     GUI_FB_PLANE_SIZE = GUI_HEIGHT * GUI_FB_PITCH,
+    GUI_VRAM_PITCH = GUI_WIDTH / 4,
 };
 
 #define GRID_WIDTH_SPACED(cell_width, cols) ((cell_width) * (cols) + (cols) - 1)
