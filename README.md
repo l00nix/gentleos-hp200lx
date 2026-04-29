@@ -63,7 +63,7 @@ Start DOSBox from the source directory and run the following:
 Z:\>MOUNT C .
 Z:\>C:
 C:\>ENV
-C:\>REGEN
+C:\>AUTOGEN
 C:\>WMAKE
 ```
 
