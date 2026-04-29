@@ -11,7 +11,7 @@ enum {
     KEY_CHAR_MAP_SIZE = 90,
 };
 
-static const unsigned char key_char_map_default[KEY_CHAR_MAP_SIZE] = {
+static const char key_char_map_default[KEY_CHAR_MAP_SIZE] = {
     0,  27, '1', '2', '3', '4', '5', '6', '7', '8', '9', '0', '-', '=', '\b',
     '\t', 'q', 'w', 'e', 'r', 't', 'y', 'u', 'i', 'o', 'p', '[', ']', '\n',
     0, 'a', 's', 'd', 'f', 'g', 'h', 'j', 'k', 'l', ';', '\'', '`', 0, '\\',
@@ -20,7 +20,7 @@ static const unsigned char key_char_map_default[KEY_CHAR_MAP_SIZE] = {
     '-', 0, 0, 0, '+', 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 };
 
-static const unsigned char key_char_map_shifted[KEY_CHAR_MAP_SIZE] = {
+static const char key_char_map_shifted[KEY_CHAR_MAP_SIZE] = {
     0,  27, '!', '@', '#', '$', '%', '^', '&', '*', '(', ')', '_', '+', '\b',
     '\t', 'Q', 'W', 'E', 'R', 'T', 'Y', 'U', 'I', 'O', 'P', '{', '}', '\n',
     0, 'A', 'S', 'D', 'F', 'G', 'H', 'J', 'K', 'L', ':', '"', '~', 0, '|',
@@ -33,7 +33,7 @@ global char
 key_char_for_code(uint8_t code, uint8_t mods)
 {
     int shifted = mods & KEY_MOD_SHIFT;
-    unsigned const char *map = shifted ? key_char_map_shifted : key_char_map_default;
+    const char *map = shifted ? key_char_map_shifted : key_char_map_default;
 
     return code < KEY_CHAR_MAP_SIZE ? map[code] : 0;
 }
