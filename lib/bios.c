@@ -55,6 +55,18 @@ bios_getc(void)
 }
 
 global void
+bios_uart_init(void)
+{
+    regs_st regs;
+
+    regs.h.ah = 0x00;
+    regs.h.al = 0xe3; /* 8N1, 9600 */
+    regs.x.dx = 0;
+
+    intr(0x14, &regs);
+}
+
+global void
 bios_uart_putc(char c)
 {
     regs_st regs;

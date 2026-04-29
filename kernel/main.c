@@ -54,8 +54,8 @@ krn_fix_clock(void)
 global void
 krn_main(void)
 {
+    bios_uart_init();
     krn_debug_printf("\n");
-
     krn_check_load();
 
 #if ENABLE_TESTS
