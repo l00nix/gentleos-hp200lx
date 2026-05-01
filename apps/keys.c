@@ -250,8 +250,8 @@ on_show(void)
 
         gui_window_init(&window, window.size.width, window.size.height);
 
-        app_keymap.on_key_down = on_key_down;
-        app_keymap.on_key_up = on_key_up;
+        app_keys.on_key_down = on_key_down;
+        app_keys.on_key_up = on_key_up;
 
         initialized = 1;
     }
@@ -259,7 +259,7 @@ on_show(void)
     draw_keyboard();
 }
 
-global app_st app_keymap = {
+global app_st app_keys = {
     "Keys",
     &icon_keys,
     on_show,

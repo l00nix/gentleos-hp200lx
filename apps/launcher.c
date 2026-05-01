@@ -32,7 +32,7 @@ static app_st *apps[] = {
     &app_calendar,
     &app_calc,
     &app_fonts,
-    &app_keymap,
+    &app_keys,
     &app_sounds,
     &app_mines,
     &app_pairs,
