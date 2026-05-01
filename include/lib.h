@@ -99,7 +99,13 @@ enum {
     KEY_ENTER = 0x1c,
     KEY_SPACE = 0x39,
     KEY_ESC = 0x01,
+    KEY_TAB = 0x0f,
+    KEY_BKSP = 0x0e,
+    KEY_CAPS = 0x3a,
 
+    KEY_INS = 0x52,
+    KEY_HOME = 0x47,
+    KEY_END = 0x4f,
     KEY_PGUP = 0x49,
     KEY_PGDN = 0x51,
     KEY_DEL = 0x53,
@@ -108,6 +114,21 @@ enum {
     KEY_RSHIFT = 0x36,
     KEY_CTRL = 0x1d,
     KEY_ALT = 0x38,
+    KEY_RCTRL = 0xe01d,
+    KEY_RALT = 0xe038,
+
+    KEY_F1 = 0x3b,
+    KEY_F2 = 0x3c,
+    KEY_F3 = 0x3d,
+    KEY_F4 = 0x3e,
+    KEY_F5 = 0x3f,
+    KEY_F6 = 0x40,
+    KEY_F7 = 0x41,
+    KEY_F8 = 0x42,
+    KEY_F9 = 0x43,
+    KEY_F10 = 0x44,
+    KEY_F11 = 0x57,
+    KEY_F12 = 0x58,
 
     KEY_1 = 0x02,
     KEY_2 = 0x03,
@@ -147,7 +168,17 @@ enum {
     KEY_Y = 0x15,
     KEY_Z = 0x2c,
 
+    KEY_BKTICK = 0x29,
+    KEY_MINUS = 0x0c,
+    KEY_EQUAL = 0x0d,
+    KEY_LBRCKT = 0x1a,
+    KEY_RBRCKT = 0x1b,
+    KEY_BKSLASH = 0x2b,
+    KEY_SEMICOL = 0x27,
+    KEY_QUOTE = 0x28,
     KEY_COMMA = 0x33,
+    KEY_PERIOD = 0x34,
+    KEY_SLASH = 0x35,
 };
 
 enum {
