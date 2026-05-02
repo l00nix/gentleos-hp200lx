@@ -68,6 +68,14 @@ static const char *help_lines[] = {
     "H:      toggle help",
 };
 
+typedef struct {
+    int src_pile;
+    int src_idx;
+    int dst_pile;
+    int dst_idx;
+    int count;
+} card_move_st;
+
 static window_st window;
 
 static uint8_t holds[HOLD_COUNT];
@@ -75,8 +83,7 @@ static uint8_t founds[FOUND_COUNT];
 static uint8_t columns[COLUMN_COUNT][COLUMN_CARDS_MAX];
 static int column_counts[COLUMN_COUNT];
 
-static int sel_pile;
-static int sel_idx;
+static card_move_st cur_move = { PILE_NONE, 0, PILE_NONE, 0, 0 };
 
 static int cur_pile;
 static int cur_idx;
@@ -163,13 +170,13 @@ pile_top_card_y(int pile, int idx)
 static int
 pile_is_sel(int pile, int idx)
 {
-    return sel_pile == pile && sel_idx == idx;
+    return cur_move.src_pile == pile && cur_move.src_idx == idx;
 }
 
 static uint8_t
 selected_card(void)
 {
-    return pile_top_card(sel_pile, sel_idx);
+    return pile_top_card(cur_move.src_pile, cur_move.src_idx);
 }
 
 static int
@@ -224,8 +231,8 @@ deal_cards(void)
         columns[col][column_counts[col]++] = deck[i];
     }
 
-    sel_pile = PILE_NONE;
-    sel_idx = 0;
+    cur_move.src_pile = PILE_NONE;
+    cur_move.src_idx = 0;
 
     cur_pile = PILE_COLUMNS;
     cur_idx = 0;
@@ -341,6 +348,16 @@ draw_column(int col)
 }
 
 static void
+draw_pile(int pile, int idx)
+{
+    if (pile == PILE_COLUMNS) {
+        draw_column(idx);
+    } else {
+        draw_cell(pile, idx);
+    }
+}
+
+static void
 draw_piles(void)
 {
     int i;
@@ -411,13 +428,13 @@ static void
 select_card(void)
 {
     if (cur_pile == PILE_HOLDS && holds[cur_idx] != CARD_EMPTY) {
-        sel_pile = PILE_HOLDS;
-        sel_idx = cur_idx;
+        cur_move.src_pile = PILE_HOLDS;
+        cur_move.src_idx = cur_idx;
         draw_cell(PILE_HOLDS, cur_idx);
         update_status();
     } else if (cur_pile == PILE_COLUMNS && column_counts[cur_idx] > 0) {
-        sel_pile = PILE_COLUMNS;
-        sel_idx = cur_idx;
+        cur_move.src_pile = PILE_COLUMNS;
+        cur_move.src_idx = cur_idx;
         draw_column(cur_idx);
         update_status();
     }
@@ -426,10 +443,10 @@ select_card(void)
 static void
 deselect_card(void)
 {
-    int old_pile = sel_pile;
-    int old_idx = sel_idx;
+    int old_pile = cur_move.src_pile;
+    int old_idx = cur_move.src_idx;
 
-    sel_pile = PILE_NONE;
+    cur_move.src_pile = PILE_NONE;
 
     if (old_pile == PILE_HOLDS) {
         draw_cell(PILE_HOLDS, old_idx);
@@ -447,24 +464,62 @@ show_error(const char *msg)
     gui_status_set("%s", msg);
 }
 
-static uint8_t
-lift_card(void)
+static void
+exec_move(card_move_st *move)
 {
-    uint8_t card = CARD_EMPTY;
+    int i;
+    uint8_t card;
+    int src_pile = move->src_pile;
+    int src_idx = move->src_idx;
+    int dst_pile = move->dst_pile;
+    int dst_idx = move->dst_idx;
+    int count = move->count;
 
-    if (sel_pile == PILE_HOLDS) {
-        card = holds[sel_idx];
-        holds[sel_idx] = CARD_EMPTY;
-        sel_pile = PILE_NONE;
-        draw_cell(PILE_HOLDS, sel_idx);
-    } else if (sel_pile == PILE_COLUMNS) {
-        card = columns[sel_idx][column_counts[sel_idx] - 1];
-        column_counts[sel_idx]--;
-        sel_pile = PILE_NONE;
-        draw_column(sel_idx);
+    move->src_pile = PILE_NONE;
+
+    ASSERT(src_pile != PILE_NONE);
+    ASSERT(dst_pile != PILE_NONE);
+
+    if (src_pile == PILE_COLUMNS && dst_pile == PILE_COLUMNS) {
+        ASSERT(count <= column_counts[src_idx]);
+
+        for (i = 0; i < count; ++i) {
+            columns[dst_idx][column_counts[dst_idx]++] =
+                columns[src_idx][column_counts[src_idx] - count + i];
+        }
+
+        column_counts[src_idx] -= count;
+        draw_column(src_idx);
+        draw_column(dst_idx);
+        return;
     }
 
-    return card;
+    ASSERT(count == 1);
+
+    if (src_pile == PILE_HOLDS) {
+        card = holds[src_idx];
+        ASSERT(card != CARD_EMPTY);
+        holds[src_idx] = CARD_EMPTY;
+    } else if (src_pile == PILE_FOUNDS) {
+        card = founds[src_idx];
+        ASSERT(card != CARD_EMPTY);
+        founds[src_idx] = CARD_EMPTY;
+    } else if (src_pile == PILE_COLUMNS) {
+        ASSERT(column_counts[src_idx] > 0);
+        card = columns[src_idx][--column_counts[src_idx]];
+    }
+
+    if (dst_pile == PILE_HOLDS) {
+        ASSERT(holds[dst_idx] == CARD_EMPTY);
+        holds[dst_idx] = card;
+    } else if (dst_pile == PILE_FOUNDS) {
+        founds[dst_idx] = card;
+    } else if (dst_pile == PILE_COLUMNS) {
+        columns[dst_idx][column_counts[dst_idx]++] = card;
+    }
+
+    draw_pile(src_pile, src_idx);
+    draw_pile(dst_pile, dst_idx);
 }
 
 static int
@@ -546,36 +601,41 @@ get_move_count(int src_col, int dst_col)
 static void
 move_to_hold(void)
 {
-    uint8_t card;
+    cur_move.dst_pile = PILE_HOLDS;
+    cur_move.dst_idx = cur_idx;
+    cur_move.count = 1;
 
-    if (holds[cur_idx] != CARD_EMPTY) {
+    if (holds[cur_move.dst_idx] != CARD_EMPTY) {
         show_error("Cell not empty");
         return;
     }
 
-    card = lift_card();
-    holds[cur_idx] = card;
-    draw_cell(PILE_HOLDS, cur_idx);
+    exec_move(&cur_move);
+
     update_status();
 }
 
 static void
 move_to_found(void)
 {
-    int suit, expected_rank;
+    int expected_rank;
     uint8_t card, top;
 
-    if (sel_pile == PILE_NONE) {
+    if (cur_move.src_pile == PILE_NONE) {
         select_card();
     }
 
-    if (sel_pile == PILE_NONE) {
+    if (cur_move.src_pile == PILE_NONE) {
         return;
     }
 
     card = selected_card();
-    suit = card_suit(card);
-    top = founds[suit];
+
+    cur_move.dst_pile = PILE_FOUNDS;
+    cur_move.dst_idx = card_suit(card);
+    cur_move.count = 1;
+
+    top = founds[cur_move.dst_idx];
     expected_rank = (top == CARD_EMPTY) ? 0 : card_rank(top) + 1;
 
     if (card_rank(card) != expected_rank) {
@@ -583,9 +643,8 @@ move_to_found(void)
         return;
     }
 
-    card = lift_card();
-    founds[suit] = card;
-    draw_cell(PILE_FOUNDS, suit);
+    exec_move(&cur_move);
+
     check_win();
     update_status();
 }
@@ -593,14 +652,17 @@ move_to_found(void)
 static void
 move_to_nonempty_col(void)
 {
-    int dst, src, n, i;
+    int dst, src;
     uint8_t dst_top, src_card;
 
-    dst = cur_idx;
+    cur_move.dst_pile = PILE_COLUMNS;
+    cur_move.dst_idx = cur_idx;
 
-    if (sel_pile == PILE_HOLDS) {
+    dst = cur_move.dst_idx;
+
+    if (cur_move.src_pile == PILE_HOLDS) {
         dst_top = columns[dst][column_counts[dst] - 1];
-        src_card = holds[sel_idx];
+        src_card = holds[cur_move.src_idx];
 
         if (card_rank(dst_top) != card_rank(src_card) + 1 ||
             card_color(dst_top) == card_color(src_card)) {
@@ -608,47 +670,28 @@ move_to_nonempty_col(void)
             return;
         }
 
-        src_card = lift_card();
-        columns[dst][column_counts[dst]++] = src_card;
-        draw_column(dst);
-        update_status();
-    } else if (sel_pile == PILE_COLUMNS) {
-        src = sel_idx;
-        n = get_move_count(src, dst);
-        if (n == 0) {
+        cur_move.count = 1;
+    } else if (cur_move.src_pile == PILE_COLUMNS) {
+        src = cur_move.src_idx;
+        cur_move.count = get_move_count(src, dst);
+        if (cur_move.count == 0) {
             show_error("Invalid move");
             return;
         }
-
-        for (i = 0; i < n; ++i) {
-            columns[dst][column_counts[dst]++] =
-                columns[src][column_counts[src] - n + i];
-        }
-
-        column_counts[src] -= n;
-        sel_pile = PILE_NONE;
-        draw_column(src);
-        draw_column(dst);
-        update_status();
     }
+
+    exec_move(&cur_move);
+    update_status();
 }
 
 static void
 finish_move_to_empty_col(int dst, int count)
 {
-    int src, i;
+    cur_move.dst_pile = PILE_COLUMNS;
+    cur_move.dst_idx = dst;
+    cur_move.count = count;
 
-    src = sel_idx;
-
-    for (i = 0; i < count; ++i) {
-        columns[dst][column_counts[dst]++] =
-            columns[src][column_counts[src] - count + i];
-    }
-
-    column_counts[src] -= count;
-    sel_pile = PILE_NONE;
-    draw_column(src);
-    draw_column(dst);
+    exec_move(&cur_move);
     update_status();
 }
 
@@ -656,21 +699,22 @@ static void
 start_move_to_empty_col(void)
 {
     int max_seq_len, max_movable;
-    uint8_t card;
 
-    if (sel_pile == PILE_HOLDS) {
-        card = lift_card();
-        columns[cur_idx][column_counts[cur_idx]++] = card;
-        draw_column(cur_idx);
+    cur_move.dst_pile = PILE_COLUMNS;
+    cur_move.dst_idx = cur_idx;
+
+    if (cur_move.src_pile == PILE_HOLDS) {
+        cur_move.count = 1;
+        exec_move(&cur_move);
         update_status();
         return;
     }
 
-    max_seq_len = get_max_valid_sequence_len(sel_idx);
-    max_movable = MIN(max_seq_len, get_max_movable_cards_count(cur_idx));
+    max_seq_len = get_max_valid_sequence_len(cur_move.src_idx);
+    max_movable = MIN(max_seq_len, get_max_movable_cards_count(cur_move.dst_idx));
 
     if (max_movable <= 1) {
-        finish_move_to_empty_col(cur_idx, 1);
+        finish_move_to_empty_col(cur_move.dst_idx, 1);
         return;
     }
 
@@ -692,8 +736,8 @@ handle_move_count(int key_code)
         return;
     }
 
-    max_seq_len = get_max_valid_sequence_len(sel_idx);
-    max_movable = MIN(max_seq_len, get_max_movable_cards_count(cur_idx));
+    max_seq_len = get_max_valid_sequence_len(cur_move.src_idx);
+    max_movable = MIN(max_seq_len, get_max_movable_cards_count(cur_move.dst_idx));
 
     if (count == 0) {
         count = max_movable;
@@ -704,13 +748,15 @@ handle_move_count(int key_code)
         return;
     }
 
-    finish_move_to_empty_col(cur_idx, count);
+    finish_move_to_empty_col(cur_move.dst_idx, count);
 }
 
 static void
-move_card(void)
+handle_space(void)
 {
-    if (sel_pile == cur_pile && sel_idx == cur_idx) {
+    if (cur_move.src_pile == PILE_NONE) {
+        select_card();
+    } else if (cur_move.src_pile == cur_pile && cur_move.src_idx == cur_idx) {
         deselect_card();
     } else if (cur_pile == PILE_HOLDS) {
         move_to_hold();
@@ -718,16 +764,6 @@ move_card(void)
         start_move_to_empty_col();
     } else {
         move_to_nonempty_col();
-    }
-}
-
-static void
-handle_space(void)
-{
-    if (sel_pile == PILE_NONE) {
-        select_card();
-    } else {
-        move_card();
     }
 }
 
