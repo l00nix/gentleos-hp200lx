@@ -111,6 +111,19 @@ gui_status_set(const char *fmt, ...)
 }
 
 global void
+gui_status_set_urgent(const char *fmt, ...)
+{
+    va_list args;
+
+    va_start(args, fmt);
+    (void) vsnprintf(status_text_buf, sizeof(status_text_buf), fmt, args);
+    va_end(args);
+
+    gui_status_set_text(CORNER_BL, status_text_buf);
+    gui_surface_flush();
+}
+
+global void
 gui_status_set_br(const char *fmt, ...)
 {
     va_list args;

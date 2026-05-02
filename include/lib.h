@@ -74,6 +74,7 @@ typedef int32_t ssize_t;
     }                                   \
     _already_called = 1;
 
+#define ASSERT(expr) krn_debug_assert((expr), __FILE__, __LINE__)
 
 typedef struct {
     uint8_t second;

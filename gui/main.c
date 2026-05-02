@@ -64,6 +64,8 @@ gui_main(void)
     gui_run_app(&app_launcher);
     gui_surface_flush();
 
+    krn_debug_status_cb = gui_status_set_urgent;
+
     while (1) {
         krn_event_wait(&event);
 

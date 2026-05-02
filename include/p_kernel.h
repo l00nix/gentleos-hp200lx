@@ -1,8 +1,11 @@
 /* kernel/debug.c */
 extern int krn_debug_text_mode_enabled;
+extern void (*krn_debug_status_cb)(const char *, ...);
 extern void krn_debug_printf(const char *fmt, ...);
+extern void krn_debug_assert(int expr, const char *file, unsigned line);
 extern void krn_debug_beep_adv(unsigned hz, unsigned msecs, unsigned count);
 extern void krn_debug_beep(void);
+extern void krn_debug_assert(int expr, const char *file, unsigned line);
 /* kernel/event.c */
 extern void krn_event_wait(event_st *out);
 extern int krn_event_ipush(event_st *event);

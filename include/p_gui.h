@@ -31,6 +31,7 @@ extern const char * gui_rect_format(const rect_st *r);
 extern void gui_status_set_tl(const char *fmt, ...);
 extern void gui_status_set_tr(const char *fmt, ...);
 extern void gui_status_set(const char *fmt, ...);
+extern void gui_status_set_urgent(const char *fmt, ...);
 extern void gui_status_set_br(const char *fmt, ...);
 extern void gui_status_init(void);
 /* gui/surface.c */
