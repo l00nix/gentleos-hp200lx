@@ -9,10 +9,9 @@
 #include <kernel.h>
 #include <gui.h>
 
-extern uint32_t krn_marker_data_end;
+extern uint32_t krn_magic_number;
 
 global isr_st far *krn_ivt = MK_FP(0, 0);
-
 
 #if ENABLE_TESTS
 extern void tests_run(void);
@@ -23,7 +22,7 @@ krn_check_load(void)
 {
     krn_debug_printf("Checking kernel load... ");
 
-    if (krn_marker_data_end != 0xf0cacc1a) {
+    if (krn_magic_number != 0xf0cacc1a) {
         krn_debug_printf("fail\n");
         halt();
         /* UNREACHABLE */
@@ -57,6 +56,7 @@ krn_main(void)
     bios_uart_init();
     krn_debug_printf("\n");
     krn_check_load();
+    krn_mem_init();
 
 #if ENABLE_TESTS
     tests_run();

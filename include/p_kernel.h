@@ -5,7 +5,6 @@ extern void krn_debug_printf(const char *fmt, ...);
 extern void krn_debug_assert(int expr, const char *file, unsigned line);
 extern void krn_debug_beep_adv(unsigned hz, unsigned msecs, unsigned count);
 extern void krn_debug_beep(void);
-extern void krn_debug_assert(int expr, const char *file, unsigned line);
 /* kernel/event.c */
 extern void krn_event_wait(event_st *out);
 extern int krn_event_ipush(event_st *event);
@@ -26,6 +25,8 @@ extern void krn_main(void);
 extern void krn_exit(void);
 extern void krn_set_isr(uint8_t no, uint16_t seg, uint16_t ofs);
 extern void krn_get_isr(uint8_t no, isr_st *dst);
+/* kernel/mem.c */
+extern void krn_mem_init(void);
 /* kernel/speaker.c */
 extern void krn_speaker_stop(void);
 extern void krn_speaker_play(uint16_t hz);

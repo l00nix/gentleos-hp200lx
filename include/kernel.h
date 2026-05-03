@@ -35,7 +35,7 @@ typedef struct {
 
 extern void *krn_link_start;
 extern void *krn_link_end;
-extern uint16_t krn_data_seg;
+extern uint16_t krn_main_segment;
 
 void far *krn_heap_alloc(uint16_t);
 

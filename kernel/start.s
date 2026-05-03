@@ -9,7 +9,20 @@
 
 extern _krn_main
 
+global _krn_marker_text_start
+global _krn_marker_text_end
+global _krn_marker_data_start
+global _krn_marker_data_end
+global _krn_marker_bss_start
+global _krn_marker_bss_end
+
+global _krn_main_segment
+global _krn_magic_number
+
+global DGROUP@
+
 section _TEXT class=CODE
+_krn_marker_text_start:
 
 resb 0x100
 ..start:
@@ -19,22 +32,25 @@ resb 0x100
     ; jump to the C code
     jmp _krn_main
 
+section _TEXTEND class=ENDCODE
+_krn_marker_text_end:
+
 section _DATA class=DATA
+_krn_marker_data_start:
 
-global _krn_data_seg
-_krn_data_seg:
-
-global DGROUP@
+_krn_main_segment:
 DGROUP@:
     dw 0
 
 section _DATAEND class=DATAEND
-
-global _krn_marker_data_end
-_krn_marker_data_end:
+_krn_magic_number:
     dq 0xf0cacc1a
+_krn_marker_data_end:
 
 section _BSS class=BSS
-section _BSSEND class=BSSEND
+_krn_marker_bss_start:
 
-group DGROUP _TEXT _DATA _DATAEND _BSS _BSSEND
+section _BSSEND class=BSSEND
+_krn_marker_bss_end:
+
+group DGROUP _TEXT _TEXTEND _DATA _DATAEND _BSS _BSSEND

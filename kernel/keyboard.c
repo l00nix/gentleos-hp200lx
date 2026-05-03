@@ -114,7 +114,7 @@ krn_keyboard_init(void)
     krn_debug_printf("Initializing keyboard... ");
 
     krn_get_isr(0x09, &saved_isr_handler);
-    krn_set_isr(0x09, krn_data_seg, (uint16_t)(uint32_t)&krn_isr_keyboard);
+    krn_set_isr(0x09, krn_main_segment, (uint16_t)(uint32_t)&krn_isr_keyboard);
 
     krn_debug_printf("ok\n");
 }

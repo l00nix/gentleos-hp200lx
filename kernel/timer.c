@@ -88,7 +88,7 @@ krn_timer_init(void)
     outb((uint8_t)((div >> 8) & 0xFF), PIT_CR0);
 
     krn_get_isr(0x1c, &saved_isr_handler);
-    krn_set_isr(0x1c, krn_data_seg, (uint16_t)(uint32_t)&krn_isr_timer);
+    krn_set_isr(0x1c, krn_main_segment, (uint16_t)(uint32_t)&krn_isr_timer);
 
     krn_debug_printf("ok\n");
 }
