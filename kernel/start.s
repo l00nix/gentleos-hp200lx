@@ -19,17 +19,12 @@ global _krn_marker_bss_end
 global _krn_main_segment
 global _krn_magic_number
 
-global DGROUP@
-
 section _TEXT class=CODE
 _krn_marker_text_start:
 
 resb 0x100
 ..start:
-    ; save program DGROUP for Turbo C interrupt functions
-    mov [DGROUP@], ds
-
-    ; jump to the C code
+    mov [_krn_main_segment], ds
     jmp _krn_main
 
 section _TEXTEND class=ENDCODE
@@ -39,8 +34,6 @@ section _DATA class=DATA
 _krn_marker_data_start:
 
 _krn_main_segment:
-DGROUP@:
-    dw 0
 
 section _DATAEND class=DATAEND
 _krn_magic_number:
