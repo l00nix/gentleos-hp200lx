@@ -422,10 +422,11 @@ check_win(void)
     }
 
     state = STATE_WON;
+    update_status();
 }
 
 static void
-select_card(void)
+start_move(void)
 {
     if (cur_pile == PILE_HOLDS && holds[cur_idx] != CARD_EMPTY) {
         cur_move.src_pile = PILE_HOLDS;
@@ -441,7 +442,7 @@ select_card(void)
 }
 
 static void
-deselect_card(void)
+cancel_move(void)
 {
     int old_pile = cur_move.src_pile;
     int old_idx = cur_move.src_idx;
@@ -460,7 +461,7 @@ deselect_card(void)
 static void
 show_error(const char *msg)
 {
-    deselect_card();
+    cancel_move();
     gui_status_set("%s", msg);
 }
 
@@ -489,8 +490,12 @@ exec_move(card_move_st *move)
         }
 
         column_counts[src_idx] -= count;
+
         draw_column(src_idx);
         draw_column(dst_idx);
+
+        update_status();
+
         return;
     }
 
@@ -520,6 +525,8 @@ exec_move(card_move_st *move)
 
     draw_pile(src_pile, src_idx);
     draw_pile(dst_pile, dst_idx);
+
+    update_status();
 }
 
 static int
@@ -599,30 +606,25 @@ get_move_count(int src_col, int dst_col)
 }
 
 static void
-move_to_hold(void)
+request_move_to_hold(void)
 {
-    cur_move.dst_pile = PILE_HOLDS;
-    cur_move.dst_idx = cur_idx;
-    cur_move.count = 1;
-
     if (holds[cur_move.dst_idx] != CARD_EMPTY) {
         show_error("Cell not empty");
         return;
     }
 
+    cur_move.count = 1;
     exec_move(&cur_move);
-
-    update_status();
 }
 
 static void
-move_to_found(void)
+request_move_to_found(void)
 {
     int expected_rank;
-    uint8_t card, top;
+    uint8_t card, suit, top;
 
     if (cur_move.src_pile == PILE_NONE) {
-        select_card();
+        start_move();
     }
 
     if (cur_move.src_pile == PILE_NONE) {
@@ -630,12 +632,8 @@ move_to_found(void)
     }
 
     card = selected_card();
-
-    cur_move.dst_pile = PILE_FOUNDS;
-    cur_move.dst_idx = card_suit(card);
-    cur_move.count = 1;
-
-    top = founds[cur_move.dst_idx];
+    suit = card_suit(card);
+    top = founds[suit];
     expected_rank = (top == CARD_EMPTY) ? 0 : card_rank(top) + 1;
 
     if (card_rank(card) != expected_rank) {
@@ -643,26 +641,22 @@ move_to_found(void)
         return;
     }
 
+    cur_move.dst_pile = PILE_FOUNDS;
+    cur_move.dst_idx = suit;
+    cur_move.count = 1;
     exec_move(&cur_move);
 
     check_win();
-    update_status();
 }
 
 static void
-move_to_nonempty_col(void)
+request_move_to_nonempty_col(void)
 {
-    int dst, src;
     uint8_t dst_top, src_card;
 
-    cur_move.dst_pile = PILE_COLUMNS;
-    cur_move.dst_idx = cur_idx;
-
-    dst = cur_move.dst_idx;
-
     if (cur_move.src_pile == PILE_HOLDS) {
-        dst_top = columns[dst][column_counts[dst] - 1];
         src_card = holds[cur_move.src_idx];
+        dst_top = columns[cur_move.dst_idx][column_counts[cur_move.dst_idx] - 1];
 
         if (card_rank(dst_top) != card_rank(src_card) + 1 ||
             card_color(dst_top) == card_color(src_card)) {
@@ -672,8 +666,8 @@ move_to_nonempty_col(void)
 
         cur_move.count = 1;
     } else if (cur_move.src_pile == PILE_COLUMNS) {
-        src = cur_move.src_idx;
-        cur_move.count = get_move_count(src, dst);
+        cur_move.count = get_move_count(cur_move.src_idx, cur_move.dst_idx);
+
         if (cur_move.count == 0) {
             show_error("Invalid move");
             return;
@@ -681,40 +675,27 @@ move_to_nonempty_col(void)
     }
 
     exec_move(&cur_move);
-    update_status();
 }
 
 static void
-finish_move_to_empty_col(int dst, int count)
-{
-    cur_move.dst_pile = PILE_COLUMNS;
-    cur_move.dst_idx = dst;
-    cur_move.count = count;
-
-    exec_move(&cur_move);
-    update_status();
-}
-
-static void
-start_move_to_empty_col(void)
+request_move_to_empty_col(void)
 {
     int max_seq_len, max_movable;
-
-    cur_move.dst_pile = PILE_COLUMNS;
-    cur_move.dst_idx = cur_idx;
 
     if (cur_move.src_pile == PILE_HOLDS) {
         cur_move.count = 1;
         exec_move(&cur_move);
-        update_status();
         return;
     }
+
+    ASSERT(cur_move.src_pile == PILE_COLUMNS);
 
     max_seq_len = get_max_valid_sequence_len(cur_move.src_idx);
     max_movable = MIN(max_seq_len, get_max_movable_cards_count(cur_move.dst_idx));
 
     if (max_movable <= 1) {
-        finish_move_to_empty_col(cur_move.dst_idx, 1);
+        cur_move.count = 1;
+        exec_move(&cur_move);
         return;
     }
 
@@ -732,7 +713,7 @@ handle_move_count(int key_code)
     count = key_number_for_code(key_code);
 
     if (count < 0) {
-        deselect_card();
+        cancel_move();
         return;
     }
 
@@ -748,22 +729,34 @@ handle_move_count(int key_code)
         return;
     }
 
-    finish_move_to_empty_col(cur_move.dst_idx, count);
+    cur_move.count = count;
+    exec_move(&cur_move);
+}
+
+static void
+request_move(void)
+{
+    cur_move.dst_pile = cur_pile;
+    cur_move.dst_idx = cur_idx;
+
+    if (cur_move.dst_pile == PILE_HOLDS) {
+        request_move_to_hold();
+    } else if (column_counts[cur_move.dst_idx] == 0) {
+        request_move_to_empty_col();
+    } else {
+        request_move_to_nonempty_col();
+    }
 }
 
 static void
 handle_space(void)
 {
     if (cur_move.src_pile == PILE_NONE) {
-        select_card();
+        start_move();
     } else if (cur_move.src_pile == cur_pile && cur_move.src_idx == cur_idx) {
-        deselect_card();
-    } else if (cur_pile == PILE_HOLDS) {
-        move_to_hold();
-    } else if (column_counts[cur_idx] == 0) {
-        start_move_to_empty_col();
+        cancel_move();
     } else {
-        move_to_nonempty_col();
+        request_move();
     }
 }
 
@@ -841,7 +834,7 @@ on_key_down(uint8_t key_code, uint8_t key_mods)
         case KEY_UP: move_cursor(0, -1); return;
         case KEY_DOWN: move_cursor(0, 1); return;
         case KEY_SPACE: handle_space(); return;
-        case KEY_F: move_to_found(); return;
+        case KEY_F: request_move_to_found(); return;
         case KEY_R: restart_game(); return;
         case KEY_H: show_help(); return;
     }
