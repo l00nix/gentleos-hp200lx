@@ -1,5 +1,20 @@
 /* gui/button.c */
 extern void gui_button_draw(widget_st *widget);
+/* gui/card.c */
+extern int card_rank(card_t card);
+extern int card_suit(card_t card);
+extern int card_color(card_t card);
+extern card_t card_selected(card_game_st *game);
+extern int card_pile_cascade_step(card_game_st *game, card_pile_st *p);
+extern int card_pile_top_y(card_game_st *game, card_pile_st *p);
+extern card_t card_pile_top(card_pile_st *p);
+extern card_t card_pile_pop(card_pile_st *p);
+extern void card_pile_push(card_pile_st *p, card_t c);
+extern int card_pile_is_selected(card_game_st *game, card_pile_st *pile);
+extern void card_draw(card_game_st *game, int x, int y, card_t card, int is_sel);
+extern void card_stub_draw(card_game_st *game, int x, int y, int height, card_t card);
+extern void card_pile_draw(card_game_st *game, card_pile_st *p);
+extern void card_cursor_draw(card_game_st *game, int visible);
 /* gui/grid.c */
 extern void gui_grid_rect(grid_st *grid, rect_st *out);
 extern void gui_grid_cell_rect(grid_st *grid, int col, int row, rect_st *out);

@@ -21,7 +21,6 @@ enum {
 
     COLUMN_CARDS_STEP = 10,
     COLUMN_CARDS_MAX = 21,
-    CARD_EMPTY = 0xFF,
 
     WINDOW_WIDTH = COLUMN_COUNT * CARD_WIDTH + (COLUMN_COUNT + 1) * GAP_X,
     WINDOW_HEIGHT = GUI_HEIGHT - 2 * STATUS_HEIGHT,
@@ -49,17 +48,6 @@ enum {
     HELP_Y = (WINDOW_HEIGHT - HELP_HEIGHT) / 2,
 };
 
-static const char *rank_str[] = {
-    "A", "2", "3", "4", "5", "6", "7", "8", "9", "10", "J", "Q", "K"
-};
-
-static bitmap_st *suit_bmp[] = {
-    &sprite_heart_2,
-    &sprite_diamnd_2,
-    &sprite_club_2,
-    &sprite_spade_2,
-};
-
 static const char *help_lines[] = {
     "Arrows: move cursor",
     "Space:  select / place",
@@ -67,25 +55,6 @@ static const char *help_lines[] = {
     "R:      restart game",
     "H:      toggle help",
 };
-
-typedef uint8_t card_t;
-
-typedef struct {
-    uint8_t type;
-    int index;
-    rect_st rect;
-    uint8_t capacity;
-    uint8_t count;
-    card_t *cards;
-    unsigned is_cascade : 1;
-    unsigned replace_on_push : 1;
-} card_pile_st;
-
-typedef struct {
-    card_pile_st *src;
-    card_pile_st *dst;
-    int count;
-} card_move_st;
 
 static window_st window;
 
@@ -98,28 +67,9 @@ static card_pile_st founds[FOUND_COUNT];
 static card_t columns_cards[COLUMN_COUNT][COLUMN_CARDS_MAX];
 static card_pile_st columns[COLUMN_COUNT];
 
-static card_move_st cur_move = { NULL, NULL, 0 };
-static card_pile_st *cur_pile;
+static card_game_st game;
 
 static int state;
-
-static int
-card_rank(card_t card)
-{
-    return card % 13;
-}
-
-static int
-card_suit(card_t card)
-{
-    return card / 13;
-}
-
-static int
-card_color(card_t card)
-{
-    return card_suit(card) / 2;
-}
 
 static card_pile_st *
 get_pile(int type, int idx)
@@ -130,69 +80,6 @@ get_pile(int type, int idx)
     case PILE_COLUMNS: return &columns[idx];
     default: return NULL;
     }
-}
-
-static card_t
-pile_top(card_pile_st *p)
-{
-    return p->count > 0 ? p->cards[p->count - 1] : CARD_EMPTY;
-}
-
-static card_t
-pile_pop(card_pile_st *p)
-{
-    ASSERT(p->count > 0);
-    return p->cards[--p->count];
-}
-
-static void
-pile_push(card_pile_st *p, card_t c)
-{
-    if (p->replace_on_push) {
-        p->cards[0] = c;
-        p->count = 1;
-        return;
-    }
-
-    ASSERT(p->count < p->capacity);
-    p->cards[p->count++] = c;
-}
-
-static int
-pile_is_sel(card_pile_st *p)
-{
-    return cur_move.src == p;
-}
-
-static int
-pile_cascade_step(card_pile_st *p)
-{
-    int step, max_step;
-
-    step = COLUMN_CARDS_STEP;
-    if (p->count > 1) {
-        max_step = (p->rect.height - CARD_HEIGHT) / (p->count - 1);
-        step = MIN(step, max_step);
-        step = MAX(step, 1);
-    }
-
-    return step;
-}
-
-static int
-pile_top_y(card_pile_st *p)
-{
-    if (!p->is_cascade || p->count <= 1) {
-        return p->rect.y;
-    }
-
-    return p->rect.y + (p->count - 1) * pile_cascade_step(p);
-}
-
-static card_t
-selected_card(void)
-{
-    return pile_top(cur_move.src);
 }
 
 static int
@@ -244,97 +131,15 @@ deal_cards(void)
 
     for (i = 0; i < CARD_COUNT; ++i) {
         col = i % COLUMN_COUNT;
-        pile_push(&columns[col], deck[i]);
+        card_pile_push(&columns[col], deck[i]);
     }
 
-    cur_move.src = NULL;
-    cur_pile = &columns[0];
+    game.cur_move.src = NULL;
+    game.cur_pile = &columns[0];
 
     state = STATE_DEFAULT;
 }
 
-static void
-draw_card(int x, int y, card_t card, int is_sel)
-{
-    uint8_t fg = is_sel ? gui_color_bg : gui_color_fg;
-    uint8_t bg = is_sel ? gui_color_fg : gui_color_bg;
-    int rank = card_rank(card);
-    int suit = card_suit(card);
-    rect_st r;
-
-    gui_rect_init(&r, x, y, CARD_WIDTH, CARD_HEIGHT);
-    gui_surface_draw_rect(&window.origin, &r, bg);
-    gui_surface_draw_border(&window.origin, &r, gui_color_fg);
-    gui_surface_mark_dirty(&window.origin, &r);
-
-    if (card == CARD_EMPTY) {
-        return;
-    }
-
-    gui_surface_draw_str(&window.origin, x + 3, y + 3, &fonts[2], rank_str[rank], fg, bg);
-    gui_surface_draw_bitmap(&window.origin, &window.size,
-        x + CARD_WIDTH - 8, y + 3, suit_bmp[suit], fg);
-}
-
-static void
-draw_card_stub(int x, int y, int height, card_t card)
-{
-    int rank = card_rank(card);
-    int suit = card_suit(card);
-    rect_st r;
-
-    gui_rect_init(&r, x, y, CARD_WIDTH, height);
-    gui_surface_draw_rect(&window.origin, &r, gui_color_bg);
-    gui_surface_draw_border(&window.origin, &r, gui_color_fg);
-
-    gui_surface_draw_str(&window.origin, x + 3, y + 3, &fonts[2],
-        rank_str[rank], gui_color_fg, gui_color_bg);
-    gui_surface_draw_bitmap(&window.origin, &window.size,
-        x + CARD_WIDTH - 8, y + 3, suit_bmp[suit], gui_color_fg);
-
-    gui_surface_mark_dirty(&window.origin, &r);
-}
-
-static void
-draw_cursor(int visible)
-{
-    int x = cur_pile->rect.x;
-    int y = pile_top_y(cur_pile);
-    int is_sel = pile_is_sel(cur_pile);
-    uint8_t color = (visible ^ is_sel) ? gui_color_fg : gui_color_bg;
-    rect_st r;
-
-    gui_rect_init(&r, x + 1, y + 1, CARD_WIDTH - 2, CARD_HEIGHT - 2);
-    gui_surface_draw_border(&window.origin, &r, color);
-    gui_surface_mark_dirty(&window.origin, &r);
-}
-
-static void
-draw_pile(card_pile_st *p)
-{
-    int x = p->rect.x;
-    int top_y = pile_top_y(p);
-    card_t top = pile_top(p);
-    int is_sel = top != CARD_EMPTY && pile_is_sel(p);
-    int i, step;
-
-    gui_surface_draw_rect(&window.origin, &p->rect, gui_color_bg);
-
-    if (p->is_cascade && p->count > 1) {
-        step = pile_cascade_step(p);
-        for (i = 0; i < p->count - 1; ++i) {
-            draw_card_stub(x, p->rect.y + i * step, step + 1, p->cards[i]);
-        }
-    }
-
-    draw_card(x, top_y, top, is_sel);
-
-    if (cur_pile == p) {
-        draw_cursor(1);
-    }
-
-    gui_surface_mark_dirty(&window.origin, &p->rect);
-}
 
 static void
 draw_piles(void)
@@ -342,15 +147,15 @@ draw_piles(void)
     int i;
 
     for (i = 0; i < HOLD_COUNT; ++i) {
-        draw_pile(&holds[i]);
+        card_pile_draw(&game, &holds[i]);
     }
 
     for (i = 0; i < FOUND_COUNT; ++i) {
-        draw_pile(&founds[i]);
+        card_pile_draw(&game, &founds[i]);
     }
 
     for (i = 0; i < COLUMN_COUNT; ++i) {
-        draw_pile(&columns[i]);
+        card_pile_draw(&game, &columns[i]);
     }
 }
 
@@ -359,25 +164,25 @@ move_cursor(int dx, int dy)
 {
     int new_type, new_idx, max_idx;
 
-    draw_cursor(0);
+    card_cursor_draw(&game, 0);
 
     if (dy < 0) {
         new_type = PILE_HOLDS;
     } else if (dy > 0) {
         new_type = PILE_COLUMNS;
     } else {
-        new_type = cur_pile->type;
+        new_type = game.cur_pile->type;
     }
 
     max_idx = (new_type == PILE_COLUMNS ? COLUMN_COUNT :  HOLD_COUNT) - 1;
 
-    new_idx = cur_pile->index + dx;
+    new_idx = game.cur_pile->index + dx;
     new_idx = MAX(0, new_idx);
     new_idx = MIN(new_idx, max_idx);
 
-    cur_pile = get_pile(new_type, new_idx);
+    game.cur_pile = get_pile(new_type, new_idx);
 
-    draw_cursor(1);
+    card_cursor_draw(&game, 1);
 }
 
 static void
@@ -397,10 +202,9 @@ static void
 check_win(void)
 {
     int i;
-    card_pile_st *pile;
 
     for (i = 0; i < FOUND_COUNT; ++i) {
-        if (founds[i].count == 0 || card_rank(pile_top(&founds[i])) != 12) {
+        if (founds[i].count == 0 || CARD_RANK(CARD_PILE_TOP(&founds[i])) != 12) {
             return;
         }
     }
@@ -412,28 +216,28 @@ check_win(void)
 static void
 start_move(void)
 {
-    if (cur_pile->type != PILE_HOLDS && cur_pile->type != PILE_COLUMNS) {
+    if (game.cur_pile->type != PILE_HOLDS && game.cur_pile->type != PILE_COLUMNS) {
         return;
     }
 
-    if (cur_pile->count == 0) {
+    if (game.cur_pile->count == 0) {
         return;
     }
 
-    cur_move.src = cur_pile;
-    draw_pile(cur_pile);
+    game.cur_move.src = game.cur_pile;
+    card_pile_draw(&game, game.cur_pile);
     update_status();
 }
 
 static void
 cancel_move(void)
 {
-    card_pile_st *old = cur_move.src;
+    card_pile_st *old = game.cur_move.src;
 
-    cur_move.src = NULL;
+    game.cur_move.src = NULL;
 
     if (old != NULL) {
-        draw_pile(old);
+        card_pile_draw(&game, old);
     }
 
     update_status();
@@ -449,16 +253,16 @@ show_error(const char *msg)
 static int
 card_should_auto_promote(card_t card)
 {
-    int rank = card_rank(card);
-    int suit = card_suit(card);
-    int color = card_color(card);
+    int rank = CARD_RANK(card);
+    int suit = CARD_SUIT(card);
+    int color = CARD_COLOR(card);
     int i;
 
     if (founds[suit].count == 0) {
         if (rank != 0) {
             return 0;
         }
-    } else if (rank != card_rank(pile_top(&founds[suit])) + 1) {
+    } else if (rank != CARD_RANK(CARD_PILE_TOP(&founds[suit])) + 1) {
         return 0;
     }
 
@@ -467,11 +271,11 @@ card_should_auto_promote(card_t card)
     }
 
     for (i = 0; i < FOUND_COUNT; ++i) {
-        if (card_color(i * 13) == color) {
+        if (CARD_COLOR(i * 13) == color) {
             continue;
         }
 
-        if (founds[i].count == 0 || card_rank(pile_top(&founds[i])) < rank - 1) {
+        if (founds[i].count == 0 || CARD_RANK(CARD_PILE_TOP(&founds[i])) < rank - 1) {
             return 0;
         }
     }
@@ -482,9 +286,9 @@ card_should_auto_promote(card_t card)
 static void
 set_auto_move(card_pile_st *src, card_pile_st *dst)
 {
-    cur_move.src = src;
-    cur_move.dst = dst;
-    cur_move.count = 1;
+    game.cur_move.src = src;
+    game.cur_move.dst = dst;
+    game.cur_move.count = 1;
     state = STATE_AUTO_PENDING;
 }
 
@@ -495,19 +299,19 @@ check_auto_move(void)
     card_t card;
 
     for (i = 0; i < HOLD_COUNT; ++i) {
-        card = pile_top(&holds[i]);
+        card = CARD_PILE_TOP(&holds[i]);
 
         if (card != CARD_EMPTY && card_should_auto_promote(card)) {
-            set_auto_move(&holds[i], &founds[card_suit(card)]);
+            set_auto_move(&holds[i], &founds[CARD_SUIT(card)]);
             return;
         }
     }
 
     for (i = 0; i < COLUMN_COUNT; ++i) {
-        card = pile_top(&columns[i]);
+        card = CARD_PILE_TOP(&columns[i]);
 
         if (card != CARD_EMPTY && card_should_auto_promote(card)) {
-            set_auto_move(&columns[i], &founds[card_suit(card)]);
+            set_auto_move(&columns[i], &founds[CARD_SUIT(card)]);
             return;
         }
     }
@@ -517,11 +321,11 @@ static void
 exec_move(void)
 {
     int i;
-    int count = cur_move.count;
-    card_pile_st *src = cur_move.src;
-    card_pile_st *dst = cur_move.dst;
+    int count = game.cur_move.count;
+    card_pile_st *src = game.cur_move.src;
+    card_pile_st *dst = game.cur_move.dst;
 
-    cur_move.src = NULL;
+    game.cur_move.src = NULL;
 
     ASSERT(src != NULL);
     ASSERT(dst != NULL);
@@ -530,17 +334,17 @@ exec_move(void)
         ASSERT(count <= src->count);
 
         for (i = 0; i < count; ++i) {
-            pile_push(dst, src->cards[src->count - count + i]);
+            card_pile_push(dst, src->cards[src->count - count + i]);
         }
 
         src->count -= count;
     } else {
         ASSERT(count == 1);
-        pile_push(dst, pile_pop(src));
+        card_pile_push(dst, card_pile_pop(src));
     }
 
-    draw_pile(src);
-    draw_pile(dst);
+    card_pile_draw(&game, src);
+    card_pile_draw(&game, dst);
 
     update_status();
     check_win();
@@ -563,11 +367,11 @@ get_max_valid_sequence_len(card_pile_st *p)
         curr = p->cards[i];
         prev = p->cards[i - 1];
 
-        if (card_rank(prev) != card_rank(curr) + 1) {
+        if (CARD_RANK(prev) != CARD_RANK(curr) + 1) {
             break;
         }
 
-        if (card_color(prev) == card_color(curr)) {
+        if (CARD_COLOR(prev) == CARD_COLOR(curr)) {
             break;
         }
     }
@@ -608,15 +412,15 @@ get_move_count(card_pile_st *src, card_pile_st *dst)
         return 0;
     }
 
-    dst_top = pile_top(dst);
+    dst_top = CARD_PILE_TOP(dst);
     max_seq_len = get_max_valid_sequence_len(src);
     max_movable_count = get_max_movable_cards_count(dst);
 
     for (n = MIN(max_seq_len, max_movable_count); n >= 1; --n) {
         src_card = src->cards[src->count - n];
 
-        if (card_rank(dst_top) == card_rank(src_card) + 1 &&
-            card_color(dst_top) != card_color(src_card)) {
+        if (CARD_RANK(dst_top) == CARD_RANK(src_card) + 1 &&
+            CARD_COLOR(dst_top) != CARD_COLOR(src_card)) {
             return n;
         }
     }
@@ -627,12 +431,12 @@ get_move_count(card_pile_st *src, card_pile_st *dst)
 static void
 request_move_to_hold(void)
 {
-    if (cur_move.dst->count > 0) {
+    if (game.cur_move.dst->count > 0) {
         show_error("Cell not empty");
         return;
     }
 
-    cur_move.count = 1;
+    game.cur_move.count = 1;
     exec_move();
 }
 
@@ -643,25 +447,25 @@ request_move_to_found(void)
     card_t card;
     card_pile_st *found;
 
-    if (cur_move.src == NULL) {
+    if (game.cur_move.src == NULL) {
         start_move();
     }
 
-    if (cur_move.src == NULL) {
+    if (game.cur_move.src == NULL) {
         return;
     }
 
-    card = selected_card();
-    found = &founds[card_suit(card)];
-    expected_rank = (found->count == 0) ? 0 : card_rank(pile_top(found)) + 1;
+    card = CARD_SELECTED(&game);
+    found = &founds[CARD_SUIT(card)];
+    expected_rank = (found->count == 0) ? 0 : CARD_RANK(CARD_PILE_TOP(found)) + 1;
 
-    if (card_rank(card) != expected_rank) {
+    if (CARD_RANK(card) != expected_rank) {
         show_error("Invalid move");
         return;
     }
 
-    cur_move.dst = found;
-    cur_move.count = 1;
+    game.cur_move.dst = found;
+    game.cur_move.count = 1;
     exec_move();
 }
 
@@ -670,21 +474,21 @@ request_move_to_nonempty_col(void)
 {
     card_t dst_top, src_card;
 
-    if (cur_move.src->type == PILE_HOLDS) {
-        src_card = pile_top(cur_move.src);
-        dst_top = pile_top(cur_move.dst);
+    if (game.cur_move.src->type == PILE_HOLDS) {
+        src_card = CARD_PILE_TOP(game.cur_move.src);
+        dst_top = CARD_PILE_TOP(game.cur_move.dst);
 
-        if (card_rank(dst_top) != card_rank(src_card) + 1 ||
-            card_color(dst_top) == card_color(src_card)) {
+        if (CARD_RANK(dst_top) != CARD_RANK(src_card) + 1 ||
+            CARD_COLOR(dst_top) == CARD_COLOR(src_card)) {
             show_error("Invalid move");
             return;
         }
 
-        cur_move.count = 1;
-    } else if (cur_move.src->type == PILE_COLUMNS) {
-        cur_move.count = get_move_count(cur_move.src, cur_move.dst);
+        game.cur_move.count = 1;
+    } else if (game.cur_move.src->type == PILE_COLUMNS) {
+        game.cur_move.count = get_move_count(game.cur_move.src, game.cur_move.dst);
 
-        if (cur_move.count == 0) {
+        if (game.cur_move.count == 0) {
             show_error("Invalid move");
             return;
         }
@@ -698,19 +502,19 @@ request_move_to_empty_col(void)
 {
     int max_seq_len, max_movable;
 
-    if (cur_move.src->type == PILE_HOLDS) {
-        cur_move.count = 1;
+    if (game.cur_move.src->type == PILE_HOLDS) {
+        game.cur_move.count = 1;
         exec_move();
         return;
     }
 
-    ASSERT(cur_move.src->type == PILE_COLUMNS);
+    ASSERT(game.cur_move.src->type == PILE_COLUMNS);
 
-    max_seq_len = get_max_valid_sequence_len(cur_move.src);
-    max_movable = MIN(max_seq_len, get_max_movable_cards_count(cur_move.dst));
+    max_seq_len = get_max_valid_sequence_len(game.cur_move.src);
+    max_movable = MIN(max_seq_len, get_max_movable_cards_count(game.cur_move.dst));
 
     if (max_movable <= 1) {
-        cur_move.count = 1;
+        game.cur_move.count = 1;
         exec_move();
         return;
     }
@@ -733,8 +537,8 @@ handle_move_count(int key_code)
         return;
     }
 
-    max_seq_len = get_max_valid_sequence_len(cur_move.src);
-    max_movable = MIN(max_seq_len, get_max_movable_cards_count(cur_move.dst));
+    max_seq_len = get_max_valid_sequence_len(game.cur_move.src);
+    max_movable = MIN(max_seq_len, get_max_movable_cards_count(game.cur_move.dst));
 
     if (count == 0) {
         count = max_movable;
@@ -745,18 +549,18 @@ handle_move_count(int key_code)
         return;
     }
 
-    cur_move.count = count;
+    game.cur_move.count = count;
     exec_move();
 }
 
 static void
 request_move(void)
 {
-    cur_move.dst = cur_pile;
+    game.cur_move.dst = game.cur_pile;
 
-    if (cur_pile->type == PILE_HOLDS) {
+    if (game.cur_pile->type == PILE_HOLDS) {
         request_move_to_hold();
-    } else if (cur_pile->count == 0) {
+    } else if (game.cur_pile->count == 0) {
         request_move_to_empty_col();
     } else {
         request_move_to_nonempty_col();
@@ -766,9 +570,9 @@ request_move(void)
 static void
 handle_space(void)
 {
-    if (cur_move.src == NULL) {
+    if (game.cur_move.src == NULL) {
         start_move();
-    } else if (cur_move.src == cur_pile) {
+    } else if (game.cur_move.src == game.cur_pile) {
         cancel_move();
     } else {
         request_move();
@@ -806,7 +610,7 @@ close_help(void)
     gui_surface_draw_rect(&window.origin, &r, gui_color_bg);
 
     draw_piles();
-    draw_cursor(1);
+    card_cursor_draw(&game, 1);
 
     state = STATE_DEFAULT;
 
@@ -818,7 +622,7 @@ restart_game(void)
 {
     deal_cards();
     draw_piles();
-    draw_cursor(1);
+    card_cursor_draw(&game, 1);
     update_status();
 }
 
@@ -835,7 +639,7 @@ on_tick(void)
     ++ticks_waited;
 
     if (ticks_waited == 2) {
-        draw_pile(cur_move.src);
+        card_pile_draw(&game, game.cur_move.src);
         return;
     }
 
@@ -884,9 +688,21 @@ on_key_down(uint8_t key_code, uint8_t key_mods)
 }
 
 static void
-init_piles(void)
+init_game(void)
 {
     int i;
+
+    game.origin = &window.origin;
+    game.size = &window.size;
+
+    game.card_width = CARD_WIDTH;
+    game.card_height = CARD_HEIGHT;
+    game.card_step = COLUMN_CARDS_STEP;
+
+    game.cur_move.src = NULL;
+    game.cur_move.dst = NULL;
+    game.cur_move.count = 0;
+    game.cur_pile = &columns[0];
 
     for (i = 0; i < HOLD_COUNT; ++i) {
         holds[i].type = PILE_HOLDS;
@@ -937,7 +753,7 @@ on_show(void)
 
     if (!initialized) {
         gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-        init_piles();
+        init_game();
 
         app_freecell.on_key_down = on_key_down;
         app_freecell.on_tick = on_tick;

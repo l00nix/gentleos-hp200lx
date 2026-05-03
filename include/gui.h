@@ -104,6 +104,49 @@ enum {
 #define GRID_WIDTH_SPACED(cell_width, cols) ((cell_width) * (cols) + (cols) - 1)
 #define GRID_HEIGHT_SPACED(cell_height, rows) ((cell_height) * (rows) + (rows) - 1)
 
+typedef uint8_t card_t;
+
+enum {
+    CARD_EMPTY = 0xff,
+};
+
+typedef struct {
+    uint8_t type;
+    int index;
+    rect_st rect;
+    uint8_t capacity;
+    uint8_t count;
+    card_t *cards;
+    unsigned is_cascade : 1;
+    unsigned replace_on_push : 1;
+} card_pile_st;
+
+typedef struct {
+    card_pile_st *src;
+    card_pile_st *dst;
+    int count;
+} card_move_st;
+
+typedef struct {
+    point_st *origin;
+    size_st *size;
+
+    uint8_t card_width;
+    uint8_t card_height;
+    uint8_t card_step;
+
+    card_move_st cur_move;
+    card_pile_st *cur_pile;
+} card_game_st;
+
+#define CARD_RANK(card) ((card) % 13)
+#define CARD_SUIT(card) ((card) / 13)
+#define CARD_COLOR(card) (CARD_SUIT(card) / 2)
+#define CARD_PILE_TOP(p) ((p)->count > 0 ? (p)->cards[(p)->count - 1] : CARD_EMPTY)
+#define CARD_PILE_IS_SELECTED(game, pile) ((game)->cur_move.src == (pile))
+#define CARD_SELECTED(game) \
+    ((game)->cur_move.src ? CARD_PILE_TOP((game)->cur_move.src) : CARD_EMPTY)
+
 #include "p_gui.h"
 #include "p_data.h"
 #include "p_apps.h"
