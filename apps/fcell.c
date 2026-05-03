@@ -69,6 +69,8 @@ static const char *help_lines[] = {
     "H:      toggle help",
 };
 
+typedef uint8_t card_t;
+
 typedef struct {
     int src_pile;
     int src_idx;
@@ -79,9 +81,9 @@ typedef struct {
 
 static window_st window;
 
-static uint8_t holds[HOLD_COUNT];
-static uint8_t founds[FOUND_COUNT];
-static uint8_t columns[COLUMN_COUNT][COLUMN_CARDS_MAX];
+static card_t holds[HOLD_COUNT];
+static card_t founds[FOUND_COUNT];
+static card_t columns[COLUMN_COUNT][COLUMN_CARDS_MAX];
 static int column_counts[COLUMN_COUNT];
 
 static card_move_st cur_move = { PILE_NONE, 0, PILE_NONE, 0, 0 };
@@ -92,19 +94,19 @@ static int cur_idx;
 static int state;
 
 static int
-card_rank(uint8_t card)
+card_rank(card_t card)
 {
     return card % 13;
 }
 
 static int
-card_suit(uint8_t card)
+card_suit(card_t card)
 {
     return card / 13;
 }
 
 static int
-card_color(uint8_t card)
+card_color(card_t card)
 {
     return card_suit(card) / 2;
 }
@@ -142,7 +144,7 @@ pile_x(int pile, int idx)
     }
 }
 
-static uint8_t
+static card_t
 pile_top_card(int pile, int idx)
 {
     int col_count = column_counts[idx];
@@ -174,7 +176,7 @@ pile_is_sel(int pile, int idx)
     return cur_move.src_pile == pile && cur_move.src_idx == idx;
 }
 
-static uint8_t
+static card_t
 selected_card(void)
 {
     return pile_top_card(cur_move.src_pile, cur_move.src_idx);
@@ -200,9 +202,9 @@ remaining_cards(void)
 static void
 deal_cards(void)
 {
-    uint8_t deck[CARD_COUNT];
+    card_t deck[CARD_COUNT];
     int i, j, col;
-    uint8_t tmp;
+    card_t tmp;
 
     for (i = 0; i < CARD_COUNT; i++) {
         deck[i] = i;
@@ -242,7 +244,7 @@ deal_cards(void)
 }
 
 static void
-draw_card(int x, int y, uint8_t card, int is_sel)
+draw_card(int x, int y, card_t card, int is_sel)
 {
     uint8_t fg = is_sel ? gui_color_bg : gui_color_fg;
     uint8_t bg = is_sel ? gui_color_fg : gui_color_bg;
@@ -265,7 +267,7 @@ draw_card(int x, int y, uint8_t card, int is_sel)
 }
 
 static void
-draw_card_stub(int x, int y, int height, uint8_t card)
+draw_card_stub(int x, int y, int height, card_t card)
 {
     int rank = card_rank(card);
     int suit = card_suit(card);
@@ -303,7 +305,7 @@ draw_cell(int pile, int idx)
     int x = pile_x(pile, idx);
     int y = HOLDS_Y;
     int is_sel = pile_is_sel(pile, idx);
-    uint8_t card = pile_top_card(pile, idx);
+    card_t card = pile_top_card(pile, idx);
     rect_st r;
 
     draw_card(x, y, card, is_sel);
@@ -321,7 +323,7 @@ draw_column(int col)
 {
     int x = col_x(col);
     int count = column_counts[col];
-    uint8_t top_card = pile_top_card(PILE_COLUMNS, col);
+    card_t top_card = pile_top_card(PILE_COLUMNS, col);
     int top_card_y = pile_top_card_y(PILE_COLUMNS, col);
     int is_sel = top_card != CARD_EMPTY && pile_is_sel(PILE_COLUMNS, col);
 
@@ -467,7 +469,7 @@ show_error(const char *msg)
 }
 
 static int
-card_should_auto_promote(uint8_t card)
+card_should_auto_promote(card_t card)
 {
     int rank = card_rank(card);
     int suit = card_suit(card);
@@ -503,7 +505,7 @@ static void
 check_auto_move(void)
 {
     int i;
-    uint8_t card;
+    card_t card;
 
     for (i = 0; i < HOLD_COUNT; ++i) {
         card = holds[i];
@@ -546,7 +548,7 @@ static void
 exec_move(void)
 {
     int i;
-    uint8_t card;
+    card_t card;
     int src_pile = cur_move.src_pile;
     int src_idx = cur_move.src_idx;
     int dst_pile = cur_move.dst_pile;
@@ -605,7 +607,7 @@ static int
 get_max_valid_sequence_len(int col)
 {
     int count, i;
-    uint8_t curr, prev;
+    card_t curr, prev;
 
     count = column_counts[col];
 
@@ -654,7 +656,7 @@ get_max_movable_cards_count(int dst_col)
 static int
 get_move_count(int src_col, int dst_col)
 {
-    uint8_t dst_top, src_card;
+    card_t dst_top, src_card;
     int max_seq_len, max_movable_count, n;
 
     if (column_counts[src_col] == 0 || column_counts[dst_col] == 0) {
@@ -693,7 +695,8 @@ static void
 request_move_to_found(void)
 {
     int expected_rank;
-    uint8_t card, suit, top;
+    int suit;
+    card_t card, top;
 
     if (cur_move.src_pile == PILE_NONE) {
         start_move();
@@ -722,7 +725,7 @@ request_move_to_found(void)
 static void
 request_move_to_nonempty_col(void)
 {
-    uint8_t dst_top, src_card;
+    card_t dst_top, src_card;
 
     if (cur_move.src_pile == PILE_HOLDS) {
         src_card = holds[cur_move.src_idx];
