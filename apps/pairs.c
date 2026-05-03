@@ -55,8 +55,8 @@ enum {
 static uint8_t cell_icons[GRID_CELL_COUNT];
 static uint8_t cell_states[GRID_CELL_COUNT];
 
-static int current_col = 0;
-static int current_row = 0;
+static int current_col;
+static int current_row;
 
 static int first_pick;
 static int second_pick;

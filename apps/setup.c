@@ -35,7 +35,7 @@ enum {
 };
 
 static window_st window;
-static int cursor = 0;
+static int cursor;
 
 /*
  * Row 0: "Date:  YYYY-MM-DD"

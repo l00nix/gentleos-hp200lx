@@ -32,7 +32,7 @@ enum {
 static window_st window;
 
 static widget_st button_widgets[BUTTONS_COUNT];
-static widget_st *pressed_button = NULL;
+static widget_st *pressed_button;
 
 static grid_st grid;
 
@@ -43,13 +43,13 @@ static const char *button_labels[BUTTONS_COUNT] = {
     "0", "C", "=", "+"
 };
 
-static int32_t current_val = 0;
-static int32_t stored_val = 0;
-static int32_t last_operand = 0;
-static uint8_t current_op = 0;
-static uint8_t last_op = 0;
+static int32_t current_val;
+static int32_t stored_val;
+static int32_t last_operand;
+static uint8_t current_op;
+static uint8_t last_op;
 static int new_number = 1;
-static int error = 0;
+static int error;
 
 static void
 exec_add(void)
@@ -269,8 +269,6 @@ init_buttons(void)
     grid.rows = BUTTON_ROWS;
     grid.x = GRID_X;
     grid.y = GRID_Y;
-
-    memset(button_widgets, 0, sizeof(button_widgets));
 
     for (row = 0; row < BUTTON_ROWS; ++row) {
         for (col = 0; col < BUTTON_COLS; ++col) {

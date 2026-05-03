@@ -37,12 +37,12 @@ enum {
     MAX_YEAR = 2099,
 };
 
-static int current_month = 0;
-static int current_year = 0;
-static int current_day = 0;
+static int current_month;
+static int current_year;
+static int current_day;
 
-static int selected_month = 0;
-static int selected_year = 0;
+static int selected_month;
+static int selected_year;
 
 static grid_st grid;
 
@@ -178,8 +178,6 @@ init_day_buttons(void)
     grid.rows = GRID_ROWS;
     grid.x = GRID_X;
     grid.y = GRID_Y;
-
-    memset(day_buttons, 0, sizeof(day_buttons));
 
     for (i = 0; i < GRID_CELLS_COUNT; ++i) {
         col = i % GRID_COLS;

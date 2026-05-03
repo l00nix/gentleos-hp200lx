@@ -56,8 +56,8 @@ static int dealer_hand_count;
 
 static const char *status_msg = "";
 static int game_state;
-static int wins = 0;
-static int losses = 0;
+static int wins;
+static int losses;
 
 static void
 shuffle_deck(void)

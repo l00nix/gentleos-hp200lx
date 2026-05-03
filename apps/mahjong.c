@@ -427,8 +427,6 @@ init_tiles(void)
 {
     int layer, col, row, i = 0;
 
-    memset(board, 0, sizeof(board));
-
     for (layer = 0; layer < BOARD_LAYERS; layer++) {
         for (row = 0; row < BOARD_ROWS; row++) {
             for (col = 0; col < BOARD_COLS; col++) {

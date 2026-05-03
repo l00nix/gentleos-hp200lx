@@ -47,8 +47,8 @@ static app_st *apps[] = {
 #define APPS_COUNT (sizeof(apps) / sizeof(apps[0]))
 
 static window_st window;
-static int current_col = 0;
-static int current_row = 0;
+static int current_col;
+static int current_row;
 
 static void
 cell_rect_init(rect_st *out, int col, int row)

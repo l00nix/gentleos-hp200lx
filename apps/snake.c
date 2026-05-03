@@ -53,10 +53,10 @@ static enum {
     DIR_UP, DIR_DOWN, DIR_LEFT, DIR_RIGHT
 } prev_dir, next_dir;
 
-static int score = 0;
-static int best_score = 0;
-static int game_over = 0;
-static int game_paused = 0;
+static int score;
+static int best_score;
+static int game_over;
+static int game_paused;
 
 static void
 update_status(void)

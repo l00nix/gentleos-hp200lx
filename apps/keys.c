@@ -108,7 +108,7 @@ static cell_st cells[] = {
 #define CELL_COUNT (sizeof(cells) / sizeof(cells[0]))
 
 static window_st window;
-static int last_key_code = 0;
+static int last_key_code;
 
 static void
 init_cells(void)

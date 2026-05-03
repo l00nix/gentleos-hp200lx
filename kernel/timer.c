@@ -17,11 +17,11 @@ enum {
 static isr_st saved_isr_handler;
 extern void *krn_isr_timer;
 
-global volatile uint8_t krn_timer_is_cpu_idle = 0;
+global volatile uint8_t krn_timer_is_cpu_idle;
 
-volatile static uint32_t timer_msecs = 0;
-static uint32_t idle_ticks = 0;
-static uint32_t total_ticks = 0;
+volatile static uint32_t timer_msecs;
+static uint32_t idle_ticks;
+static uint32_t total_ticks;
 
 global void
 krn_timer_handle_intr(void)

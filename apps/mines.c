@@ -48,8 +48,8 @@ enum {
 
 static uint8_t cell_state[GRID_COLS][GRID_ROWS];
 static uint8_t cell_type[GRID_COLS][GRID_ROWS];
-static unsigned current_col = 0;
-static unsigned current_row = 0;
+static unsigned current_col;
+static unsigned current_row;
 
 static size_t
 count_cells_by_state(uint8_t state)

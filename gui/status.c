@@ -140,8 +140,6 @@ gui_status_init(void)
 {
     point_st origin = { 0, 0 };
     size_st size = { GUI_WIDTH, GUI_HEIGHT };
-    memset(status_text_len, 0, sizeof(status_text_len));
-    memset(status_text_buf, 0, sizeof(status_text_buf));
 
     gui_surface_draw_h_seg(&origin, 0, STATUS_HEIGHT - 1, STATUS_WIDTH, gui_color_fg);
     gui_surface_draw_h_seg(&origin, 0, GUI_HEIGHT - STATUS_HEIGHT, STATUS_WIDTH, gui_color_fg);

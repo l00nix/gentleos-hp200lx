@@ -30,7 +30,7 @@ static window_st window;
 
 static widget_st keys_w[KEY_W_COUNT];
 static widget_st keys_b[KEY_B_COUNT];
-static widget_st *pressed_widget = 0;
+static widget_st *pressed_widget;
 
 static void
 draw_key_w(widget_st *widget)
@@ -166,9 +166,6 @@ init_keys(void)
 {
     int i;
     int octave_no, octave_ofs, key_w_idx;
-
-    memset(keys_b, 0, sizeof(keys_b));
-    memset(keys_w, 0, sizeof(keys_w));
 
     for (i = 0; i < KEY_B_COUNT; i++) {
         octave_no = i / 5;

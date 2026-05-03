@@ -44,7 +44,7 @@ static int cur_row;
 static int game_over;
 static int game_paused;
 static uint16_t score;
-static uint16_t best_score = 0;
+static uint16_t best_score;
 
 static void
 update_status(void)
