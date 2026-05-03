@@ -39,6 +39,7 @@ enum {
     STATE_ENTER_MOVE_COUNT = 1,
     STATE_WON = 2,
     STATE_HELP = 3,
+    STATE_AUTO_PENDING = 4,
 
     HELP_LINE_COUNT = 5,
     HELP_LINE_HEIGHT = 11,
@@ -465,18 +466,94 @@ show_error(const char *msg)
     gui_status_set("%s", msg);
 }
 
+static int
+card_should_auto_promote(uint8_t card)
+{
+    int rank = card_rank(card);
+    int suit = card_suit(card);
+    int color = card_color(card);
+    int i;
+
+    if (founds[suit] == CARD_EMPTY) {
+        if (rank != 0) {
+            return 0;
+        }
+    } else if (rank != card_rank(founds[suit]) + 1) {
+        return 0;
+    }
+
+    if (rank <= 1) {
+        return 1;
+    }
+
+    for (i = 0; i < FOUND_COUNT; ++i) {
+        if (card_color(i * 13) == color) {
+            continue;
+        }
+
+        if (founds[i] == CARD_EMPTY || card_rank(founds[i]) < rank - 1) {
+            return 0;
+        }
+    }
+
+    return 1;
+}
+
 static void
-exec_move(card_move_st *move)
+check_auto_move(void)
 {
     int i;
     uint8_t card;
-    int src_pile = move->src_pile;
-    int src_idx = move->src_idx;
-    int dst_pile = move->dst_pile;
-    int dst_idx = move->dst_idx;
-    int count = move->count;
 
-    move->src_pile = PILE_NONE;
+    for (i = 0; i < HOLD_COUNT; ++i) {
+        card = holds[i];
+
+        if (card == CARD_EMPTY) {
+            continue;
+        }
+
+        if (card_should_auto_promote(card)) {
+            cur_move.src_pile = PILE_HOLDS;
+            cur_move.src_idx = i;
+            cur_move.dst_pile = PILE_FOUNDS;
+            cur_move.dst_idx = card_suit(card);
+            cur_move.count = 1;
+            state = STATE_AUTO_PENDING;
+            return;
+        }
+    }
+
+    for (i = 0; i < COLUMN_COUNT; ++i) {
+        if (column_counts[i] == 0) {
+            continue;
+        }
+
+        card = columns[i][column_counts[i] - 1];
+
+        if (card_should_auto_promote(card)) {
+            cur_move.src_pile = PILE_COLUMNS;
+            cur_move.src_idx = i;
+            cur_move.dst_pile = PILE_FOUNDS;
+            cur_move.dst_idx = card_suit(card);
+            cur_move.count = 1;
+            state = STATE_AUTO_PENDING;
+            return;
+        }
+    }
+}
+
+static void
+exec_move(void)
+{
+    int i;
+    uint8_t card;
+    int src_pile = cur_move.src_pile;
+    int src_idx = cur_move.src_idx;
+    int dst_pile = cur_move.dst_pile;
+    int dst_idx = cur_move.dst_idx;
+    int count = cur_move.count;
+
+    cur_move.src_pile = PILE_NONE;
 
     ASSERT(src_pile != PILE_NONE);
     ASSERT(dst_pile != PILE_NONE);
@@ -490,43 +567,38 @@ exec_move(card_move_st *move)
         }
 
         column_counts[src_idx] -= count;
+    } else {
+        ASSERT(count == 1);
 
-        draw_column(src_idx);
-        draw_column(dst_idx);
+        if (src_pile == PILE_HOLDS) {
+            card = holds[src_idx];
+            ASSERT(card != CARD_EMPTY);
+            holds[src_idx] = CARD_EMPTY;
+        } else if (src_pile == PILE_FOUNDS) {
+            card = founds[src_idx];
+            ASSERT(card != CARD_EMPTY);
+            founds[src_idx] = CARD_EMPTY;
+        } else if (src_pile == PILE_COLUMNS) {
+            ASSERT(column_counts[src_idx] > 0);
+            card = columns[src_idx][--column_counts[src_idx]];
+        }
 
-        update_status();
-
-        return;
-    }
-
-    ASSERT(count == 1);
-
-    if (src_pile == PILE_HOLDS) {
-        card = holds[src_idx];
-        ASSERT(card != CARD_EMPTY);
-        holds[src_idx] = CARD_EMPTY;
-    } else if (src_pile == PILE_FOUNDS) {
-        card = founds[src_idx];
-        ASSERT(card != CARD_EMPTY);
-        founds[src_idx] = CARD_EMPTY;
-    } else if (src_pile == PILE_COLUMNS) {
-        ASSERT(column_counts[src_idx] > 0);
-        card = columns[src_idx][--column_counts[src_idx]];
-    }
-
-    if (dst_pile == PILE_HOLDS) {
-        ASSERT(holds[dst_idx] == CARD_EMPTY);
-        holds[dst_idx] = card;
-    } else if (dst_pile == PILE_FOUNDS) {
-        founds[dst_idx] = card;
-    } else if (dst_pile == PILE_COLUMNS) {
-        columns[dst_idx][column_counts[dst_idx]++] = card;
+        if (dst_pile == PILE_HOLDS) {
+            ASSERT(holds[dst_idx] == CARD_EMPTY);
+            holds[dst_idx] = card;
+        } else if (dst_pile == PILE_FOUNDS) {
+            founds[dst_idx] = card;
+        } else if (dst_pile == PILE_COLUMNS) {
+            columns[dst_idx][column_counts[dst_idx]++] = card;
+        }
     }
 
     draw_pile(src_pile, src_idx);
     draw_pile(dst_pile, dst_idx);
 
     update_status();
+    check_win();
+    check_auto_move();
 }
 
 static int
@@ -614,7 +686,7 @@ request_move_to_hold(void)
     }
 
     cur_move.count = 1;
-    exec_move(&cur_move);
+    exec_move();
 }
 
 static void
@@ -644,9 +716,7 @@ request_move_to_found(void)
     cur_move.dst_pile = PILE_FOUNDS;
     cur_move.dst_idx = suit;
     cur_move.count = 1;
-    exec_move(&cur_move);
-
-    check_win();
+    exec_move();
 }
 
 static void
@@ -674,7 +744,7 @@ request_move_to_nonempty_col(void)
         }
     }
 
-    exec_move(&cur_move);
+    exec_move();
 }
 
 static void
@@ -684,7 +754,7 @@ request_move_to_empty_col(void)
 
     if (cur_move.src_pile == PILE_HOLDS) {
         cur_move.count = 1;
-        exec_move(&cur_move);
+        exec_move();
         return;
     }
 
@@ -695,7 +765,7 @@ request_move_to_empty_col(void)
 
     if (max_movable <= 1) {
         cur_move.count = 1;
-        exec_move(&cur_move);
+        exec_move();
         return;
     }
 
@@ -730,7 +800,7 @@ handle_move_count(int key_code)
     }
 
     cur_move.count = count;
-    exec_move(&cur_move);
+    exec_move();
 }
 
 static void
@@ -808,8 +878,36 @@ restart_game(void)
 }
 
 static void
+on_tick(void)
+{
+    static int ticks_waited = 0;
+
+    if (state != STATE_AUTO_PENDING) {
+        ticks_waited = 0;
+        return;
+    }
+
+    ++ticks_waited;
+
+    if (ticks_waited == 2) {
+        draw_pile(cur_move.src_pile, cur_move.src_idx);
+        return;
+    }
+
+    if (ticks_waited > 5) {
+        ticks_waited = 0;
+        state = STATE_DEFAULT;
+        exec_move();
+    }
+}
+
+static void
 on_key_down(uint8_t key_code, uint8_t key_mods)
 {
+    if (state == STATE_AUTO_PENDING) {
+        return;
+    }
+
     if (state == STATE_HELP) {
         close_help();
         return;
@@ -849,6 +947,7 @@ on_show(void)
         gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
 
         app_freecell.on_key_down = on_key_down;
+        app_freecell.on_tick = on_tick;
 
         initialized = 1;
     }
