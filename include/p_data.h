@@ -1,6 +1,6 @@
 /* data/data.c */
 extern bitmap_st icon_bjack;
-extern bitmap_st icon_fcell;
+extern bitmap_st icon_freecell;
 extern bitmap_st icon_mines;
 extern bitmap_st icon_pairs;
 extern bitmap_st icon_setup;

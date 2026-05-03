@@ -2,7 +2,7 @@
  * Copyright (c) 2026 luke8086
  * Distributed under the terms of GPL-2 License
  *
- * File: fcell.c - FreeCell game
+ * File: freecell.c - FreeCell game
  */
 
 #include <gui.h>
@@ -766,6 +766,6 @@ on_show(void)
 
 global app_st app_freecell = {
     "FreeCell",
-    &icon_fcell,
+    &icon_freecell,
     on_show,
 };

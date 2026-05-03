@@ -6,10 +6,10 @@ extern app_st app_calc;
 extern app_st app_calendar;
 /* apps/clock.c */
 extern app_st app_clock;
-/* apps/fcell.c */
-extern app_st app_freecell;
 /* apps/fonts.c */
 extern app_st app_fonts;
+/* apps/freecell.c */
+extern app_st app_freecell;
 /* apps/keys.c */
 extern app_st app_keys;
 /* apps/launcher.c */
