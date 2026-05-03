@@ -78,6 +78,7 @@ _intr:
 
     mov ax, [bp+4]
     mov byte [intr_int+1], al
+    jmp short $+2
 
     mov si, [bp+6]
     mov ax, [si+0]
