@@ -12,6 +12,8 @@ extern app_st app_fonts;
 extern app_st app_freecell;
 /* apps/keys.c */
 extern app_st app_keys;
+/* apps/klondike.c */
+extern app_st app_klondike;
 /* apps/launcher.c */
 extern app_st app_launcher;
 /* apps/mahjong.c */

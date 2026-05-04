@@ -40,6 +40,7 @@ static app_st *apps[] = {
     &app_snake,
     &app_tetris,
     &app_freecell,
+    &app_klondike,
     &app_blackjack,
     &app_setup,
 };

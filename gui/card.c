@@ -65,6 +65,14 @@ card_pile_push(card_pile_st *p, card_t c)
 }
 
 global void
+card_pile_uncover_top(card_pile_st *pile)
+{
+    if (pile->count > 0 && pile->face_up_from > pile->count - 1) {
+        pile->face_up_from = pile->count - 1;
+    }
+}
+
+global void
 card_draw(card_game_st *game, int x, int y, card_t card, int is_sel)
 {
     uint8_t fg = is_sel ? gui_color_bg : gui_color_fg;
@@ -150,8 +158,9 @@ card_pile_draw(card_game_st *game, card_pile_st *p)
 {
     int x = p->rect.x;
     int top_y = card_pile_top_y(game, p);
-    card_t top = CARD_PILE_TOP(p);
-    int is_sel = top != CARD_EMPTY && CARD_PILE_IS_SELECTED(game, p);
+    card_t top_card = CARD_PILE_TOP(p);
+    int is_sel = top_card != CARD_EMPTY && CARD_PILE_IS_SELECTED(game, p);
+    int is_top_face_down = (p->count > 0 && p->face_up_from > p->count - 1);
     int i, step;
 
     gui_surface_draw_rect(game->origin, &p->rect, gui_color_bg);
@@ -159,11 +168,19 @@ card_pile_draw(card_game_st *game, card_pile_st *p)
     if (p->is_cascade && p->count > 1) {
         step = card_pile_cascade_step(game, p);
         for (i = 0; i < p->count - 1; ++i) {
-            card_stub_draw(game, x, p->rect.y + i * step, step + 1, p->cards[i]);
+            if (i < p->face_up_from) {
+                card_back_stub_draw(game, x, p->rect.y + i * step, step + 1);
+            } else {
+                card_stub_draw(game, x, p->rect.y + i * step, step + 1, p->cards[i]);
+            }
         }
     }
 
-    card_draw(game, x, top_y, top, is_sel);
+    if (is_top_face_down) {
+        card_back_draw(game, x, top_y);
+    } else {
+        card_draw(game, x, top_y, top_card, is_sel);
+    }
 
     if (game->cur_pile == p) {
         card_cursor_draw(game, 1);

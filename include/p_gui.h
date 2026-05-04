@@ -5,6 +5,7 @@ extern int card_pile_cascade_step(card_game_st *game, card_pile_st *p);
 extern int card_pile_top_y(card_game_st *game, card_pile_st *p);
 extern card_t card_pile_pop(card_pile_st *p);
 extern void card_pile_push(card_pile_st *p, card_t c);
+extern void card_pile_uncover_top(card_pile_st *pile);
 extern void card_draw(card_game_st *game, int x, int y, card_t card, int is_sel);
 extern void card_stub_draw(card_game_st *game, int x, int y, int height, card_t card);
 extern void card_back_draw(card_game_st *game, int x, int y);

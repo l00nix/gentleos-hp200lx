@@ -108,6 +108,7 @@ typedef uint8_t card_t;
 
 enum {
     CARD_EMPTY = 0xff,
+    CARD_PILE_ALL_FACE_DOWN = 0xff,
 };
 
 typedef struct {
@@ -116,6 +117,7 @@ typedef struct {
     rect_st rect;
     uint8_t capacity;
     uint8_t count;
+    uint8_t face_up_from;
     card_t *cards;
     unsigned is_cascade : 1;
     unsigned replace_on_push : 1;
