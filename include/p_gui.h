@@ -7,6 +7,8 @@ extern card_t card_pile_pop(card_pile_st *p);
 extern void card_pile_push(card_pile_st *p, card_t c);
 extern void card_draw(card_game_st *game, int x, int y, card_t card, int is_sel);
 extern void card_stub_draw(card_game_st *game, int x, int y, int height, card_t card);
+extern void card_back_draw(card_game_st *game, int x, int y);
+extern void card_back_stub_draw(card_game_st *game, int x, int y, int height);
 extern void card_pile_draw(card_game_st *game, card_pile_st *p);
 extern void card_cursor_draw(card_game_st *game, int visible);
 /* gui/grid.c */
@@ -59,6 +61,7 @@ extern void gui_surface_draw_str(const point_st *origin, uint16_t x, uint16_t y,
 extern void gui_surface_draw_str_centered(const point_st *origin, const rect_st *rect, font_st *font, const char *s, uint8_t fg, uint8_t bg);
 extern void gui_surface_draw_bitmap(const point_st *origin, const size_st *bounds, int dst_x, int dst_y, bitmap_st *bitmap, uint8_t fill);
 extern void gui_surface_draw_bitmap_centered(const point_st *origin, const size_st *bounds, const rect_st *rect, bitmap_st *bitmap, uint8_t fill);
+extern void gui_surface_draw_dots_pattern(const point_st *origin, const rect_st *rect);
 /* gui/window.c */
 extern void gui_window_init(window_st *window, int width, int height);
 extern void gui_window_draw(window_st *window, uint8_t bg_color, int border);

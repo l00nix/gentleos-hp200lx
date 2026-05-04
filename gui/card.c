@@ -112,6 +112,40 @@ card_stub_draw(card_game_st *game, int x, int y, int height, card_t card)
 }
 
 global void
+card_back_draw(card_game_st *game, int x, int y)
+{
+    rect_st rect, rect_inner;
+
+    gui_rect_init(&rect, x, y, game->card_width, game->card_height);
+    gui_surface_draw_rect(game->origin, &rect, gui_color_bg);
+    gui_surface_draw_border(game->origin, &rect, gui_color_fg);
+
+    gui_rect_copy(&rect_inner, &rect);
+    gui_rect_shrink(&rect_inner, 2);
+    gui_surface_draw_dots_pattern(game->origin, &rect_inner);
+
+    gui_surface_mark_dirty(game->origin, &rect);
+}
+
+global void
+card_back_stub_draw(card_game_st *game, int x, int y, int height)
+{
+    rect_st rect, rect_inner;
+
+    gui_rect_init(&rect, x, y, game->card_width, height);
+    gui_surface_draw_rect(game->origin, &rect, gui_color_bg);
+    gui_surface_draw_border(game->origin, &rect, gui_color_fg);
+
+    if (height > 4) {
+        gui_rect_copy(&rect_inner, &rect);
+        gui_rect_shrink(&rect_inner, 2);
+        gui_surface_draw_dots_pattern(game->origin, &rect_inner);
+    }
+
+    gui_surface_mark_dirty(game->origin, &rect);
+}
+
+global void
 card_pile_draw(card_game_st *game, card_pile_st *p)
 {
     int x = p->rect.x;

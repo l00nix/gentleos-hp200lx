@@ -315,3 +315,17 @@ gui_surface_draw_bitmap_centered(const point_st *origin, const size_st *bounds, 
 
     gui_surface_draw_bitmap(origin, bounds, x, y, bitmap, fill);
 }
+
+global void
+gui_surface_draw_dots_pattern(const point_st *origin, const rect_st *rect)
+{
+    int x, y;
+
+    for (y = 0; y < rect->height; ++y) {
+        for (x = 0; x < rect->width; ++x) {
+            if (((x + y) & 1) == 0) {
+                gui_surface_draw_pixel(origin, rect->x + x, rect->y + y, gui_color_fg);
+            }
+        }
+    }
+}
