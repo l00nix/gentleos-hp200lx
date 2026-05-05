@@ -7,12 +7,20 @@
 
 #include <gui.h>
 
+static const char *labels[] = {
+    "Date:        -  -",
+    "Time:      :  :",
+    "Colors:",
+    "Invert:",
+    NULL,
+};
+
 enum {
     FONT_WIDTH = 5,
     FONT_HEIGHT = 8,
 
     ROW_HEIGHT = FONT_HEIGHT + 5,
-    ROW_COUNT = 3,
+    ROW_COUNT = (sizeof(labels) / sizeof(labels[0])) - 1,
 
     PADDING_Y = 10,
     PADDING_X = 15,
@@ -31,7 +39,19 @@ enum {
     FIELD_HOUR,
     FIELD_MINUTE,
     FIELD_SECOND,
+    FIELD_THEME,
     FIELD_COLORS,
+};
+
+static const char *hints[] = {
+    "Current year",
+    "Current month",
+    "Current day",
+    "Current hour",
+    "Current minute",
+    "Current second",
+    "Color theme (VGA+)",
+    "Inverted colors",
 };
 
 static window_st window;
@@ -56,25 +76,11 @@ static int cursor;
     { 1,  9,  2,    0,   23 },
     { 1, 12,  2,    0,   59 },
     { 1, 15,  2,    0,   59 },
-    { 2,  9, 10,    0,    1 },
-};
-
-static const struct {
-    uint8_t row;
-    uint8_t col;
-    const char *text;
-} labels[] = {
-    { 0,  0, "Date:" },
-    { 0, 13, "-" },
-    { 0, 16, "-" },
-    { 1,  0, "Time:" },
-    { 1, 11, ":" },
-    { 1, 14, ":" },
-    { 2,  0, "Colors:" },
+    { 2,  9, 11,    0, VGA_THEME_COUNT - 1 },
+    { 3,  9, 11,    0,    1 },
 };
 
 #define FIELD_COUNT (sizeof(fields) / sizeof(fields[0]))
-#define LABEL_COUNT (sizeof(labels) / sizeof(labels[0]))
 
 static void
 draw_field(int n)
@@ -94,7 +100,9 @@ draw_field(int n)
     rect.height = FONT_HEIGHT + 1;
 
     if (n == FIELD_COLORS) {
-        snprintf(buf, sizeof(buf), val == 1 ? "inverted" : "normal");
+        snprintf(buf, sizeof(buf), val == 1 ? "Enable" : "Disable");
+    } else if (n == FIELD_THEME) {
+        snprintf(buf, sizeof(buf), "%s", krn_vga_themes[val].name);
     } else if (n == FIELD_YEAR) {
         snprintf(buf, sizeof(buf), "%04d", val);
     } else {
@@ -107,17 +115,6 @@ draw_field(int n)
 }
 
 static void
-draw_label(int n)
-{
-    int x, y;
-
-    x = CONTENT_X + labels[n].col * FONT_WIDTH;
-    y = CONTENT_Y + labels[n].row * ROW_HEIGHT + (ROW_HEIGHT - FONT_HEIGHT) / 2;
-
-    gui_surface_draw_str(&window.origin, x, y, NULL, labels[n].text, gui_color_fg, gui_color_bg);
-}
-
-static void
 draw_all(void)
 {
     int i;
@@ -125,9 +122,9 @@ draw_all(void)
 
     gui_window_draw(&window, gui_color_bg, 1);
 
-    for (i = 0; i < LABEL_COUNT; ++i) {
-        draw_label(i);
-    }
+    gui_surface_draw_str_lines(&window.origin, CONTENT_X,
+        CONTENT_Y + (ROW_HEIGHT - FONT_HEIGHT) / 2, ROW_HEIGHT - FONT_HEIGHT,
+        NULL, labels, gui_color_fg, gui_color_bg);
 
     for (i = 0; i < FIELD_COUNT; ++i) {
         draw_field(i);
@@ -145,6 +142,8 @@ move_cursor(int dn)
     cursor = cursor + dn;
     cursor = MIN(cursor, FIELD_COUNT - 1);
     cursor = MAX(cursor, 0);
+
+    gui_status_set("Edit: %s", hints[cursor]);
 
     if (prev_cursor == cursor) {
         return;
@@ -183,6 +182,7 @@ load_fields(void)
     fields[FIELD_HOUR].val = time.hour;
     fields[FIELD_MINUTE].val = time.minute;
     fields[FIELD_SECOND].val = time.second;
+    fields[FIELD_THEME].val = krn_vga_current_theme;
     fields[FIELD_COLORS].val = gui_colors_inverted;
 }
 
@@ -200,6 +200,10 @@ save_fields(void)
         fields[FIELD_MINUTE].val,
         fields[FIELD_SECOND].val
     );
+
+    if (fields[FIELD_THEME].val != krn_vga_current_theme) {
+        krn_vga_set_theme(fields[FIELD_THEME].val);
+    }
 
     gui_set_colors_inverted(fields[FIELD_COLORS].val);
     gui_status_set("Settings saved");
@@ -233,9 +237,9 @@ on_show(void)
     cursor = 0;
     load_fields();
     draw_all();
+    move_cursor(0);
 
-    gui_status_set("\x18\x19: Select field  PgUp/PgDn: Edit");
-    gui_status_set_br("S: Save");
+    gui_status_set_br("PgUp/PgDn: Edit  S: Save");
 }
 
 global app_st app_setup = {
