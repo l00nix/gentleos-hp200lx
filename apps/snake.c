@@ -135,7 +135,6 @@ move_snake(coords_st next_head)
     if (body.grow) {
         ++body.tail;
         --body.grow;
-        update_status();
     } else {
         draw_cell(body.tail->x, body.tail->y, CELL_FLOOR);
     }
