@@ -223,12 +223,14 @@ on_key_down(uint8_t key_code, uint8_t key_mods)
 {
     int escaped = !!(key_mods & KEY_MOD_ESC);
     char key_char = key_char_for_code(key_code, key_mods);
+    char key_char_to_print = MAX(key_char, ' ');
+
 
     update_cell(key_code, escaped, 1);
 
     if (key_code != last_key_code) {
         gui_status_set("Last key:%02X  Mods:%02X  Char:%02X (%c)",
-            key_code, key_mods, key_char, key_char ? key_char : ' ');
+            key_code, key_mods, key_char, key_char_to_print);
     }
 }
 
