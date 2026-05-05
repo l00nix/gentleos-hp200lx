@@ -11,7 +11,7 @@ enum {
     GRID_CELL_WIDTH = 24,
     GRID_CELL_HEIGHT = 24,
     GRID_ROWS = 5,
-    GRID_COLS = 6,
+    GRID_COLS = 8,
     GRID_CELL_COUNT = GRID_ROWS * GRID_COLS,
     GRID_WIDTH = GRID_WIDTH_SPACED(GRID_CELL_WIDTH, GRID_COLS),
     GRID_HEIGHT = GRID_HEIGHT_SPACED(GRID_CELL_HEIGHT, GRID_ROWS),
@@ -30,20 +30,25 @@ static grid_st grid;
 
 static bitmap_st *icons[PAIR_COUNT] = {
     &glyph_mn_beaver,
+    &glyph_mn_cactus,
     &glyph_mn_dolphin,
     &glyph_mn_drmcamel,
     &glyph_mn_elephant,
     &glyph_mn_flamingo,
     &glyph_mn_horsefac,
     &glyph_mn_monkey,
+    &glyph_mn_mushroom,
     &glyph_mn_octopus,
+    &glyph_mn_palmtree,
     &glyph_mn_pandafac,
+    &glyph_mn_pumpkin,
     &glyph_mn_rabbit,
     &glyph_mn_robotfac,
     &glyph_mn_sloth,
     &glyph_mn_snail,
     &glyph_mn_tigerfac,
     &glyph_mn_trex,
+    &glyph_mn_tulip,
 };
 
 enum {
