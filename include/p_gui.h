@@ -12,6 +12,7 @@ extern void card_back_draw(card_game_st *game, int x, int y);
 extern void card_back_stub_draw(card_game_st *game, int x, int y, int height);
 extern void card_pile_draw(card_game_st *game, card_pile_st *p);
 extern void card_cursor_draw(card_game_st *game, int visible);
+extern void card_game_exec_cur_move(card_game_st *game);
 /* gui/grid.c */
 extern void gui_grid_rect(grid_st *grid, rect_st *out);
 extern void gui_grid_cell_rect(grid_st *grid, int col, int row, rect_st *out);

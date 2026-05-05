@@ -302,32 +302,7 @@ check_auto_move(void)
 static void
 exec_move(void)
 {
-    int i;
-    int count = game.cur_move.count;
-    card_pile_st *src = game.cur_move.src;
-    card_pile_st *dst = game.cur_move.dst;
-
-    game.cur_move.src = NULL;
-
-    ASSERT(src != NULL);
-    ASSERT(dst != NULL);
-
-    if (src->type == PILE_COLUMNS && dst->type == PILE_COLUMNS) {
-        ASSERT(count <= src->count);
-
-        for (i = 0; i < count; ++i) {
-            card_pile_push(dst, src->cards[src->count - count + i]);
-        }
-
-        src->count -= count;
-    } else {
-        ASSERT(count == 1);
-        card_pile_push(dst, card_pile_pop(src));
-    }
-
-    card_pile_draw(&game, src);
-    card_pile_draw(&game, dst);
-
+    card_game_exec_cur_move(&game);
     update_status();
     check_win();
     check_auto_move();

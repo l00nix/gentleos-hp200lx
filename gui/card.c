@@ -203,3 +203,33 @@ card_cursor_draw(card_game_st *game, int visible)
     gui_surface_mark_dirty(game->origin, &r);
 }
 
+global void
+card_game_exec_cur_move(card_game_st *game)
+{
+    int i;
+    int count = game->cur_move.count;
+    card_pile_st *src = game->cur_move.src;
+    card_pile_st *dst = game->cur_move.dst;
+
+    game->cur_move.src = NULL;
+
+    ASSERT(src != NULL);
+    ASSERT(dst != NULL);
+
+    ASSERT(count <= src->count);
+    ASSERT(dst->replace_on_push || dst->count + count <= dst->capacity);
+
+    for (i = 0; i < count; ++i) {
+        card_pile_push(dst, src->cards[src->count - count + i]);
+    }
+
+    src->count -= count;
+
+    if (src->is_cascade) {
+        card_pile_uncover_top(src);
+    }
+
+    card_pile_draw(game, src);
+    card_pile_draw(game, dst);
+}
+
