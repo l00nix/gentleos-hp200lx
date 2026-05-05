@@ -171,6 +171,18 @@ move_current_piece(int dy, int dx, int dr)
 }
 
 static int
+drop_current_piece(void)
+{
+    draw_current_piece(0);
+
+    while (is_piece_valid(cur_piece, cur_row + 1, cur_col, cur_rot)) {
+        ++cur_row;
+    }
+
+    draw_current_piece(1);
+}
+
+static int
 is_row_full(int row)
 {
     int col;
@@ -301,12 +313,7 @@ on_key_down(uint8_t key_code, uint8_t key_mods)
     case KEY_RIGHT: move_current_piece(0, 1, 0); return;
     case KEY_DOWN: move_current_piece(1, 0, 0); return;
     case KEY_UP: move_current_piece(0, 0, 1); return;
-    }
-
-    if (key_code == KEY_SPACE) {
-        while (move_current_piece(1, 0, 0)) {
-            /* drop */
-        };
+    case KEY_SPACE: drop_current_piece(); return;
     }
 }
 
