@@ -1,8 +1,8 @@
 /*
  * Use custom color theme, see kernel/vga.c for the list
- * Only works on EGA/VGA cards, but not real CGA
+ * Requires a VGA card, it won't work on CGA
  */
-#define VGA_THEME 0
+#define DEFAULT_VGA_THEME 0
 
 /*
  * Invert colors by default

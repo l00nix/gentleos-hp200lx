@@ -42,6 +42,8 @@ extern uint8_t krn_timer_get_cpu_usage(void);
 extern void krn_timer_init(void);
 extern void krn_timer_deinit(void);
 /* kernel/vga.c */
+extern const vga_theme_st krn_vga_themes[VGA_THEME_COUNT];
+extern int krn_vga_current_theme;
 extern void krn_vga_set_theme(int n);
 extern void krn_vga_init(void);
 extern void krn_vga_deinit(void);
