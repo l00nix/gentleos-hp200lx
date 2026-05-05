@@ -36,24 +36,7 @@ enum {
     STATE_DEFAULT = 0,
     STATE_ENTER_MOVE_COUNT = 1,
     STATE_WON = 2,
-    STATE_HELP = 3,
-    STATE_AUTO_PENDING = 4,
-
-    HELP_LINE_COUNT = 5,
-    HELP_LINE_HEIGHT = 11,
-    HELP_PADDING = 10,
-    HELP_WIDTH = 180,
-    HELP_HEIGHT = HELP_LINE_COUNT * HELP_LINE_HEIGHT + 2 * HELP_PADDING,
-    HELP_X = (WINDOW_WIDTH - HELP_WIDTH) / 2,
-    HELP_Y = (WINDOW_HEIGHT - HELP_HEIGHT) / 2,
-};
-
-static const char *help_lines[] = {
-    "Arrows: move cursor",
-    "Space:  select / place",
-    "F:      move to foundation",
-    "R:      restart game",
-    "H:      toggle help",
+    STATE_AUTO_PENDING = 3,
 };
 
 static window_st window;
@@ -194,7 +177,6 @@ update_status(void)
         gui_status_set("You Won! Press R to restart");
     } else {
         gui_status_set("Remaining cards: %d", remaining);
-        gui_status_set_br("H: Show controls");
     }
 }
 
@@ -580,44 +562,6 @@ handle_space(void)
 }
 
 static void
-show_help(void)
-{
-    rect_st r;
-    int i, y;
-
-    gui_rect_init(&r, HELP_X, HELP_Y, HELP_WIDTH, HELP_HEIGHT);
-    gui_surface_draw_rect(&window.origin, &r, gui_color_bg);
-    gui_surface_draw_border(&window.origin, &r, gui_color_fg);
-
-    y = HELP_Y + HELP_PADDING;
-    for (i = 0; i < HELP_LINE_COUNT; ++i) {
-        gui_surface_draw_str(&window.origin, HELP_X + HELP_PADDING, y,
-            NULL, help_lines[i], gui_color_fg, gui_color_bg);
-        y += HELP_LINE_HEIGHT;
-    }
-
-    gui_surface_mark_dirty(&window.origin, &r);
-
-    state = STATE_HELP;
-}
-
-static void
-close_help(void)
-{
-    rect_st r;
-
-    gui_rect_init(&r, HELP_X, HELP_Y, HELP_WIDTH, HELP_HEIGHT);
-    gui_surface_draw_rect(&window.origin, &r, gui_color_bg);
-
-    draw_piles();
-    card_cursor_draw(&game, 1);
-
-    state = STATE_DEFAULT;
-
-    update_status();
-}
-
-static void
 restart_game(void)
 {
     deal_cards();
@@ -657,11 +601,6 @@ on_key_down(uint8_t key_code, uint8_t key_mods)
         return;
     }
 
-    if (state == STATE_HELP) {
-        close_help();
-        return;
-    }
-
     if (state == STATE_ENTER_MOVE_COUNT) {
         handle_move_count(key_code);
         return;
@@ -683,7 +622,6 @@ on_key_down(uint8_t key_code, uint8_t key_mods)
         case KEY_SPACE: handle_space(); return;
         case KEY_F: request_move_to_found(); return;
         case KEY_R: restart_game(); return;
-        case KEY_H: show_help(); return;
     }
 }
 
@@ -761,6 +699,7 @@ on_show(void)
         initialized = 1;
     }
 
+    gui_status_set_br("F: Promote  R: Restart");
     restart_game();
 }
 
