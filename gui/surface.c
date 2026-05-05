@@ -252,6 +252,22 @@ gui_surface_draw_str(const point_st *origin, uint16_t x, uint16_t y,
 }
 
 global void
+gui_surface_draw_str_lines(const point_st *origin, uint16_t x, uint16_t y,
+    uint8_t line_spc, font_st *font, const char **lines, uint8_t fg, uint8_t bg)
+{
+    int i;
+
+    if (!font) {
+        font = &fonts[0];
+    }
+
+    for (i = 0; lines[i]; ++i) {
+        gui_surface_draw_str(origin, x, y + i * (font->size.height + line_spc),
+            font, lines[i], fg, bg);
+    }
+}
+
+global void
 gui_surface_draw_str_centered(const point_st *origin, const rect_st *rect,
     font_st *font, const char *s, uint8_t fg, uint8_t bg)
 {
