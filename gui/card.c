@@ -2,7 +2,7 @@
  * Copyright (c) 2026 luke8086
  * Distributed under the terms of GPL-2 License
  *
- * File: card.c - Support for playing cards
+ * File: card.c - Generic code for implementing card games
  */
 
 #include <gui.h>
@@ -161,17 +161,18 @@ card_pile_draw(card_game_st *game, card_pile_st *p)
     card_t top_card = CARD_PILE_TOP(p);
     int is_sel = top_card != CARD_EMPTY && CARD_PILE_IS_SELECTED(game, p);
     int is_top_face_down = (p->count > 0 && p->face_up_from > p->count - 1);
-    int i, step;
+    int y, i, step;
 
     gui_surface_draw_rect(game->origin, &p->rect, gui_color_bg);
 
     if (p->is_cascade && p->count > 1) {
         step = card_pile_cascade_step(game, p);
         for (i = 0; i < p->count - 1; ++i) {
+            y = p->rect.y + i * step;
             if (i < p->face_up_from) {
-                card_back_stub_draw(game, x, p->rect.y + i * step, step + 1);
+                card_back_stub_draw(game, x, y, step + 1);
             } else {
-                card_stub_draw(game, x, p->rect.y + i * step, step + 1, p->cards[i]);
+                card_stub_draw(game, x, y, step + 1, p->cards[i]);
             }
         }
     }
