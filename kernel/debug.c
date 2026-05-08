@@ -37,7 +37,7 @@ krn_debug_assert(int expr, const char *file, unsigned line)
         return;
     }
 
-    krn_debug_printf("Fatal: Assertion failed (%s:%u)", file, line);
+    krn_debug_printf("Fatal: Assertion failed (%s:%u)\n", file, line);
 
     if (krn_debug_status_cb) {
         krn_debug_status_cb("Assert failed (%s:%u)", file, line);
