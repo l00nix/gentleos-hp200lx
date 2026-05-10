@@ -170,7 +170,7 @@ move_current_piece(int dy, int dx, int dr)
     return 1;
 }
 
-static int
+static void
 drop_current_piece(void)
 {
     draw_current_piece(0);
