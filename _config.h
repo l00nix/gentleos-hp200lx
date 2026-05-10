@@ -2,7 +2,7 @@
  * Use custom color theme, see kernel/vga.c for the list
  * Requires a VGA card, it won't work on CGA
  */
-#define DEFAULT_VGA_THEME 0
+#define DEFAULT_VGA_THEME 1
 
 /*
  * Invert colors by default
@@ -19,7 +19,6 @@
  */
 #define DEBUG_KEYBOARD 0
 
-
 /*
  * Send debug output to UART (COM1)
  */
@@ -31,9 +30,8 @@
 #define MANUAL_START 0
 
 /*
- * Default date & time to use if we detect clock is not set,
- * by checking if current year < 2000. This is useful for
- * hardware with dead RTC battery
+ * Default date & time to set on boot if the current year is below 2000.
+ * This is useful for hardware with dead RTC battery
  */
 #define DEFAULT_YEAR 2026
 #define DEFAULT_MONTH 4

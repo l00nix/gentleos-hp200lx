@@ -5,7 +5,7 @@
 /MAKEFILE
 /Makefile
 /data/*
-/include/config.h
+/config.h
 /tmp/*
 *.swp
 __pycache__

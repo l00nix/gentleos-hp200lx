@@ -58,7 +58,7 @@ typedef int32_t ssize_t;
 
 #define global
 
-#include <config.h>
+#include "../config.h"
 
 
 #define NULL ((void *)0)

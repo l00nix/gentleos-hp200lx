@@ -110,7 +110,7 @@ sub collect_boot2_sources {
 }
 
 sub collect_includes {
-    my @includes = sort(glob("include/*.h"));
+    my @includes = sort(glob("config.h include/*.h"));
     @includes = grep { !/_config\.h$/ } @includes;
     return @includes;
 }
