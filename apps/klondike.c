@@ -36,6 +36,9 @@ enum {
     STATE_DEFAULT = 0,
     STATE_WON = 1,
     STATE_AUTO_PENDING = 2,
+
+    AUTO_MOVE_HIGHLIGHT_TICKS = 2,
+    AUTO_MOVE_EXECUTE_TICKS = 6,
 };
 
 static window_st window;
@@ -53,8 +56,8 @@ static card_t columns_cards[COLUMN_COUNT][COLUMN_CARDS_MAX];
 static card_pile_st columns[COLUMN_COUNT];
 
 static card_game_st game;
-
 static int state;
+static int ticks_waited = 0;
 
 static void
 draw_all_piles(void)
@@ -91,19 +94,10 @@ static void
 deal_cards(void)
 {
     card_t deck[CARD_COUNT];
-    card_t tmp;
     int i, j, k;
 
-    for (i = 0; i < CARD_COUNT; ++i) {
-        deck[i] = i;
-    }
-
-    for (i = CARD_COUNT - 1; i > 0; --i) {
-        j = rand() % (i + 1);
-        tmp = deck[i];
-        deck[i] = deck[j];
-        deck[j] = tmp;
-    }
+    card_deck_init(deck, CARD_COUNT);
+    card_deck_shuffle(deck, CARD_COUNT);
 
     stock.count = 0;
     waste.count = 0;
@@ -224,6 +218,7 @@ set_auto_move(card_pile_st *src, card_pile_st *dst)
     game.cur_move.dst = dst;
     game.cur_move.count = 1;
     state = STATE_AUTO_PENDING;
+    ticks_waited = 0;
 }
 
 static void
@@ -241,6 +236,7 @@ check_auto_move(void)
 
     for (i = 0; i < COLUMN_COUNT; ++i) {
         card = CARD_PILE_TOP(&columns[i]);
+
         if (card != CARD_EMPTY && card_should_auto_promote(card)) {
             set_auto_move(&columns[i], &founds[CARD_SUIT(card)]);
             return;
@@ -254,7 +250,10 @@ exec_move(void)
     card_game_exec_cur_move(&game);
     update_status();
     check_win();
-    check_auto_move();
+
+    if (state != STATE_WON) {
+        check_auto_move();
+    }
 }
 
 static void
@@ -423,6 +422,7 @@ draw_card_from_stock(void)
     card_pile_draw(&game, &stock);
     card_pile_draw(&game, &waste);
     update_status();
+    check_auto_move();
 }
 
 static void
@@ -431,7 +431,6 @@ handle_space(void)
     if (game.cur_pile->type == PILE_STOCK) {
         if (game.cur_move.src == NULL) {
             draw_card_from_stock();
-            check_auto_move();
         } else {
             cancel_move();
         }
@@ -484,30 +483,6 @@ restart_game(void)
 }
 
 static void
-on_tick(void)
-{
-    static int ticks_waited = 0;
-
-    if (state != STATE_AUTO_PENDING) {
-        ticks_waited = 0;
-        return;
-    }
-
-    ++ticks_waited;
-
-    if (ticks_waited == 2) {
-        card_pile_draw(&game, game.cur_move.src);
-        return;
-    }
-
-    if (ticks_waited > 5) {
-        ticks_waited = 0;
-        state = STATE_DEFAULT;
-        exec_move();
-    }
-}
-
-static void
 on_key_down(uint8_t key_code, uint8_t key_mods)
 {
     if (state == STATE_AUTO_PENDING) {
@@ -530,6 +505,26 @@ on_key_down(uint8_t key_code, uint8_t key_mods)
         case KEY_F: request_promote_to_found(); return;
         case KEY_R: restart_game(); return;
         case KEY_ESC: cancel_move(); return;
+    }
+}
+
+static void
+on_tick(void)
+{
+    if (state != STATE_AUTO_PENDING) {
+        return;
+    }
+
+    ++ticks_waited;
+
+    if (ticks_waited == AUTO_MOVE_HIGHLIGHT_TICKS) {
+        card_pile_draw(&game, game.cur_move.src);
+        return;
+    }
+
+    if (ticks_waited >= AUTO_MOVE_EXECUTE_TICKS) {
+        state = STATE_DEFAULT;
+        exec_move();
     }
 }
 
