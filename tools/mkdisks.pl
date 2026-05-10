@@ -17,6 +17,9 @@ sub slurp {
 
 sub pad {
     my ($data, $size) = @_;
+
+    return $data if $size == 0;
+
     my $data_size = length($data);
 
     die "Data exceeds padded size ($data_size > $size)\n" if $data_size > $size;
@@ -42,5 +45,6 @@ sub make_disk {
     print "Done\n";
 }
 
-make_disk("build/fd720.img", 720 * 1024);
-make_disk("build/fd1440.img", 1440 * 1024);
+make_disk("BUILD/DISK.IMG", 0);
+make_disk("BUILD/FD720.IMG", 720 * 1024);
+make_disk("BUILD/FD1440.IMG", 1440 * 1024);
