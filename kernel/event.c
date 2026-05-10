@@ -61,9 +61,7 @@ krn_event_wait(event_st *out)
             break;
         }
 
-        krn_timer_is_cpu_idle = 1;
         cpu_hlt();
-        krn_timer_is_cpu_idle = 0;
     }
 }
 

@@ -17,11 +17,7 @@ enum {
 static isr_st saved_isr_handler;
 extern void *krn_isr_timer;
 
-global volatile uint8_t krn_timer_is_cpu_idle;
-
 volatile static uint32_t timer_msecs;
-static uint32_t idle_ticks;
-static uint32_t total_ticks;
 
 global void
 krn_timer_handle_intr(void)
@@ -29,11 +25,6 @@ krn_timer_handle_intr(void)
     event_st event;
 
     timer_msecs += (1000 / TIMER_HZ);
-
-    total_ticks++;
-    if (krn_timer_is_cpu_idle) {
-        idle_ticks++;
-    }
 
     event.type = EVENT_TIMER_TICK;
     event.payload = timer_msecs;
@@ -45,32 +36,6 @@ global uint32_t
 krn_timer_get_msecs(void)
 {
     return timer_msecs;
-}
-
-global uint8_t
-krn_timer_get_cpu_usage(void)
-{
-    return 0;
-
-    /*
-    uint32_t idle, total;
-    uint16_t flags = cpu_get_flags();
-
-    cpu_cli();
-
-    idle = idle_ticks;
-    total = total_ticks;
-    idle_ticks = 0;
-    total_ticks = 0;
-
-    cpu_set_flags(flags);
-
-    if (total == 0) {
-        return 0;
-    }
-
-    return (uint8_t)(100 - (idle * 100 / total));
-    */
 }
 
 global void
