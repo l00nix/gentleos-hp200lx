@@ -18,6 +18,30 @@ static bitmap_st *card_suit_bmp[] = {
     &sprite_spade_2,
 };
 
+global void
+card_deck_init(card_t *deck, int n)
+{
+    int i;
+
+    for (i = 0; i < n; ++i) {
+        deck[i] = i;
+    }
+}
+
+global void
+card_deck_shuffle(card_t *deck, int n)
+{
+    card_t tmp;
+    int i, j;
+
+    for (i = n - 1; i > 0; --i) {
+        j = rand() % (i + 1);
+        tmp = deck[i];
+        deck[i] = deck[j];
+        deck[j] = tmp;
+    }
+}
+
 global int
 card_pile_cascade_step(card_game_st *game, card_pile_st *p)
 {

@@ -1,6 +1,8 @@
 /* gui/button.c */
 extern void gui_button_draw(widget_st *widget);
 /* gui/card.c */
+extern void card_deck_init(card_t *deck, int n);
+extern void card_deck_shuffle(card_t *deck, int n);
 extern int card_pile_cascade_step(card_game_st *game, card_pile_st *p);
 extern int card_pile_top_y(card_game_st *game, card_pile_st *p);
 extern card_t card_pile_pop(card_pile_st *p);
