@@ -9,7 +9,7 @@
 
 global const vga_theme_st krn_vga_themes[VGA_THEME_COUNT] = {
     { 0xcccccc, 0x000000, "Gray/Black" },
-    { 0x00dd00, 0x000000, "Green/Black" },
+    { 0x67a353, 0x000000, "Green/Black" },
     { 0x00b0e8, 0x000000, "Blue/Black" },
 };
 
