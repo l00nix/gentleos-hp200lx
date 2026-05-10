@@ -2,9 +2,10 @@
 
 A hobby operating system for vintage 16-bit PCs (80186+).
 
-It's designed as a platform for tinkering with retro hardware, so it
-doesn't have most of the features of general-purpose operating systems.
-Its goal is to support building user-facing apps with minimal infrastructure.
+It's designed as a platform for tinkering with retro hardware, so it skips
+most of the features of general-purpose operating systems.
+Its goal is to allow building interactive apps as soon as possible,
+with minimal infrastructure.
 
 GentleOS/16 is a sibling of [GentleOS/32](https://github.com/luke8086/gentleos32),
 a slightly more advanced 32-bit OS that targets 486+ devices.

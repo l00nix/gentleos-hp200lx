@@ -271,19 +271,6 @@ init_grid(void)
 static void
 on_show(void)
 {
-    static int initialized = 0;
-
-    if (!initialized) {
-        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        init_grid();
-
-        app_snake.on_tick = on_tick;
-        app_snake.on_key_down = on_key_down;
-
-        initialized = 1;
-    }
-
     cell_colors[CELL_FLOOR] = gui_color_bg;
     cell_colors[CELL_WALL] = gui_color_fg;
     cell_colors[CELL_SNAKE] = gui_color_fg;
@@ -294,8 +281,20 @@ on_show(void)
     restart_game();
 }
 
+static void
+on_init(void)
+{
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    init_grid();
+
+    app_snake.on_show = on_show;
+    app_snake.on_tick = on_tick;
+    app_snake.on_key_down = on_key_down;
+}
+
 global app_st app_snake = {
     "Snake",
     &icon_snake,
-    on_show,
+    on_init,
 };

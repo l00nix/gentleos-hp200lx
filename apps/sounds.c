@@ -197,19 +197,7 @@ init_keys(void)
 static void
 on_show(void)
 {
-    static int initialized = 0;
     int i;
-
-    if (!initialized) {
-        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        init_keys();
-
-        app_sounds.on_key_down = on_key_down;
-        app_sounds.on_key_up = on_key_up;
-
-        initialized = 1;
-    }
 
     gui_window_draw(&window, gui_color_fg, 1);
 
@@ -224,8 +212,20 @@ on_show(void)
     gui_status_set("Z-,: Wh/Lo  S-J: Bl/Lo  W-O: Wh/Hi  3-8: Bl/Hi");
 }
 
+static void
+on_init(void)
+{
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    init_keys();
+
+    app_sounds.on_show = on_show;
+    app_sounds.on_key_down = on_key_down;
+    app_sounds.on_key_up = on_key_up;
+}
+
 global app_st app_sounds = {
     "Sounds",
     &icon_sounds,
-    on_show,
+    on_init,
 };

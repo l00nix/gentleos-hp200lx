@@ -287,19 +287,7 @@ init_buttons(void)
 static void
 on_show(void)
 {
-    static int initialized = 0;
     int i;
-
-    if (!initialized) {
-        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        init_buttons();
-
-        app_calc.on_key_down = on_key_down;
-        app_calc.on_key_up = on_key_up;
-
-        initialized = 1;
-    }
 
     gui_window_draw(&window, gui_color_fg, 1);
 
@@ -310,8 +298,20 @@ on_show(void)
     update_display();
 }
 
+static void
+on_init(void)
+{
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    init_buttons();
+
+    app_calc.on_show = on_show;
+    app_calc.on_key_down = on_key_down;
+    app_calc.on_key_up = on_key_up;
+}
+
 global app_st app_calc = {
     "Calculator",
     &icon_calc,
-    on_show,
+    on_init,
 };

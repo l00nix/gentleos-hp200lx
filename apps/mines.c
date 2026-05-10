@@ -379,18 +379,6 @@ init_grid(void)
 static void
 on_show(void)
 {
-    static int initialized = 0;
-
-    if (!initialized) {
-        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        init_grid();
-
-        app_mines.on_key_down = on_key_down;
-
-        initialized = 1;
-    }
-
     current_row = 0;
     current_col = 0;
 
@@ -399,8 +387,19 @@ on_show(void)
     restart_game();
 }
 
+static void
+on_init(void)
+{
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    init_grid();
+
+    app_mines.on_show = on_show;
+    app_mines.on_key_down = on_key_down;
+}
+
 global app_st app_mines = {
     "Mines",
     &icon_mines,
-    on_show,
+    on_init,
 };

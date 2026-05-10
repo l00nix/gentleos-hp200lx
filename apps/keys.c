@@ -245,24 +245,23 @@ on_key_up(uint8_t key_code, uint8_t key_mods)
 static void
 on_show(void)
 {
-    static int initialized = 0;
-
-    if (!initialized) {
-        init_cells();
-
-        gui_window_init(&window, window.size.width, window.size.height);
-
-        app_keys.on_key_down = on_key_down;
-        app_keys.on_key_up = on_key_up;
-
-        initialized = 1;
-    }
-
     draw_keyboard();
+}
+
+static void
+on_init(void)
+{
+    init_cells();
+
+    gui_window_init(&window, window.size.width, window.size.height);
+
+    app_keys.on_show = on_show;
+    app_keys.on_key_down = on_key_down;
+    app_keys.on_key_up = on_key_up;
 }
 
 global app_st app_keys = {
     "Keys",
     &icon_keys,
-    on_show,
+    on_init,
 };

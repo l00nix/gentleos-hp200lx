@@ -316,24 +316,23 @@ on_key_down(uint8_t key_code, uint8_t key_mods)
 static void
 on_show(void)
 {
-    static int initialized = 0;
-
-    if (!initialized) {
-        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        app_blackjack.on_key_down = on_key_down;
-
-        initialized = 1;
-    }
-
     gui_window_draw(&window, gui_color_bg, 1);
     gui_surface_draw_h_seg(&window.origin, 1, DIVIDER_Y, WINDOW_WIDTH - 2, gui_color_fg);
 
     restart_game();
 }
 
+static void
+on_init(void)
+{
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    app_blackjack.on_show = on_show;
+    app_blackjack.on_key_down = on_key_down;
+}
+
 global app_st app_blackjack = {
     "Blackjack",
     &icon_bjack,
-    on_show,
+    on_init,
 };

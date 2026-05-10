@@ -595,24 +595,23 @@ init_game(void)
 static void
 on_show(void)
 {
-    static int initialized = 0;
-
-    if (!initialized) {
-        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-        init_game();
-
-        app_klondike.on_key_down = on_key_down;
-        app_klondike.on_tick = on_tick;
-
-        initialized = 1;
-    }
-
     gui_status_set_br("F: Promote  R: Restart");
     restart_game();
+}
+
+static void
+on_init(void)
+{
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+    init_game();
+
+    app_klondike.on_show = on_show;
+    app_klondike.on_key_down = on_key_down;
+    app_klondike.on_tick = on_tick;
 }
 
 global app_st app_klondike = {
     "Klondike",
     &icon_klondike,
-    on_show,
+    on_init,
 };

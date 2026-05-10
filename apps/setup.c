@@ -224,16 +224,6 @@ on_key_down(uint8_t key_code, uint8_t key_mods)
 static void
 on_show(void)
 {
-    static int initialized = 0;
-
-    if (!initialized) {
-        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        app_setup.on_key_down = on_key_down;
-
-        initialized = 1;
-    }
-
     cursor = 0;
     load_fields();
     draw_all();
@@ -242,8 +232,17 @@ on_show(void)
     gui_status_set_br("PgUp/PgDn: Edit  S: Save");
 }
 
+static void
+on_init(void)
+{
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    app_setup.on_show = on_show;
+    app_setup.on_key_down = on_key_down;
+}
+
 global app_st app_setup = {
     "Setup",
     &icon_setup,
-    on_show,
+    on_init,
 };

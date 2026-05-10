@@ -582,21 +582,20 @@ on_key_down(uint8_t key_code, uint8_t key_mods)
 static void
 on_show(void)
 {
-    static int initialized = 0;
-
-    if (!initialized) {
-        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        app_mahjong.on_key_down = on_key_down;
-
-        initialized = 1;
-    }
-
     restart_game();
+}
+
+static void
+on_init(void)
+{
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    app_mahjong.on_show = on_show;
+    app_mahjong.on_key_down = on_key_down;
 }
 
 global app_st app_mahjong = {
     "Mahjong",
     &glyph_mn_east_icn,
-    on_show,
+    on_init,
 };

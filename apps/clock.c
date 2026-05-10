@@ -134,18 +134,6 @@ init_grid(void)
 static void
 on_show(void)
 {
-    static int initialized = 0;
-
-    if (!initialized) {
-        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        init_grid();
-
-        app_clock.on_tick = on_tick;
-
-        initialized = 1;
-    }
-
     last_day = 0xff;
     last_second = 0xff;
 
@@ -153,8 +141,19 @@ on_show(void)
     update_status();
 }
 
+static void
+on_init(void)
+{
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    init_grid();
+
+    app_clock.on_show = on_show;
+    app_clock.on_tick = on_tick;
+}
+
 global app_st app_clock = {
     "Clock",
     &icon_clock,
-    on_show,
+    on_init,
 };

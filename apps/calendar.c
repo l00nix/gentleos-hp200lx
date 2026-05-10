@@ -206,19 +206,7 @@ init_current_date(void)
 static void
 on_show(void)
 {
-    static int initialized = 0;
     int i;
-
-    if (!initialized) {
-        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        init_day_buttons();
-        init_current_date();
-
-        app_calendar.on_key_up = on_key_up;
-
-        initialized = 1;
-    }
 
     gui_window_draw(&window, gui_color_bg, 1);
 
@@ -231,9 +219,20 @@ on_show(void)
     gui_status_set_br("PgUp/PgDn: Select month");
 }
 
+static void
+on_init(void)
+{
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    init_day_buttons();
+    init_current_date();
+
+    app_calendar.on_show = on_show;
+    app_calendar.on_key_up = on_key_up;
+}
 
 global app_st app_calendar = {
     "Calendar",
     &icon_calendar,
-    on_show,
+    on_init,
 };

@@ -41,6 +41,13 @@ gui_run_app(app_st *app)
     gui_status_set_br("");
 
     gui_current_app = app;
+
+    if (gui_current_app->on_init) {
+        gui_current_app->on_init();
+        gui_current_app->on_init = (void(*)(void))NULL;
+    }
+
+    ASSERT(!!gui_current_app->on_show);
     gui_current_app->on_show();
 }
 

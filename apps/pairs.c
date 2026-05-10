@@ -286,26 +286,25 @@ init_grid(void)
 static void
 on_show(void)
 {
-    static int initialized = 0;
-
-    if (!initialized) {
-        gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
-
-        init_grid();
-
-        app_pairs.on_tick = on_tick;
-        app_pairs.on_key_down = on_key_down;
-
-        initialized = 1;
-    }
-
     gui_window_draw(&window, gui_color_fg, 1);
     gui_status_set_br("Spc: Reveal");
     restart_game();
 }
 
+static void
+on_init(void)
+{
+    gui_window_init(&window, WINDOW_WIDTH, WINDOW_HEIGHT);
+
+    init_grid();
+
+    app_pairs.on_show = on_show;
+    app_pairs.on_tick = on_tick;
+    app_pairs.on_key_down = on_key_down;
+}
+
 global app_st app_pairs = {
     "Pairs",
     &icon_pairs,
-    on_show,
+    on_init,
 };
