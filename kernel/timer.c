@@ -30,6 +30,8 @@ krn_timer_handle_intr(void)
     event.payload = timer_msecs;
 
     (void)krn_event_ipush(&event);
+
+    outb(0x20, 0x20);
 }
 
 global uint32_t
@@ -52,8 +54,8 @@ krn_timer_init(void)
     outb((uint8_t)((div >> 0) & 0xFF), PIT_CR0);
     outb((uint8_t)((div >> 8) & 0xFF), PIT_CR0);
 
-    krn_get_isr(0x1c, &saved_isr_handler);
-    krn_set_isr(0x1c, krn_main_segment, (uint16_t)(uint32_t)&krn_isr_timer);
+    krn_get_isr(0x08, &saved_isr_handler);
+    krn_set_isr(0x08, krn_main_segment, (uint16_t)(uint32_t)&krn_isr_timer);
 
     krn_debug_printf("ok\n");
 }
@@ -61,5 +63,5 @@ krn_timer_init(void)
 global void
 krn_timer_deinit(void)
 {
-    krn_set_isr(0x1c, saved_isr_handler.seg, saved_isr_handler.ofs);
+    krn_set_isr(0x08, saved_isr_handler.seg, saved_isr_handler.ofs);
 }
