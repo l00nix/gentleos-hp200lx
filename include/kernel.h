@@ -27,7 +27,7 @@ typedef struct {
     uint32_t payload;
 } event_st;
 
-#define VGA_THEME_COUNT 3
+#define VGA_THEME_COUNT 4
 
 typedef struct {
     uint32_t fg_color;
