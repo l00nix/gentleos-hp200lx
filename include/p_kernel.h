@@ -30,10 +30,6 @@ extern void krn_mem_init(void);
 /* kernel/speaker.c */
 extern void krn_speaker_stop(void);
 extern void krn_speaker_play(uint16_t hz);
-/* kernel/system.c */
-extern uint32_t krn_system_get_total_mem(void);
-extern uint32_t krn_system_get_used_mem(void);
-extern uint32_t krn_system_get_avail_mem(void);
 /* kernel/timer.c */
 extern void krn_timer_handle_intr(void);
 extern uint32_t krn_timer_get_msecs(void);
