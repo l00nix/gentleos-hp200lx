@@ -2,15 +2,38 @@
 
 A hobby operating system for vintage 16-bit PCs (80186+).
 
-It's goal is to provide a simple platform for tinkering with retro
-hardware and building interactive apps with minimal infrastructure.
+Its goal is to provide a simple platform for tinkering with retro
+hardware and running graphical interactive apps on bare metal.
 
 GentleOS/16 is a sibling of [GentleOS/32](https://github.com/luke8086/gentleos32),
-a slightly more advanced 32-bit OS that targets 486+ devices.
+a slightly more advanced 32-bit OS that targets i386+ devices.
 
-## Usage
+For details on building and running, see [USAGE.md](USAGE.md).
 
-For details on building and running, see [USAGE.md](USAGE.md)
+<img src="doc/machimg/t1100fd.webp" width="400">
+
+## Gallery
+
+All apps running on Tandy 1100FD (NEC V20 CPU, 640KB RAM, 640x200 STN LCD):
+
+<p>
+  <img src="doc/appimg/launcher.webp" width="240">
+  <img src="doc/appimg/clock.webp" width="240">
+  <img src="doc/appimg/calendar.webp" width="240">
+  <img src="doc/appimg/calc.webp" width="240">
+  <img src="doc/appimg/fonts.webp" width="240">
+  <img src="doc/appimg/keys.webp" width="240">
+  <img src="doc/appimg/sounds.webp" width="240">
+  <img src="doc/appimg/mines.webp" width="240">
+  <img src="doc/appimg/pairs.webp" width="240">
+  <img src="doc/appimg/mahjong.webp" width="240">
+  <img src="doc/appimg/snake.webp" width="240">
+  <img src="doc/appimg/tetris.webp" width="240">
+  <img src="doc/appimg/freecell.webp" width="240">
+  <img src="doc/appimg/klondike.webp" width="240">
+  <img src="doc/appimg/bjack.webp" width="240">
+  <img src="doc/appimg/setup.webp" width="240">
+</p>
 
 ## Attributions
 
