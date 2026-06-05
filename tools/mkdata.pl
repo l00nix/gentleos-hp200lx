@@ -268,6 +268,7 @@ sub process_all {
         ""
     );
 
+    -d "data" or mkdir "data" or die "Cannot create data dir: $!\n";
     open(my $fh, ">", "data/data.c") or die "Cannot write data/data.c: $!\n";
     binmode($fh);
     print $fh join("\r\n", @lines);
