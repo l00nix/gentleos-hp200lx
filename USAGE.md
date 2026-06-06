@@ -1,5 +1,10 @@
 # GentleOS/16 - Usage and development
 
+## Pre-built images
+
+For a quick test, you can find pre-built images of GentleOS in
+[Releases](https://github.com/luke8086/gentleos/releases).
+
 ## Building
 
 The only prerequisite is [DOSBox](https://www.dosbox.com/), the
