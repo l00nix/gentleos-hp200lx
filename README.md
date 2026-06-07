@@ -1,9 +1,17 @@
 # GentleOS/16
 
-A hobby operating system for vintage 16-bit PCs (80186+).
+A hobby operating system for vintage 16-bit PCs.
 
 Its goal is to provide a simple platform for tinkering with retro
 hardware and running graphical interactive apps on bare metal.
+
+At minimum, it only requires an 80186 CPU, 192KB of RAM, and a CGA display
+supporting 320x200x4 mode. It may possibly work with just 8086, but I don't
+have such PC to test.
+
+By design it's entirely monolithic, mostly configured at compile time,
+and only supports standard PC devices: CGA/VGA, keyboard, PC speaker.
+The only future plans are bugfixes, optimizations, and adding more apps.
 
 GentleOS/16 is a sibling of [GentleOS/32](https://github.com/luke8086/gentleos32),
 a slightly more advanced 32-bit OS that targets i386+ devices.
