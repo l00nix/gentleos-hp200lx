@@ -22,6 +22,10 @@ For details on building and running, see [USAGE.md](USAGE.md).
 
 ## Gallery
 
+Amstrad PPC 512 (NEC V30 CPU, 512KB RAM, 640x200 STN LCD):
+
+<img src="doc/machimg/ppc512.webp" width="360"> <img src="doc/machimg/ppc512-2.webp" width="360">
+
 All apps running on Tandy 1100FD (NEC V20 CPU, 640KB RAM, 640x200 STN LCD):
 
 <p>
