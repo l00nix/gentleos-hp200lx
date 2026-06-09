@@ -92,10 +92,9 @@ get_sectors_per_track(void)
 
     intr(0x13, &regs);
 
+    /* If the call is unsupported, return value for 720K/360K disks */
     if (regs.x.flags & 0x0001) {
-        putc('E');
-        halt();
-        /* UNREACHABLE */
+        return 9;
     }
 
     return regs.h.cl & 0x3f;
