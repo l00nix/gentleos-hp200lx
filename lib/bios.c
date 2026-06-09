@@ -102,6 +102,11 @@ bios_get_time(time_st *t)
     t->hour = from_bcd(regs.h.ch);
     t->minute = from_bcd(regs.h.cl);
     t->second = from_bcd(regs.h.dh);
+
+    /* Temporary workaround for machines not supporting this call */
+    t->hour = MIN(23, t->hour);
+    t->minute = MIN(59, t->minute);
+    t->second = MIN(59, t->second);
 }
 
 global void
@@ -130,6 +135,11 @@ bios_get_date(date_st *d)
     d->year = from_bcd(regs.h.ch) * 100 + from_bcd(regs.h.cl);
     d->month = from_bcd(regs.h.dh);
     d->day = from_bcd(regs.h.dl);
+
+    /* Temporary workaround for machines not supporting this call */
+    d->year = MAX(1900, MIN(2100, d->year));
+    d->month = MAX(1, MIN(12, d->month));
+    d->day = MAX(1, MIN(31, d->month));
 }
 
 global void
