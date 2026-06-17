@@ -1,11 +1,8 @@
 # GentleOS/16 on the HP 200LX
 
-This repository packages an HP 200LX-focused build of
-[GentleOS/16](https://github.com/luke8086/gentleos), with a compatibility fix
-for the built-in HP 200LX keyboard.
+This repository packages an HP 200LX-focused build of [GentleOS/16](https://github.com/luke8086/gentleos), with a compatibility fix for the built-in HP 200LX keyboard.
 
-Release 1: `KERNEL.COM` boots from DOS on a real HP 200LX, reaches the
-GentleOS launcher, and the built-in HP 200LX keyboard works.
+Release 1: `KERNEL.COM` boots from DOS on a real HP 200LX, reaches the GentleOS launcher, and the built-in HP 200LX keyboard works.
 
 <p>
   <img src="images/02-PXL_20260616_214426311.MP.jpg" width="760" alt="GentleOS launcher running on an HP 200LX">
@@ -25,14 +22,12 @@ When running as `KERNEL.COM`, GentleOS can return to DOS with `Shift-Q`.
 
 ## Release Download
 
-For users who want to try this build without setting up the DOSBox build
-environment, Release 1 includes a prebuilt `KERNEL.COM`:
+For users who want to try this build without setting up the DOSBox build environment, Release 1 includes a prebuilt `KERNEL.COM`:
 
 - [Download Release 1](https://github.com/l00nix/gentleos-hp200lx/releases/tag/v1.0.0)
 - Expected file: `KERNEL.COM`
 - Size: `46,238` bytes
-- SHA-256:
-  `e5c70b387a3aaae79f455f48767fccf2610318dc6a6be352c71a197601372e3b`
+- SHA-256: `e5c70b387a3aaae79f455f48767fccf2610318dc6a6be352c71a197601372e3b`
 
 ## Screenshots
 
@@ -49,12 +44,9 @@ More screenshots are in [images](images/).
 
 ## What Changed
 
-The HP 200LX looks PC-compatible from DOS, but its internal keyboard is not a
-plain PC/XT keyboard controller.
+The HP 200LX looks PC-compatible from DOS, but its internal keyboard is not a plain PC/XT keyboard controller.
 
-On a normal PC, keyboard hardware places a scan code in I/O port `60h` and
-raises IRQ1/INT 09h. GentleOS originally installed its own INT 09h handler,
-read port `60h`, toggled port `61h`, and acknowledged the PIC directly.
+On a normal PC, keyboard hardware places a scan code in I/O port `60h` and raises IRQ1/INT 09h. GentleOS originally installed its own INT 09h handler, read port `60h`, toggled port `61h`, and acknowledged the PIC directly.
 
 On the HP 100LX/200LX, the Hornet ASIC and BIOS cooperate differently:
 
@@ -62,18 +54,14 @@ On the HP 100LX/200LX, the Hornet ASIC and BIOS cooperate differently:
 - Initial keyboard events arrive through Hornet IRQ2/INT 0Ah.
 - TIMER1 is used by the BIOS to debounce and generate PC-style scan codes.
 - The BIOS writes scan codes to port `60h`, then causes a synthetic INT 09h.
-- Applications are expected to consume the resulting keyboard stream through
-  BIOS INT 16h.
+- Applications are expected to consume the resulting keyboard stream through BIOS INT 16h.
 
 So this repository adds an HP 200LX keyboard mode:
 
 - Do not replace the BIOS INT 09h handler on HP 200LX builds.
-- Poll BIOS INT 16h extended keyboard services from the GentleOS event wait
-  loop.
-- Convert the returned BIOS scan code and modifier state into GentleOS
-  `EVENT_KEY_DOWN` events.
-- Keep the existing direct INT 09h/port `60h` keyboard path available for
-  ordinary PC-compatible targets.
+- Poll BIOS INT 16h extended keyboard services from the GentleOS event wait loop.
+- Convert the returned BIOS scan code and modifier state into GentleOS `EVENT_KEY_DOWN` events.
+- Keep the existing direct INT 09h/port `60h` keyboard path available for ordinary PC-compatible targets.
 
 The CGA-safe color setting is also enabled:
 
@@ -166,14 +154,10 @@ The expected real-hardware test artifact is:
 BUILD/KERNEL.COM
 ```
 
-Avoid writing `DISK.IMG` or floppy images to physical media until the `.COM`
-path behaves correctly on the target palmtop.
+Avoid writing `DISK.IMG` or floppy images to physical media until the `.COM` path behaves correctly on the target palmtop.
 
 ## Upstream
 
-This work is based on Luke A. Guest's
-[GentleOS/16](https://github.com/luke8086/gentleos), a hobby operating system
-for vintage 16-bit PCs.
+This work is based on Luke A. Guest's [GentleOS/16](https://github.com/luke8086/gentleos), a hobby operating system for vintage 16-bit PCs.
 
-GentleOS/16 is licensed under [GPLv2](LICENSE). See the upstream project and
-vendored asset directories for original attributions.
+GentleOS/16 is licensed under [GPLv2](LICENSE). See the upstream project and vendored asset directories for original attributions.
