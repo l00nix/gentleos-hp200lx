@@ -34,11 +34,6 @@ The full source diff is in `doc/hp200lx-change.diff`.
 
 ## Running
 
-Copy `KERNEL.COM` to the HP 200LX, then launch it from DOS:
+The easiest way to test is to copy `KERNEL.COM` to the HP 200LX and run `KERNEL.COM`.
 
-```dos
-CD \GENTLE
-KERNEL
-```
-
-Use `Shift-Q` to return to DOS from GentleOS.
+When running as `KERNEL.COM`, GentleOS can return to DOS with `Shift-Q`.
