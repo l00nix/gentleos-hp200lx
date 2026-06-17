@@ -8,7 +8,7 @@ Release 1: `KERNEL.COM` boots from DOS on a real HP 200LX, reaches the
 GentleOS launcher, and the built-in HP 200LX keyboard works.
 
 <p>
-  <img src="README-images-straight/02-PXL_20260616_214426311.MP.jpg" width="760" alt="GentleOS launcher running on an HP 200LX">
+  <img src="images/02-PXL_20260616_214426311.MP.jpg" width="760" alt="GentleOS launcher running on an HP 200LX">
 </p>
 
 ## Hardware Tested
@@ -19,12 +19,7 @@ GentleOS launcher, and the built-in HP 200LX keyboard works.
 - Built-in HP 200LX keyboard
 - Launched from DOS as `KERNEL.COM`
 
-The safest way to test this build is still the DOS `.COM` path:
-
-```dos
-CD \GENTLE
-KERNEL
-```
+The easiest way to test is to copy `KERNEL.COM` to the HP 200LX and run `KERNEL.COM`.
 
 When running as `KERNEL.COM`, GentleOS can return to DOS with `Shift-Q`.
 
@@ -41,19 +36,16 @@ environment, Release 1 includes a prebuilt `KERNEL.COM`:
 
 ## Screenshots
 
-The photos below are cleaned publication copies with camera metadata removed.
-Original photos are not required to build or run GentleOS.
-
 <p>
-  <img src="README-images-straight/02-PXL_20260616_214426311.MP.jpg" width="360" alt="GentleOS launcher">
-  <img src="README-images-straight/03-PXL_20260616_214436973.jpg" width="360" alt="GentleOS clock">
-  <img src="README-images-straight/04-PXL_20260616_214455508.jpg" width="360" alt="GentleOS calendar">
-  <img src="README-images-straight/06-PXL_20260616_214527371.jpg" width="360" alt="GentleOS keyboard test app">
-  <img src="README-images-straight/07-PXL_20260616_214542780.jpg" width="360" alt="GentleOS sounds app">
-  <img src="README-images-straight/18-PXL_20260616_214806476.jpg" width="360" alt="GentleOS setup app">
+  <img src="images/02-PXL_20260616_214426311.MP.jpg" width="360" alt="GentleOS launcher">
+  <img src="images/03-PXL_20260616_214436973.jpg" width="360" alt="GentleOS clock">
+  <img src="images/04-PXL_20260616_214455508.jpg" width="360" alt="GentleOS calendar">
+  <img src="images/06-PXL_20260616_214527371.jpg" width="360" alt="GentleOS keyboard test app">
+  <img src="images/07-PXL_20260616_214542780.jpg" width="360" alt="GentleOS sounds app">
+  <img src="images/18-PXL_20260616_214806476.jpg" width="360" alt="GentleOS setup app">
 </p>
 
-More screenshots are in [README-images-straight](README-images-straight/).
+More screenshots are in [images](images/).
 
 ## What Changed
 
@@ -185,10 +177,3 @@ for vintage 16-bit PCs.
 
 GentleOS/16 is licensed under [GPLv2](LICENSE). See the upstream project and
 vendored asset directories for original attributions.
-
-## Notes
-
-This is intentionally a small compatibility patch rather than a full HP 200LX
-platform layer. A deeper port could eventually expose the HP 200LX keyboard
-mode as a build target, add Hornet-specific timer handling, and separate
-runtime platform detection from compile-time configuration.
