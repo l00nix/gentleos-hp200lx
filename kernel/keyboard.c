@@ -12,8 +12,10 @@ enum {
     PS2_PORT_CMD  = 0x64,
 };
 
+#if !HP200LX_BIOS_KEYBOARD
 static isr_st saved_isr_handler;
 extern void *krn_isr_keyboard;
+#endif
 
 global uint16_t
 krn_keyboard_getc(void)
@@ -27,6 +29,31 @@ krn_keyboard_getc(void)
             return event.payload;
         }
     }
+}
+
+global void
+krn_keyboard_poll(void)
+{
+#if HP200LX_BIOS_KEYBOARD
+    event_st ev;
+    key_st key;
+    uint16_t bios_key;
+
+    while (bios_key_ready()) {
+        bios_key = bios_get_key_ext();
+
+        key.p.code = (uint8_t)(bios_key >> 8);
+        key.p.mods = bios_get_key_mods();
+
+        if (key.p.code == 0) {
+            continue;
+        }
+
+        ev.type = EVENT_KEY_DOWN;
+        ev.payload = key.encoded;
+        (void)krn_event_push(&ev);
+    }
+#endif
 }
 
 static void
@@ -113,14 +140,20 @@ krn_keyboard_init(void)
 {
     krn_debug_printf("Initializing keyboard... ");
 
+#if HP200LX_BIOS_KEYBOARD
+    krn_debug_printf("bios\n");
+#else
     krn_get_isr(0x09, &saved_isr_handler);
     krn_set_isr(0x09, krn_main_segment, (uint16_t)(uint32_t)&krn_isr_keyboard);
 
     krn_debug_printf("ok\n");
+#endif
 }
 
 global void
 krn_keyboard_deinit(void)
 {
+#if !HP200LX_BIOS_KEYBOARD
     krn_set_isr(0x09, saved_isr_handler.seg, saved_isr_handler.ofs);
+#endif
 }

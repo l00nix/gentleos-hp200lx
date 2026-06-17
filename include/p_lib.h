@@ -2,6 +2,9 @@
 extern void bios_putc(char c);
 extern void bios_puts(const char *s);
 extern uint16_t bios_getc(void);
+extern int bios_key_ready(void);
+extern uint16_t bios_get_key_ext(void);
+extern uint8_t bios_get_key_mods(void);
 extern void bios_uart_init(void);
 extern void bios_uart_putc(char c);
 extern void bios_uart_puts(const char *s);

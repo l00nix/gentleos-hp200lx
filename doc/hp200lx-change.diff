@@ -1,0 +1,290 @@
+diff --git a/_config.h b/_config.h
+index 326e09f..7129194 100644
+--- a/_config.h
++++ b/_config.h
+@@ -2,7 +2,7 @@
+  * Use custom color theme, see kernel/vga.c for the list
+  * Requires a VGA card, it won't work on CGA
+  */
+-#define DEFAULT_VGA_THEME 1
++#define DEFAULT_VGA_THEME 0
+ 
+ /*
+  * Invert colors by default
+@@ -22,12 +22,19 @@
+ /*
+  * Send debug output to UART (COM1)
+  */
+-#define DEBUG_TO_UART 0
+-
+-/*
+- * Wait for key press before starting GUI
+- */
+-#define MANUAL_START 0
++#define DEBUG_TO_UART 0
++
++/*
++ * Use HP 100LX/200LX BIOS keyboard services instead of taking over INT 09h.
++ * The internal keyboard is scanned/debounced by Hornet IRQ2/TIMER1 BIOS code,
++ * then delivered through the BIOS keyboard path.
++ */
++#define HP200LX_BIOS_KEYBOARD 1
++
++/*
++ * Wait for key press before starting GUI
++ */
++#define MANUAL_START 0
+ 
+ /*
+  * Default date & time to set on boot if the current year is below 2000.
+diff --git a/include/p_kernel.h b/include/p_kernel.h
+index f2a3c39..c376db9 100644
+--- a/include/p_kernel.h
++++ b/include/p_kernel.h
+@@ -14,9 +14,10 @@ extern uint16_t krn_event_count(void);
+ /* kernel/heap.c */
+ extern void far * krn_heap_alloc(uint16_t size);
+ extern void krn_heap_init(void);
+-/* kernel/keyboard.c */
+-extern uint16_t krn_keyboard_getc(void);
+-extern void krn_keyboard_handle_intr(void);
++/* kernel/keyboard.c */
++extern uint16_t krn_keyboard_getc(void);
++extern void krn_keyboard_poll(void);
++extern void krn_keyboard_handle_intr(void);
+ extern void krn_keyboard_init(void);
+ extern void krn_keyboard_deinit(void);
+ /* kernel/main.c */
+diff --git a/include/p_lib.h b/include/p_lib.h
+index 33c867d..1fd1501 100644
+--- a/include/p_lib.h
++++ b/include/p_lib.h
+@@ -1,8 +1,11 @@
+ /* lib/bios.c */
+ extern void bios_putc(char c);
+-extern void bios_puts(const char *s);
+-extern uint16_t bios_getc(void);
+-extern void bios_uart_init(void);
++extern void bios_puts(const char *s);
++extern uint16_t bios_getc(void);
++extern int bios_key_ready(void);
++extern uint16_t bios_get_key_ext(void);
++extern uint8_t bios_get_key_mods(void);
++extern void bios_uart_init(void);
+ extern void bios_uart_putc(char c);
+ extern void bios_uart_puts(const char *s);
+ extern void bios_get_time(time_st *t);
+diff --git a/kernel/event.c b/kernel/event.c
+index d9743d8..25fa709 100644
+--- a/kernel/event.c
++++ b/kernel/event.c
+@@ -54,12 +54,14 @@ krn_event_format(event_st *ev)
+ }
+ 
+ global void
+-krn_event_wait(event_st *out)
+-{
+-    while (1) {
+-        if (krn_event_count() > 0 && krn_event_pop(out) == 0) {
+-            break;
+-        }
++krn_event_wait(event_st *out)
++{
++    while (1) {
++        krn_keyboard_poll();
++
++        if (krn_event_count() > 0 && krn_event_pop(out) == 0) {
++            break;
++        }
+ 
+         cpu_hlt();
+     }
+diff --git a/kernel/keyboard.c b/kernel/keyboard.c
+index 59c848f..844ab8a 100644
+--- a/kernel/keyboard.c
++++ b/kernel/keyboard.c
+@@ -12,12 +12,14 @@ enum {
+     PS2_PORT_CMD  = 0x64,
+ };
+ 
+-static isr_st saved_isr_handler;
+-extern void *krn_isr_keyboard;
+-
+-global uint16_t
+-krn_keyboard_getc(void)
+-{
++#if !HP200LX_BIOS_KEYBOARD
++static isr_st saved_isr_handler;
++extern void *krn_isr_keyboard;
++#endif
++
++global uint16_t
++krn_keyboard_getc(void)
++{
+     event_st event;
+ 
+     while (1) {
+@@ -26,12 +28,37 @@ krn_keyboard_getc(void)
+         if (event.type == EVENT_KEY_DOWN) {
+             return event.payload;
+         }
+-    }
+-}
+-
+-static void
+-krn_keyboard_handle_scancode(uint8_t scancode)
+-{
++    }
++}
++
++global void
++krn_keyboard_poll(void)
++{
++#if HP200LX_BIOS_KEYBOARD
++    event_st ev;
++    key_st key;
++    uint16_t bios_key;
++
++    while (bios_key_ready()) {
++        bios_key = bios_get_key_ext();
++
++        key.p.code = (uint8_t)(bios_key >> 8);
++        key.p.mods = bios_get_key_mods();
++
++        if (key.p.code == 0) {
++            continue;
++        }
++
++        ev.type = EVENT_KEY_DOWN;
++        ev.payload = key.encoded;
++        (void)krn_event_push(&ev);
++    }
++#endif
++}
++
++static void
++krn_keyboard_handle_scancode(uint8_t scancode)
++{
+     static uint8_t lshift = 0;
+     static uint8_t rshift = 0;
+     static uint8_t ctrl = 0;
+@@ -108,19 +135,25 @@ krn_keyboard_handle_intr(void)
+     outb(0x20, 0x20);
+ }
+ 
+-global void
+-krn_keyboard_init(void)
+-{
+-    krn_debug_printf("Initializing keyboard... ");
+-
+-    krn_get_isr(0x09, &saved_isr_handler);
+-    krn_set_isr(0x09, krn_main_segment, (uint16_t)(uint32_t)&krn_isr_keyboard);
+-
+-    krn_debug_printf("ok\n");
+-}
+-
+-global void
+-krn_keyboard_deinit(void)
+-{
+-    krn_set_isr(0x09, saved_isr_handler.seg, saved_isr_handler.ofs);
+-}
++global void
++krn_keyboard_init(void)
++{
++    krn_debug_printf("Initializing keyboard... ");
++
++#if HP200LX_BIOS_KEYBOARD
++    krn_debug_printf("bios\n");
++#else
++    krn_get_isr(0x09, &saved_isr_handler);
++    krn_set_isr(0x09, krn_main_segment, (uint16_t)(uint32_t)&krn_isr_keyboard);
++
++    krn_debug_printf("ok\n");
++#endif
++}
++
++global void
++krn_keyboard_deinit(void)
++{
++#if !HP200LX_BIOS_KEYBOARD
++    krn_set_isr(0x09, saved_isr_handler.seg, saved_isr_handler.ofs);
++#endif
++}
+diff --git a/lib/bios.c b/lib/bios.c
+index 3609f95..e57d5cc 100644
+--- a/lib/bios.c
++++ b/lib/bios.c
+@@ -43,19 +43,65 @@ bios_puts(const char *s)
+     }
+ }
+ 
+-global uint16_t
+-bios_getc(void)
+-{
++global uint16_t
++bios_getc(void)
++{
+     regs_st regs;
+ 
+     regs.h.ah = 0x00;
+     intr(0x16, &regs);
+ 
+-    return regs.x.ax;
+-}
+-
+-global void
+-bios_uart_init(void)
++    return regs.x.ax;
++}
++
++global int
++bios_key_ready(void)
++{
++    regs_st regs;
++
++    regs.h.ah = 0x11;
++    intr(0x16, &regs);
++
++    return !(regs.x.flags & 0x0040);
++}
++
++global uint16_t
++bios_get_key_ext(void)
++{
++    regs_st regs;
++
++    regs.h.ah = 0x10;
++    intr(0x16, &regs);
++
++    return regs.x.ax;
++}
++
++global uint8_t
++bios_get_key_mods(void)
++{
++    regs_st regs;
++    uint8_t mods = 0;
++
++    regs.h.ah = 0x02;
++    intr(0x16, &regs);
++
++    if (regs.h.al & 0x03) {
++        mods |= KEY_MOD_SHIFT;
++    }
++
++    if (regs.h.al & 0x04) {
++        mods |= KEY_MOD_CTRL;
++    }
++
++    if (regs.h.al & 0x08) {
++        mods |= KEY_MOD_ALT;
++    }
++
++    return mods;
++}
++
++global void
++bios_uart_init(void)
+ {
+     regs_st regs;
+ 

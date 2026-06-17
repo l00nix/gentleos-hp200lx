@@ -2,7 +2,7 @@
  * Use custom color theme, see kernel/vga.c for the list
  * Requires a VGA card, it won't work on CGA
  */
-#define DEFAULT_VGA_THEME 1
+#define DEFAULT_VGA_THEME 0
 
 /*
  * Invert colors by default
@@ -23,6 +23,13 @@
  * Send debug output to UART (COM1)
  */
 #define DEBUG_TO_UART 0
+
+/*
+ * Use HP 100LX/200LX BIOS keyboard services instead of taking over INT 09h.
+ * The internal keyboard is scanned/debounced by Hornet IRQ2/TIMER1 BIOS code,
+ * then delivered through the BIOS keyboard path.
+ */
+#define HP200LX_BIOS_KEYBOARD 1
 
 /*
  * Wait for key press before starting GUI

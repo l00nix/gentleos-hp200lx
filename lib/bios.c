@@ -54,6 +54,52 @@ bios_getc(void)
     return regs.x.ax;
 }
 
+global int
+bios_key_ready(void)
+{
+    regs_st regs;
+
+    regs.h.ah = 0x11;
+    intr(0x16, &regs);
+
+    return !(regs.x.flags & 0x0040);
+}
+
+global uint16_t
+bios_get_key_ext(void)
+{
+    regs_st regs;
+
+    regs.h.ah = 0x10;
+    intr(0x16, &regs);
+
+    return regs.x.ax;
+}
+
+global uint8_t
+bios_get_key_mods(void)
+{
+    regs_st regs;
+    uint8_t mods = 0;
+
+    regs.h.ah = 0x02;
+    intr(0x16, &regs);
+
+    if (regs.h.al & 0x03) {
+        mods |= KEY_MOD_SHIFT;
+    }
+
+    if (regs.h.al & 0x04) {
+        mods |= KEY_MOD_CTRL;
+    }
+
+    if (regs.h.al & 0x08) {
+        mods |= KEY_MOD_ALT;
+    }
+
+    return mods;
+}
+
 global void
 bios_uart_init(void)
 {
