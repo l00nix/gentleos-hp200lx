@@ -5,7 +5,7 @@ This fork is an experimental HP 200LX build of [GentleOS/16](https://github.com/
 Release 1: `KERNEL.COM` boots from DOS on a real HP 200LX, reaches the GentleOS launcher, and the built-in HP 200LX keyboard works.
 
 <p>
-  <img src="images/02-PXL_20260616_214426311.MP.jpg" width="760" alt="GentleOS launcher running on an HP 200LX">
+  <img src="images/gentleos-hp200lx-carousel.gif" width="760" alt="GentleOS running on an HP 200LX">
 </p>
 
 ## Hardware Tested
@@ -32,12 +32,7 @@ For users who want to try this build without setting up the DOSBox build environ
 ## Screenshots
 
 <p>
-  <img src="images/02-PXL_20260616_214426311.MP.jpg" width="360" alt="GentleOS launcher">
-  <img src="images/03-PXL_20260616_214436973.jpg" width="360" alt="GentleOS clock">
-  <img src="images/04-PXL_20260616_214455508.jpg" width="360" alt="GentleOS calendar">
-  <img src="images/06-PXL_20260616_214527371.jpg" width="360" alt="GentleOS keyboard test app">
-  <img src="images/07-PXL_20260616_214542780.jpg" width="360" alt="GentleOS sounds app">
-  <img src="images/18-PXL_20260616_214806476.jpg" width="360" alt="GentleOS setup app">
+  <img src="images/gentleos-hp200lx-carousel.gif" width="760" alt="Animated carousel of GentleOS apps running on an HP 200LX">
 </p>
 
 More screenshots are in [images](images/).
