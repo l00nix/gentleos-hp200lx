@@ -5,7 +5,7 @@ This repository packages an HP 200LX-focused build of [GentleOS/16](https://gith
 Release 1: `KERNEL.COM` boots from DOS on a real HP 200LX, reaches the GentleOS launcher, and the built-in HP 200LX keyboard works.
 
 <p>
-  <img src="images/gentleos-hp200lx-carousel.gif" width="760" alt="GentleOS running on an HP 200LX">
+  <img src="images/02-PXL_20260616_214426311.MP.jpg" width="760" alt="GentleOS launcher running on an HP 200LX">
 </p>
 
 ## Hardware Tested
